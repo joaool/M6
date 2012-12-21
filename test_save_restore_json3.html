@@ -1,0 +1,347 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+     <title>Test Save/Restore json v3.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;//so that we can use "this" inside this html with embedded script
+//z={};
+z={me:"I am z!"};
+thiz=this;
+myDialog = null;
+require([
+	"MotherLib6.js",
+	"Mother1/json2FormDsgn2.js",
+	"Mother1/editFBuilder2.js",
+	"Mother1/debug.js",
+	"../dajax_curr/DojJsonStore.js",
+	"dojo/_base/declare",	 
+	"dojo/_base/lang",
+	"dijit/form/Button",
+	"dijit/Dialog",	
+	"dojo/ready",
+	 "dojo/domReady!"
+	], 
+	function(FBuilder,FJson,EditFBuilder,Dbg,JsonStoreCrud,Declare,Lang,Button,Dialog,Ready){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_save_restore_json3","",{main:true,myTest1:true,fim:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("editFBuilder2"         ,"-->",{constructor:true,removeAreas:true,removeWListeners:true,setAListeners:false,resumeWListeners:true,suspendWListeners:true,overWidget:true,outWidget:true});
+		this.oDbg.setDbg("ResizeMoveArea"        ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("resizeWCoord"          ,"------>",{"constructor":true,postCreate:true,_onMouseUp:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setThis("test_save_restore_json3");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//var x=2;
+		// if we want to show x only for those cases where x!=1...we do
+		//if(this.oDbg.isDbg("main")) this.oDbg.display("x should be 1 -- x="+x,x!=1);//we have an error condition - message will only be displayed if error verifies
+		
+		
+		//------------------------------------------------------------------------	
+		//write code HERE !
+		//------------------------ switch RUN/DESIGN & properties ----------------------------------------------
+		//http://pp19dd.com/2010/07/reusable-dijit-dialog-yesno-function/
+		this.myDialog = new Dialog({
+            title: "teste de foating properties",
+            //style: "overflow:auto; left:1000px,top:100px,width: 400px,height:300px",
+			style: "opacity:100;left:1000px;top:100px;width:214px;height:400px",
+			'class':'nonModal'//just to use this in CSS with .nonModal_underlay { display:none} (in MotherBuilder.css) MAGIC !!! "modal" makes it modal
+        });//there is  no dom node with content for the Dialog
+		//myDialog.set("Hello world !!!");
+		//myDialog.show();
+		var xDesign=true;
+		var fx=new FBuilder("switch run/design","fx",{viewPort:{l:1190,t:5,w:214,h:350},borderColor:"black",borderType:"solid",borderThickness:1});
+		//fx.addChild("button",{left:0,top:0,width:80,value:"DESIGN",clickCode:"z.run_Design()"});//1
+		fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"thiz.z.run_Design()"});//1
+		fx.addChild("label",{value:"No widget selected ",left:5,top:30,width:155}); //2
+		fx.addChild("button",{left:162,top:26,width:40,height:25,value:"Del",clickCode:"thiz.z.deleteW()"});//4
+		
+		fx.addChild("grid",{left:4,top:60,width:200,height:189,showId:false,headers:"Name,Value",colTypes:"text/50,text/100"});//3
+		
+		fx.addChild("button",{left:0,top:250,width:65,height:25,value:"Text",clickCode:"thiz.z.insertW('textBox')"});//4
+		fx.addChild("button",{left:68,top:250,width:65,height:25,value:"Label",clickCode:"thiz.z.insertW('label')"});//5
+		fx.addChild("button",{left:136,top:250,width:65,height:25,value:"Num.",clickCode:"thiz.z.insertW('numberBox')"});//6
+		
+		fx.addChild("button",{left:0,top:275,width:65,height:25,value:"Area",clickCode:"thiz.z.insertW('textArea')"});//4
+		fx.addChild("button",{left:68,top:275,width:65,height:25,value:"Check",clickCode:"thiz.z.insertW('checkBox')"});//4
+		fx.addChild("button",{left:136,top:275,width:65,height:25,value:"Date",clickCode:"thiz.z.insertW('dateTextBox')"});//4
+
+		fx.addChild("button",{left:0,top:300,width:65,height:25,value:"Button",clickCode:"thiz.z.insertW('button')"});//4
+		fx.addChild("button",{left:68,top:300,width:65,height:25,value:"Combo",clickCode:"thiz.z.insertW('comboBox')"});//4
+		fx.addChild("button",{left:136,top:300,width:65,height:25,value:"Grid",clickCode:"thiz.z.insertW('grid')"});//4
+
+		fx.addChild("button",{left:0,top:326,width:90,height:35,value:"Save Form",clickCode:"thiz.z.saveF()"});//4
+		fx.addChild("button",{left:95,top:326,width:100,height:35,value:"Restore",clickCode:"thiz.z.restoreF()"});//4
+		
+		var xVal=fx.fieldById("fx1").props.value; //the same as .label
+		if(this.oDbg.isDbg("main")) this.oDbg.display("valor inicial do button DESIGN/RUN="+xVal);
+		
+		this.myDialog.set("content",fx.formObj.domNode);//if we comment this line form will be presented in the viewport...
+		
+		//Ready(function(){
+		//	this.myDialog.show(); invocado dentro de widget_selected event !!!
+		//});
+		//myDialog.set("Hello world !!!");
+		//myDialog.set(fx.formObj);
+		//myDialog.show();
+
+		
+		//------------------------------------------------------------------------------------------
+		var viewPortX={l:50,t:5,w:1100,h:200};
+		var f0=new FBuilder("form f0","f0",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1});
+//		
+		f0.addChild("label",{value:"Entity",left:80,top:10,width:100}); //1
+		var xArr=[{name:"Invoice"},{name:"InvoiceLine"},{name:"Product"},{name:"Customer"}];
+		f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120});//2
+		//	f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120,placeHolder:"Enter Entity"});//2
+
+
+		f0.addChild("label",{value:"Master Data",left:80,top:40,width:100}); //3
+
+		// EXEMPLO: em que colocamos um valor (23) como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		//f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',23);",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+		// EXEMPLO SEMELHANTE AO ANTERIOR mas em que o default é retirado de "num1" como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',this.get('num1'));",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+
+		f0.addChild("label",{value:"isCreateDelTrueChild",            left:500,top:10}); //5
+		f0.addChild("label",{value:"isCreateNormalChildWithParent",   left:500,top:40}); //6
+		f0.addChild("label",{value:"isCreateNormalChildWITHOUTParent",left:500,top:70}); //7
+		f0.addChild("checkBox",{left:480,top:10+5,title:"true/false for boolean isCreateDelTrueChild"}); //8
+		f0.addChild("checkBox",{left:480,top:40+5,title:"true/false  for boolean isCreateNormalChildWithParent"}); //9
+		f0.addChild("checkBox",{left:480,top:70+5,title:"true/false  for boolean isCreateNormalChildWITHOUTParent"}); //10
+
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:10}); //11
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:40}); //12
+		f0.addChild("textBox",{left:920,top:10,title:"pls introduce number with a comma separator ex:9,3,7",placeHolder:"el1,el2,...eln"});//13
+		f0.addChild("textBox",{left:920,top:40,title:"pls introduce number with a comma separator ex:9,3,7"});//14
+	
+		f0.addChild("button",{left:600,top:120,width:80,height:80,value:"SAVE",clickCode:"z.testSave()"});//15
+		f0.addChild("button",{left:700,top:120,width:80,height:80,value:"RESTORE",clickCode:"z.testRestore()"});//16
+
+		f0.addChild("numberBox",{name:"num1",left:80,top:70,width:80,pattern:'##.00000',value:123.5});//17
+		//f0.addChild("textArea",{left:180,top:70,width:100,height:120});//18
+		// EXEMPLO_ Pomos o default igual ao conteudo de "test1" e mostramos o valor à saida (em posCode) !!!! 
+		f0.addChild("textArea",{name:"area1",left:180,top:70,width:100,height:120,preCode:"this.set('area1',this.get('test1'));",posCode:"console.log('saiu de textArea com '+this.get('area1'));"});//18
+		var d= new Date("October 13, 2012 11:13:00");//javascript date definition
+		f0.addChild("dateTextBox",{left:290,top:70,value:d,width:120}); //19   //if value of date is specified as a string
+//		
+		//----------------------------------------
+		edit_f0=new EditFBuilder(f0,"click"); //"mouseenter","click"
+		//edit_f0.on("widget_selected",function(){
+		edit_f0.on("widget_selected",Lang.hitch(this,function(){
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+			var xOrder=edit_f0.currentWidget.posInArr;
+			var xName=f0.field(xOrder).props.name;
+			fx.setFieldProps("fx2",{value:edit_f0.currentWidget.type+" "+xName});
+			var xOrder=edit_f0.currentWidget.posInArr;
+			//console.log("test_MotherLib5_4 -- Pos="+xOrder+" x="+editF.currentWidget.left+" y="+editF.currentWidget.top);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("Pos="+xOrder+" x="+edit_f0.currentWidget.left+" y="+edit_f0.currentWidget.top);
+			f0.unVisibleById(edit_f0.currentWidget.id)
+			this.myDialog.set("title",edit_f0.currentWidget.type+" "+xName+" props.");
+			this.myDialog.show(); //invocado dentro de widget_selected event !!!
+			//alert("widget_selected");
+		}));
+		edit_f0.on("widget_unselected",Lang.hitch(this,function(){
+			//console.log("test_MotherLib5_4 -- CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+			fx.setFieldProps("fx2",{value:"No widget selected "});
+			f0.visibleById(edit_f0.currentWidget.id)
+			edit_f0.reset();//volta a por listeners à escuta
+		}));
+
+		//--------------------------------------------------------------------------------------------------------------------------
+	    //z=Lang.getObject("z",true); //returns the value for the property of an object defined by a dot separated string. If second par=true it creates the property (if it doesnot exist) in the object
+									// if instead of "foo.bar" we have "z" it creates this.z ?
+		//z is a global object defined before require()
+		//this.z.saveF=function(xFNum){//save or update current form in slot F+xFnum	
+		this.z.saveF=function(){//save or update current form in slot F+xFnum	
+			xFNum=2
+			var json_of_f0=f0.formDsgn2Json();//  produces the form JSON representation (format only)
+			var oJsonStore = new JsonStoreCrud();//to read
+			var oJsonStore2 = new JsonStoreCrud();//to create or to update				
+			var jtype="F";
+			var idname="F"+xFNum;
+			var name= "JO Form de teste slot fixo F"+xFNum;
+			var description="Form de suporte do teste das properties window";
+			var xRetStr=null;
+			oJsonStore.setCallBack(function(oReply){//read callback
+				xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+					// + oReply.info
+					;
+					if(oReply.isSuccess){
+					    if(oReply.jsonObject.rowCount==0){//the form doesn't exist we have to create it ! 
+						 	oJsonStore2.create( jtype, idname, name, description, json_of_f0 );
+						}else{//the form doesn't exist we have to update it ! 
+							//update: function( jtype, idname, name, description, json )
+						 	oJsonStore2.update( jtype, idname, name, description, json_of_f0 );
+						};
+					}else{
+						alert("Check your internet connection !!!! Trying to read form error:"+oReply.errorMessage);
+					};
+				//fz.setFieldProps("fz1",{value:xRetStr});
+				//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+			},this);
+			oJsonStore2.setCallBack(function(oReply){//update or create callback
+				xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+					// + oReply.info
+					;
+					if(!oReply.isSuccess){
+						alert("Check your internet connection !!!! Trying to write form error:"+oReply.errorMessage);
+					};
+				//fz.setFieldProps("fz1",{value:xRetStr});
+				//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+			},this);			
+			oJsonStore.read( jtype, idname);
+			//oJsonStore.create( jtype, idname, name, description, json_of_f0 );
+		};
+		this.z.restoreF=function(){//restore form in slot id=F1	
+			var oJsonStore = new JsonStoreCrud();
+			var jtype="F";
+			var idname="F1";
+			var restJson=null;
+			var xRetStr=null;
+			oJsonStore.setCallBack(function(oReply){
+				var xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;		
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"+ oReply.info;
+				//fz.setFieldProps("fz1",{value:xStr});
+				if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("this.z.restoreF - Inside call back:  BEGIN--->"+xRetStr);
+				var objJson=JSON.parse(oReply.jsonString);//objJson has the whole object
+				this.restJson=objJson.rowSet[0].json;//isolates the form only
+				//x=2;
+				//if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("Erro x não é 1",x!=1);
+				//objFjson=new FJson(restJson);
+				//destroy f0 with f0.destroy (should clean all widgets the dom and the form)
+				//var f1=objFjson.buildNoWidgets("form f1","f1");//builds form name "form f1" & "f1", from restJson,assigning it to variable f1.
+				//objFjson.buildWidgets(f1);//constroi os widgets da json restJson no form f1	
+				//if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("--------- agora mostra o json do form isolado -----------------------");
+				if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("this.z.restoreF *** FORM JSON ALONE *** restJson: BEGIN--->"+this.restJson);
+			},this);
+			oJsonStore.read( jtype, idname);
+			if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("Read request done !");
+		};
+		this.z.deleteW=function(xType){
+			var xOrder=edit_f0.currentWidget.posInArr;
+			if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("this.z.deleteW xOrder="+xOrder);
+			if(xOrder){//if xOrder is not null, then we have a widget selected
+				var xName=f0.field(xOrder).props.name;
+				var x2Del=edit_f0.currentWidget.type+" "+xName;
+				alert("Do you really want to delete the "+x2Del+" ?");
+			}else{
+				alert("Please select a widget in order to delete it !!!");				
+			};
+		};
+		this.z.insertW=function(xType){	
+			var xRunDesign=fx.fieldById("fx1").props.value;
+			if(xRunDesign=="Run"){
+				alert("Please switch to 'Design' mode in order to insert widgets !!!");
+				return;
+			};
+			
+			edit_f0.stopEdit();
+			var xIndex=f0.counterIndex(xType);
+			var xValue=xType+(f0.static.zcounter[f0.currentFormNumber][xIndex]+1);//ex textBox2
+			switch(xType){
+				case "textBox":
+					f0.addChild("textBox",{left:0,top:0,width:100,value:xValue});
+					break;
+				case "label":
+					f0.addChild("label",{value:xValue,left:0,top:0});
+					break;	
+				case "numberBox":
+					//f0.addChild("numberBox",{name:"num1",left:80,top:70,width:80,pattern:'##.00000',value:123.5});//17
+					f0.addChild("numberBox",{left:0,top:0,width:80,pattern:'##.00000',value:0});
+					break;
+				case "textArea":
+					//f0.addChild("textArea",{left:0,top:0,width:100,height:100,preCode:"this.set('area1',this.get('test1'));",posCode:"console.log('saiu de textArea com '+this.get('area1'));"});//18
+					f0.addChild("textArea",{left:0,top:0,width:100,height:100,value:xValue});
+					break;
+				case "checkBox":
+					//f0.addChild("checkBox",{left:480,top:10+5,title:"true/false for boolean isCreateDelTrueChild"}); //8
+					f0.addChild("checkBox",{left:0,top:0,title:"true/false"});
+					break;	
+				case "_radioButton":
+					//TBD
+					break;
+				case "dateTextBox":
+					//f0.addChild("dateTextBox",{left:290,top:70,value:d,width:120}); //19   //if value of date is specified as a string
+					var d= new Date();
+					f0.addChild("dateTextBox",{left:0,top:0,value:d,width:100}); //19   //if value of date is specified as a string
+					break;
+				case "button":
+					//f0.addChild("button",{left:0,top:0,width:80,value:"Button",clickCode:"z.testSave()"});//15
+					f0.addChild("button",{left:0,top:0,width:80,value:xValue});
+					break;	
+				case "comboBox":
+					//f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120});//2
+					f0.addChild("comboBox",{left:0,top:0,value:xValue});
+					break;	
+				case "_grid":
+					break;
+				case "_tabs":
+					break;	
+				default: alert("this.z.insertW  The type "+xType+" is not available for the time being");
+			};	
+			//edit_f0.removeAreas();//updates the event listteners for editFBuilder()
+			//edit_f0.setAListeners();		
+			edit_f0.resumeEdit();
+		};		
+		this.z.run_Design=function(){	
+			var xVal=fx.fieldById("fx1").props.value;
+			//alert("entrou em run_Design !!!");
+			if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("entrou em run_Design !!! o valor de z.me="+thiz.z.me);
+			//if (oDbg.isDbg("myTest1") ) oDbg.dbg("myTest1","A entrada button fx="+xVal);
+			if(xVal=="Design"){
+				xVal=fx.setFieldProps("fx1",{value:"Run"});
+				edit_f0.stopEdit();
+				xDesign=false;
+			}else{
+				xVal=fx.setFieldProps("fx1",{value:"Design"});
+				edit_f0.resumeEdit();
+				xDesign=true;
+			};
+			xVal=fx.fieldById("fx1").props.value;
+		};	
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

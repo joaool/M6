@@ -1,0 +1,1472 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Layout Area 15.0</title>
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!-- <link rel="stylesheet" href="../../../resources/style/demo.css"> -->
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/grid/resources/claroGrid.css" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script>
+		// we’re creating a dojoConfig object *before* we load dojo.js
+		var dojoConfig = {
+			async: true,
+		};
+	</script>
+	<script src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js"></script>
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<script src="Mother1/bootstrap.js"></script>	
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/grid/resources/claroGrid.css" rel="stylesheet">
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/FloatingPane.css " rel="stylesheet">
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">
+	<link rel="stylesheet" href="Dojo Toolkit/dojo-release-1.7.1/dgrid/css/dgrid.css">  
+	<!------ Mother CSS ------------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fx,f0)--->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/>  
+	<!------------------------------------------------------------------------------------- -->
+	<script>
+			/*
+			function hello(x){
+				alert("Hello de "+x);
+			};
+			*/
+			//thiz=this;
+		require(["MotherLib5.js",
+				 "Mother1/editViewPort3.js",  
+				 "Mother1/moveResizeArea2.js",  
+				 "Mother1/exchanger2.js",
+				 "Mother1/resizeWidget2.js",
+				 "Mother1/moveCanvas2.js",
+				 "Mother1/mmenu.js",
+				 "Mother1/utils.js",
+				 "dojo/_base/declare",	 
+				 "dojo/_base/window",
+				 "dojo/_base/event",
+				 "dijit/registry",				 
+				 "dojo/dom",
+				 "dojo/html",
+				 "dojo/on",
+				 "dojo/Evented",  
+				 "dojo/dnd/Moveable",
+				 "dojo/dnd/Mover",	
+				 "dojo/dom-geometry",
+				 "dojo/dom-construct",
+				 "dojo/dom-style",	
+				 "dojo/dom-class",							 
+				 "dojo/_base/lang",
+				 "dijit/layout/ContentPane",
+				 "dijit/layout/BorderContainer",
+				 "dijit/layout/AccordionContainer",
+				 "dijit/layout/TabContainer",
+				 "dojox/layout/FloatingPane",
+				 "dijit/ColorPalette",	
+				 "dojo/ready",
+				 "dojo/domReady!"], //só consome
+			//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Declare,Win,Registry,Dom,On,Evented,Moveable,Mover,DomGeom,DomConstruct,DomStyle,DomClass,Lang,ContentPane,BorderContainer,AccordionContainer,TabContainer,ColorPalette,Ready){ 
+			function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,mMenu,Utils,Declare,Win,Event,Registry,Dom,Html,On,Evented,Moveable,Mover,DomGeom,DomConstruct,DomStyle,DomClass,Lang,ContentPane,BorderContainer,AccordionContainer,TabContainer,FloatingPane,ColorPalette,Ready){ 
+				//---------------------------------------------------------------------------------------	
+				console.log(document.title+"......  inicio..");//document title tem "Layout Area 6.0" ... a property <title> que está no head
+				// Version 9 faz packing the tools num unico bloco moveable (dialogbox)
+				//		dentro deste bloco permite alterar alturas de header,subheader, footer
+				//http://www.ibm.com/developerworks/web/library/wa-aj-dojo/ para perceber enclosures
+				var util=new Utils(); //to use utils functions
+
+				//the total size of the 4 Zones may not be = total screen. The adjustment is done at "Footer" expenses
+
+				toolBox();
+		//	var fz=new fBuilder("fz0","fz"); //form para tab Visual Form Builder
+		//	thiz=this;
+				//hello("main");
+				/*
+				fz.addChild("button",{left:5,top:5,value:"Layout Menus",width:100,height:49,clickCode:"z.menuArea();"}); //1
+				fz.addChild("button",{left:5,top:100,value:"Layout Form",width:100,height:49,disable:false,clickCode:"z.formsArea();"}); //2
+				fz.addChild("button",{left:5,top:180,value:"Layout Navigation",width:100,height:49,disable:false,clickCode:"z.navigationArea();"}); //3
+
+				fz.addChild("button",{left:5,top:240,value:"test",width:100,height:20,clickCode:"z.hello('clikcode');"}); //4-->  1
+				var xComboArr=[{name:"header"},{name:"subheader"},{name:"background"},{name:"footer"}];
+				fz.addChild("comboBox",{left:9,top:280,value:"backColor",width:110,height:20,comboArr:xComboArr,preCode:"z.fillCombo();",posCode:"z.posCombo();"}); //5-->2
+				fz.addChild("button",{left:5,top:300,value:"Color",width:100,height:20,clickCode:"z.picker();"}); //6-->3
+				*/
+//				placeFormInPane(fz,"PaneId1",50,50,120,350,1,"dotted","red");//places the form runDesign in pane xPaneId. If pane does not exist create a new one and places it in a div in the body()
+//				fz.compensationAll();//not 100% necessary, but a good practice (after widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+
+				DomStyle.set(Win.body(), "backgroundColor", "darkorange");//body() é um node como qq outro...
+				//para mudar layout: http://livedocs.dojotoolkit.org/dojo/_base/window
+				console.log(document.title+"......  fim..");//document title tem "o titulo" ... a property <title> que está no head
+				//--------------------------------------------------- FIM ----------------------------------------------------------------
+				
+				function toolBox(){
+					//alert("ToolBox");
+					//falta no accordion:
+					// Layout - o que permite ao user definir zonas de forms, de menus e de navigation
+					//		  - o que permite ao user definir a imagem do site fora das áreas de layout acima
+					//		  - o que permite ao user definir a imagem dentro dos viewPorts (? - ou deverá estar dentro de cada tipo: Menu, Forms ou List)
+					// Menus - Definição do(s) menu(s) que aparecerão na zona de definição de Menus em Layout
+					// Forms - Definição do(s) Form(s) que aparecerão na zona de definição de Forms em Layout
+					// Lists - Definição do(s) list(s) que aparecerão na zona de definição de Forms em Layout - com background empty or overlapping last form - 
+					// Dictionary - Definição de entidades, propriedades e relações entre entidades
+					// Vamos colocar um accordion Pane dentro de um Border Container -----------------------------------------------------
+					// http://www.sitepen.com/blog/2012/07/11/dgrid-works-on-ie/
+					//http://www.episerver.com/Content/
+					//http://stackoverflow.com/questions/10909245/is-there-a-way-to-get-a-dojo-dialog-to-popup-from-a-popupmenuitem-to-the-left
+					
+					//var xTotHeight=DomStyle.get(Win.body(), "height");//this is the actual height at the moment of definition  (it is a window with variable height remember...)
+					//chooseSetStyleProp("Footer","height",xTotHeight-getZoneStyleProp("Header","height")-getZoneStyleProp("SubHeader","height")-getZoneStyleProp("Working Area","height")); //sets Footer Heigh according with available room
+
+					
+					var floatPane1 = DomConstruct.create("div"); 
+				//floatPane1.innerHTML=util.makeDivId("fPaneId1",0,0,1,1,1,"crimson");//O placeHolder do pFloatingPane
+					floatPane1.innerHTML=util.makeHTML("div","fPaneId1","R",null,0,0,1,1,1,"dotted","crimson");//O placeHolder do pFloatingPane
+					Win.body().appendChild(floatPane1); 
+					
+					var subFloat1 = DomConstruct.create("div"); //o suporte onde o BorderContainer frame se vai agarrar
+					//mais adiante a borderContainer "bc" será posto como conteúdo deste: subFloat1.appendChild(bc.domNode); 
+				//subFloat1.innerHTML=util.makeDivId("fSubPaneId1",10,50,100,30,6,"");//
+					subFloat1.innerHTML=util.makeHTML("div","fSubPaneId1","R",null,10,50,100,30,6,null,null);//
+					//makeHTML:function(xType,xId,A_R,xText,xLeft,xTop,xWidth,xHeight,xBorderThickness,xBorderType,xColor){
+
+					floatPane1.appendChild(subFloat1);
+
+					Ready(function(){
+						pFloatingToolBox = new FloatingPane({
+							title: "Mother Toolbox",
+							resizable: true, dockable: true,
+							style: "position:absolute;left:15;top:88;width:201px;height:435px;visibility:visible;",
+							id: "pFloatingToolBoxId"
+						}, dojo.byId("fPaneId1"));
+						//pFloatingToolBox.set("content",bc);
+						pFloatingToolBox.set("content",subFloat1);//a este conteudo vai ser pendurado o BC
+						pFloatingToolBox.startup();
+					});		
+					//FloatingPane para toolbox preparado - o conteudo será preparado adiante e colocado dentro
+					// da Toolbox com:subFloat1.appendChild(bc.domNode); 
+					
+				
+					//------- prepara Data Dictionary Toolbox ---------------------
+					var floatPane2 = DomConstruct.create("div"); 
+				//floatPane2.innerHTML=util.makeDivId("fPaneId2",0,0,1,1,1,"crimson");//O placeHolder do pFloatingPane
+					floatPane2.innerHTML=util.makeHTML("div","fPaneId2","R",null,0,0,1,1,1,"dotted","crimson");//
+					//makeHTML:function(xType,xId,A_R,xText,xLeft,xTop,xWidth,xHeight,xBorderThickness,xBorderType,xColor){
+
+					Win.body().appendChild(floatPane2); 
+					
+					var subFloat2 = DomConstruct.create("div"); //o suporte onde o conteúdo vai ser colocado
+				//subFloat2.innerHTML=util.makeDivId("fSubPaneId2",1,1,1,1,1,"");//
+					subFloat2.innerHTML=util.makeHTML("div","fSubPaneId2","R",null,1,1,1,1,1,null,null);//
+
+					floatPane1.appendChild(subFloat2);
+
+					
+					Ready(function(){
+						pFloatingDictionary = new FloatingPane({
+							title: "Data Dictionary",
+							resizable: true, dockable: true,
+							style: "position:absolute;left:23;top:120;width:216px;height:340px;visibility:hidden;",
+							id: "pFloatingDictionaryId"
+						}, dojo.byId("fPaneId2"));
+						pFloatingDictionary.set("content",subFloat2);//a este conteudo vai ser pendurado o BC
+						pFloatingDictionary.startup();
+					});
+					//simula conteudo aqui
+					var xxx = DomConstruct.create("div"); 
+				//xxx.innerHTML=util.makeDivId("xxx",5,50,250,30,3,"gold");// a gold rectangle
+					xxx.innerHTML=util.makeHTML("div","xxx","R",null,5,50,250,30,3,"solid","gold");// a gold rectangle
+					subFloat2.appendChild(xxx); //xxx is already a domNode
+					
+					// ---------------- MOTHER TOOLBOX -----------------				
+					//-------------------- prepara conteudo para ToolBox --------------------------------
+					/*
+					var floatPane1 = DomConstruct.create("div"); 
+					floatPane1.innerHTML=util.makeDivId("fPaneId1",0,0,1,1,1,"crimson");//O placeHolder do pFloatingPane
+					Win.body().appendChild(floatPane1); 
+					
+					var subFloat1 = DomConstruct.create("div"); //o suporte onde o BorderContainer frame se vai agarrar
+					//mais adiante a borderContainer "bc" será posto como conteúdo deste: subFloat1.appendChild(bc.domNode); 
+					subFloat1.innerHTML=util.makeDivId("fSubPaneId1",10,50,100,30,6,"");//
+					floatPane1.appendChild(subFloat1);
+					*/
+					
+					var bc = new BorderContainer({
+						// para HP 650,1250
+						//style: "position:absolute; left:220px; top:100px; height: 420px; width: 305px; border: solid 1px;",
+						//style: "position:absolute; left:220px; top:100px; height: 450px; width: 250px; border: solid 1px;", 
+						style: "position:absolute; left:8px; top:40px; height: 420px; width: 235px; border: solid 1px;", //para dentro de floatingPane
+						design:"sidebar"  //"headline" 
+					});					
+					var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"height: 320px; width:225px;"}, "xxxx");//width era 180px
+					// ------------------------------- Layout Toolbox ---------------------------
+					var xLeft=2;
+					var xTop=1;
+					var xSpace=20;
+					var xWidth=197;
+					var xHeight=17;
+					var content1 = DomConstruct.create("div"); 
+					var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
+					// style:"overflow: hidden !important;" if overflow:hidden; does not work it is because a new css style is being applied that takes precedence
+						var layoutToolBox=new fBuilder("LayoutToolBox","layouttb",{borderType:"none"}); //form para Accordion pane 
+							//fz.addChild("button",{left:5,top:5,value:"Layout Menus",width:100,height:49,clickCode:"z.menuArea();"}); //1
+							layoutToolBox.addChild("button",{left:xLeft,top:xTop,value:"Menu Area Layout",clickCode:"z.menuArea();",width:xWidth,height:xHeight}); //1
+							layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*1),value:"Forms Area Layout",clickCode:"z.formsArea();",width:xWidth,height:xHeight}); //2
+							layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*2),value:"Navigation Area Layout",clickCode:"z.navigationArea();",width:xWidth,height:xHeight}); //3
+							var xComboArr=[{name:"Header"},{name:"SubHeader"},{name:"Working Area"},{name:"Footer"}];
+							layoutToolBox.addChild("comboBox",{left:xLeft,top:(xTop+(10+xSpace)*3)+4,value:"Working Area",comboArr:xComboArr,width:150,height:xHeight}); //4
+							layoutToolBox.addChild("button",{left:xLeft+162,top:(xTop+(10+xSpace)*3)+2,value:"Size",clickCode:"z.sizeLayout();",width:35,height:xHeight}); //5
+							//layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(9+xSpace)*4),value:"Color",clickCode:"z.picker();",width:xWidth,height:xHeight}); //5
+							var cPal1 = new ColorPalette({
+								palette: "7x10",
+								//onChange: function(val){ alert(val); }
+								onChange: function(val){ chooseColor(val); }
+							}); 
+							Ready(function(){
+								layoutToolBox.addExternal(cPal1,4,122+5);	//add an external element to the fBuilder
+								layoutToolBox.compensationAll();//necessary to adjust buttons size (aftter widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+							});
+					ap1.set("content",layoutToolBox.formObj); //Places form "layoutToolBox" over ContentPane "ap1" and add it to accordion pane
+					aContainer.addChild(ap1);
+					//	body
+					// 		BorderContainer (bc)
+					//			AccordionContainer (aContainer)
+					//				div (content1) - o placeholder para ap1
+					//					ContentPane (ap1) title: "Layout ToolBox" ->cria id="layoutToolbox_wrapper" (div)
+					//																			id="layoutToolbox_button" (div)
+					//																			id="dijitAccordionChildWrapper" (inserido qdo está aberto)
+					//																			    id="layoutToolBox"
+					//						formObj (layoutToolBox)
+					//				div (content2)
+					//					ContentPane (ap2) title: "Menu ToolBox" -->cria id="menuToolBox_wrapper"
+					//																			id="menuToolBox_button"
+					//				div (content3)
+					//					ContentPane (ap3) title: "Form ToolBox"
+					//						TabContainer (tc)
+					//							ContentPane (tab1) title: "Widgets"
+					//								formObj (formToolbox)
+					//							ContentPane (tab2) title: "Properties"
+					//								formObj (formProperties)
+
+					// ----------------------------------- Menu Toolbox ---------------------------
+					var content2 = DomConstruct.create("div"); 
+					var ap2 = new ContentPane({title: "Menu ToolBox", selected : false,id:"menuToolBox"}, content2);						
+						menuTc = new TabContainer({title: "MenuToolBox", id:"menuTcId",region: "center",tabPosition:"top"});
+							menuTab1 = new ContentPane({title: "Link Menu"});
+							var menuToolBox=new fBuilder("MenuToolBox","menutb",{borderType:"none"}); //form para Accordion pane menu box
+								var xLeft=2;
+								var xSpace=3;
+								var xHeight=17;
+								var xWidth=80;
+								var xOffSet=10;
+								menuToolBox.addChild("label",{left:xLeft,top:xSpace,value:"Text",width:xWidth,height:xHeight}); //1
+								//var xComboArr=[{name:"#1"},{name:"#2"},{name:"#3"},{name:"#4"},{name:"#5"},{name:"#6"},{name:"#7"},{name:"#8"},{name:"#9"}]; 
+								var xComboArr=readMenuTxt();//returns an array of objects in the form [{name:menu1},{name:menu2},...{name:menu9}]
+								menuToolBox.addChild("comboBox",{left:xLeft+40,top:xSpace,value:xComboArr[0].name,preCode:"zOption=0;xComboArr=z.zReadMenuTxt();z.dummy(xComboArr);",changeCode:"zOption=z.getMenuChoice(this.value,xComboArr);//alert('inside eval zOption='+zOption);",posCode:"z.updateHtmlMenu(this.value,zOption);",comboArr:xComboArr,width:130,height:20,title:"Choose the text for the link menu..."}); //2									
+								menuToolBox.addChild("label",{left:xLeft,top:xOffSet+(xSpace+xHeight)*1,value:"Effect",width:xWidth,height:xHeight}); //3
+								var xxComboArr=[{name:"Blue Pills"},{name:"Red Pills"},{name:"Green Pills"},{name:"Black Pills"},{name:"Tabs"}];
+								menuToolBox.addChild("comboBox",{left:xLeft+40,top:xOffSet+(xSpace+xHeight)*1,value:"Pills",comboArr:xxComboArr,posCode:"z.updateEffects(this.value);",width:100,height:20,title:"Choose the type of effect for the link menus..."}); //4				
+								menuToolBox.addChild("checkBox",{left:xLeft+152,top:xOffSet+(xSpace+xHeight)*1+3,changeCode:"z.setMenuHrz_Vrt(this.checked);",title:"Check for vertical menu "}); //3
+							menuTab1.set("content",menuToolBox.formObj); //Cola o form ao tab1 que está dentro do tab container tc que vai ser colocado no content pane ap1
+							menuTab2 = new ContentPane({title: "Properties"});
+							var menuProperties=new fBuilder("MenuProperties","menup",{borderType:"none"}); //form para Accordion pane menu box
+								var xLeft=2;
+								var xSpace=3;
+								var xHeight=20;
+								var xWidth=110;
+								var xOffSet=10;
+								menuProperties.addChild("label",{left:xLeft,top:xSpace+3,value:"menu label",width:xWidth,height:xHeight}); //1
+								menuProperties.addChild("textBox",{left:xLeft+75,top:xSpace,width:xWidth,height:xHeight}); //2
+								menuProperties.addChild("label",{left:xLeft+100,top:30,width:90,height:xHeight}); //3
+								menuProperties.addChild("textArea",{left:xLeft+1,top:60,width:190,height:145}); //2
+								menuProperties.addChild("button",{left:xLeft+45,top:xOffSet+10+(xSpace+xHeight)*8,value:"Ok",clickCode:"z.menuOk()"}); //3
+								menuProperties.addChild("button",{left:xLeft+85,top:xOffSet+10+(xSpace+xHeight)*8,value:"Cancel"}); //4
+								// --> prepares content for Options --> dijit.form.DropDownMenu is the container - IMPORTANT!!! THIS IS INTRODUCED AS EXTERNAL IN MOTHERLIB
+								var optionDropDown = new dijit.DropDownMenu({style: "display: none;"}); 
+								optionDropDown.addChild(new dijit.MenuItem({label:"Peer Menu above",onClick:function(){z.zpeerAbove();},iconClass:"dijitEditorIcon dijitEditorIconJustifyLeft"})); 
+								optionDropDown.addChild(new dijit.MenuItem({label:"Peer Menu bellow",onClick:function(){z.zpeerBelow();},iconClass:"dijitEditorIcon dijitEditorIconJustifyRight"})); 
+								optionDropDown.addChild(new dijit.MenuItem({label:"Creates children",onClick:function(){z.zchildMenu();},iconClass:"dijitEditorIcon dijitEditorIconIndent"})); 
+								optionDropDown.addChild(new dijit.MenuSeparator());
+								optionDropDown.addChild(new dijit.MenuItem({label:"Delete this menu",onClick:function(){z.zok2DeleteMenu();},iconClass:"dijitEditorIcon dijitEditorIconCut"})); 
+								//-------> prepares content for dijit.PopupMenuItem()
+								var popupMenuContainer = new dijit.Menu();
+									popupMenuContainer.addChild(new dijit.MenuItem({label:"Form",onClick:function(){linkToForm(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconSelectAll"})); 
+									popupMenuContainer.addChild(new dijit.MenuItem({label:"List",onClick:function(){linkToList(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconInsertOrderedList"})); 
+									popupMenuContainer.addChild(new dijit.MenuItem({label:"Menu",onClick:function(){linkToMenu(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconInsertUnorderedList"})); 
+									popupMenuContainer.addChild(new dijit.MenuItem({label:"Report",onClick:function(){linkToReport(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconCopy"})); 
+									popupMenuContainer.addChild(new dijit.MenuItem({label:"Batch",onClick:function(){linkToBatch(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconTabIndent"})); 
+								optionDropDown.addChild(new dijit.PopupMenuItem({label:"Connections",iconClass:"dijitEditorIcon dijitEditorIconCreateLink",popup:popupMenuContainer})); 
+								// --> creates Options DropDownButton
+								var button = new dijit.form.DropDownButton({
+									label: "Options",
+									dropDown: optionDropDown
+								});
+								Ready(function(){
+									menuProperties.addExternal(button,2,30);	//add an external element to the fBuilder
+								});
+							menuTab2.set("content",menuProperties.formObj); 
+						menuTc.addChild( menuTab1 );
+						menuTc.addChild( menuTab2 );
+						Ready(function(){
+							menuToolBox.compensationAll();//necessary to adjust buttons size (aftter widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+						});
+					ap2.set("content",menuTc); //Cola o form ao accordion pane e agora vai preencher o form
+					aContainer.addChild(menuTc);				
+					// ----------------------------------- Form Toolbox ---------------------------
+					var content3 = DomConstruct.create("div"); 
+					var ap3 = new ContentPane({title: "Form ToolBox", selected : false,id:"toolbox"}, content3);					
+						var formToolbox=new fBuilder("Form ToolBox","toolb",{borderType:"none"}); //form para Accordion pane (t)oolbox
+							tc = new TabContainer({title: "Form ToolBox", id:"centerCont",region: "center",tabPosition:"top"});
+								tab1 = new ContentPane({title: "Widgets"});
+									var xLeft=2;
+									var xTop=1;
+									var xSpace=23;
+									var xWidth=127;
+									var xHeight=12;
+									formToolbox.addChild("button",{left:xLeft,top:xTop,value:"TextBox",clickCode:"z.buttonHandler('textBox');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*1,value:"Label",clickCode:"z.buttonHandler('label');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*2,value:"NumberBox",clickCode:"z.buttonHandler('numberBox');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*3,value:"TextArea",clickCode:"z.buttonHandler('textArea');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*4,value:"CheckBox",clickCode:"z.buttonHandler('checkBox');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*5,value:"DateBox",clickCode:"z.buttonHandler('dateTextBox');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*6,value:"Button",clickCode:"z.buttonHandler('button');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*7,value:"ComboBox",clickCode:"z.buttonHandler('comboBox');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*8,value:"Grid",clickCode:"z.buttonHandler('grid');",width:xWidth,height:xHeight}); 
+									formToolbox.addChild("button",{left:xLeft,top:xTop+xSpace*9,value:"Tabs",clickCode:"z.buttonHandler('tabs');",width:xWidth,height:xHeight}); 
+								tab1.set("content",formToolbox.formObj); //Cola o form ao tab1 que está dentro do tab container tc que vai ser colocado no content pane ap1
+								tab2 = new ContentPane({title: "Properties"});
+									//tab 2 content (properties widgets) goes here
+									var formProperties=new fBuilder("FormProperties","formp",{borderType:"none"}); //form para Accordion pane menu box
+									formProperties.addChild("label",{left:3,top:3,value:"Form Name"}); //1
+									formProperties.addChild("textBox",{left:80,top:3,width:110}); //2
+									formProperties.addChild("label",{left:3,top:38,value:"Entity"}); //3
+									formProperties.addChild("textBox",{left:80,top:38,width:110}); //4
+									formProperties.addChild("button",{left:48,top:200,value:"Ok",clickCode:"z.formPropOk()"}); //3
+									formProperties.addChild("button",{left:88,top:200,value:"Cancel"}); //4
+
+									tab2.set("content",formProperties.formObj); //Cola o form ao tab1 que está dentro do tab container tc que vai ser colocado no content pane ap1
+							tc.addChild( tab1 );
+							tc.addChild( tab2 );
+					ap3.set("content",tc); //Cola o form ao accordion pane e agora vai preencher o form
+					aContainer.addChild(tc);
+					
+					// ----------------------------------- List Toolbox ---------------------------
+					var content4 = DomConstruct.create("div"); 
+					var ap4 = new ContentPane({title: "List ToolBox", selected : false,id:"listToolBox"}, content4);//era AcoordionPane						
+						var listToolBox=new fBuilder("ListToolBox","listtb",{borderType:"none"}); //form para Accordion pane menu box
+					ap4.set("content",listToolBox.formObj); //Cola o form ao accordion pane e agora vai preencher o form
+					aContainer.addChild(ap4);	
+					/*	
+					var content5 = DomConstruct.create("div"); 
+					var ap5 = new ContentPane({title: "Dictionary ToolBox", selected : false,id:"dictionaryToolBox"}, content5);//era AcoordionPane						
+						var dictionaryToolBox=new fBuilder("dictionary ToolBox","listtb"); //form para Accordion pane menu box
+					ap5.set("content",dictionaryToolBox.formObj); //Cola o form ao accordion pane e agora vai preencher o form
+					aContainer.addChild(ap5);	
+					*/
+					aContainer.startup();
+					// ---------------------------- Places Accordion inside BorderContainer and Border Container inside subFloat1 (placed  inside floatPane1 in Body)
+					bc.addChild(aContainer);
+			//document.body.appendChild(bc.domNode);//pendura Border Container no DOM
+					//DomConstruct.place(bc.domNode,subFloat);	
+					subFloat1.appendChild(bc.domNode);
+					bc.startup();
+					
+					formToolbox.compensationAll();//not 100% necessary, but a good practice (after widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+						
+					//----------- vamos colar aqui o código para o Layout Toolbox que será invocado de MotherLib
+					//------------------------------------------------------------------------------------------------------------------------------------------------
+					// ---------------- DATA DICTIONARY -----------------
+				
+					var bcDd = new BorderContainer({//the black line....
+						//style: "position:absolute; left:8px; top:40px; height: 420px; width: 235px; border: solid 1px;", //para dentro de floatingPane
+						style: "position:absolute; left:8px; top:40px; height: 343px; width: 268px; border: solid 1px;", //para dentro de floatingPane
+						design:"sidebar"  //"headline" 
+					});		
+					//var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"height: 350px; width:225px;"}, "xxxx");//width era 180px
+					
+					var aContainerDd = new AccordionContainer({id:"accordionDd",region: "left",style:"width:260px; height: 200px;"}, "xxxx");//width era 180px
+				
+					// --------------------prepares  Entities
+					var xLeft=4;
+					var xTop=3;
+					var xSpace=20;
+					var xWidth=197;
+					var xHeight=17;
+					// ------ Entities			
+					var contentDd1 = DomConstruct.create("div"); 
+					var accordionPaneDd1 = new ContentPane({title: "Entities",selected : true,id:"entityToolBox"}, contentDd1);//put ContentPane inside div 
+					var entityToolBox=new fBuilder("EntityToolBox","entityTb",{borderType:"none"}); //form para Accordion pane 		
+							entityToolBox.addChild("label",{left:xLeft,top:xTop,value:"Select entity:",width:90}); //1			
+
+							var xxComboArr=[{name:"Entity 1"},{name:"Entity 2"},{name:"Entity 3"},{name:"Entity 4"}];
+							entityToolBox.addChild("comboBox",{left:xLeft+98,top:xTop,comboArr:xxComboArr,width:145,value:xxComboArr[0]}); //2			
+					accordionPaneDd1.set("content",entityToolBox.formObj); //Places form "layoutToolBox" over ContentPane "ap1" and add it to accordion pane
+					aContainerDd.addChild(accordionPaneDd1);
+					// ------ relations
+					var contentDd2 = DomConstruct.create("div"); 
+					var accordionPaneDd2 = new ContentPane({title: "Relations",selected : true,id:"relationToolBox"}, contentDd2);//put ContentPane inside div 
+					var relationToolBox=new fBuilder("RelationToolBox","relationTb",{borderType:"none"}); //form para Accordion pane 		
+							relationToolBox.addChild("label",{left:xLeft,top:xTop,value:"Select relation:",width:90}); //1			
+							var xxComboArr=[{name:"relation 1"},{name:"relation 2"},{name:"relation 3"},{name:"relation 4"}];
+							relationToolBox.addChild("comboBox",{left:xLeft+98,top:xTop,comboArr:xxComboArr,width:145,value:xxComboArr[0]}); //2			
+					accordionPaneDd2.set("content",relationToolBox.formObj); //Places form "layoutToolBox" over ContentPane "ap1" and add it to accordion pane
+					aContainerDd.addChild(accordionPaneDd2);	
+
+					aContainerDd.startup();			
+					bcDd.addChild(aContainerDd);
+					subFloat2.appendChild(bcDd.domNode);
+					bcDd.startup();
+					
+					// -------------------------------------------- END OF DATA DICTIONARY TOOLBOX CONTENT ----------
+				    var	z=Lang.getObject("z",true);
+					var x1=null;
+					var x2=null;
+					var x3=null;
+					//var zOption=0;// Home 249  menuToolBox.addChild("comboBox",{left:xLeft+80,top:xSpace,value:xComboArr[0].name,changeCode:"zOption=z.getMenuChoice(this.value,xComboArr);//alert('inside eval zOption='+zOption);",posCode:"z.updateHtmlMenu(this.value,zOption);",comboArr:xComboArr,width:130,height:20,title:"Choose the text for the link menu..."}); //2				
+					var zOption=0; //keeps the last good result
+					var zComboArr=[];
+					var landingLeft=15+275;//410 is the value for toolbox left=220px - this value will be toolbox left+190 (see bc.style)
+					var landingTop=-350;//130 is the value for toolbox top=100px - this value will be toolbox top+100 (see bc.style)
+					// menu area
+					var handlerMenuResizeEnd=null;
+					var handlerMenuArea=null;
+					var menuAHandler=null;
+					var	zMenu=null;
+					var xMenu0=null;
+					var menuABox={l:landingLeft,t:landingTop+20,w:80,h:50};
+					// Forms area
+					var xSizeArea=null;
+					var vPort=null;
+					var formsAHandler=null;
+					var fArea=null;
+					var formsABox={l:landingLeft,t:landingTop+20,w:80,h:50};
+					var element=null;//para z.picker (controi a primeira vez, na segunda reutiliza
+					// Nesta versão pode haver várias áreas activas - na próxima only one area can be active at a time !!!
+					z.menuArea=function(){
+						if(!x1){//first time x1 not existing=null =>Landing page
+							x1=new MoveResizeArea("Menu Area",landingLeft,landingTop,80,30,5,"green","silver");
+						}else{//second time or more
+							zMenu.destroy();
+							//console.assert(whatIsMyAge(yearOfBirth1) == age1);
+							//console.trace();para saber como é chamado até aqui
+							x1.activate();
+							//alert("After move resize second time");
+						};
+						// case of first time or reactivation - 
+						handlerMenuResizeEnd=x1.on("move_resize_end", function(){//regista-se para receber o evento "move_resize_end"
+							console.log("z.menuArea  Returned with --->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
+							//alert("z.menuArea  Returned with --->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
+							menuABox.l=x1.position.x;
+							menuABox.t=x1.position.y;
+							menuABox.w=x1.position.w;
+							menuABox.h=x1.position.h;
+							var menuPlace = DomConstruct.create("div"); 
+							menuPlace.innerHTML=util.makeHTML("div","mMenuId","A","",menuABox.l,menuABox.t,menuABox.w,menuABox.h,2,"solid","red");
+							Win.body().appendChild(menuPlace); 
+							// xMenu0 - Reparar que o this dentro de onMouseEnter diz respeito ao dijit (ex PopupMenuBarItem) onde está o onMouseEnter
+							//  e não ao objecto xMenu0...
+							xMenu0={menus:[ //o mais básico
+									{label: "File",onMouseEnter: function(){z.zTest(this.label,this.yLevel)},xPopup:[//2nd level
+											{label:"Menu Nr. 1",onClick: function(){z.zTest(this.label,this.yLevel)}}, //to ahave param =>anonimous function call wrapper - instead of onClick: z.zTest
+											{label:"Menu Nr. 2",onClick: function(){z.zTest(this.label,this.yLevel)}},//old code onClick: z.zTest
+											{label:"_@Sep"}, //this means "separator" in menu builder jargon
+											{label:"Menu Nr. 3",onClick: function(){z.zTest(this.label,this.yLevel)},xPopup:[//3rd level},
+													{label:"Subsubmenu 1",onClick: function(){z.zTest(this.label,this.yLevel)}},			
+													{label:"Subsubmenu 2",onClick: function(){z.zTest(this.label,this.yLevel)}},			
+													{label:"Subsubmenu 3",onClick: function(){z.zTest(this.label,this.yLevel)}}						
+												]
+											},
+											{label:"Menu Nr. 4",onClick: function(){z.zTest(this.label,this.yLevel)}}
+										],
+									},
+									{label: "Edit",onMouseEnter: function(){z.zTest(this.label,this.yLevel)},xPopup:[//2nd level
+											{label:"Edit Nr. 1",onClick: function(){z.zTest(this.label,this.yLevel)}},
+											{label:"Edit Nr. 2",onClick: function(){z.zTest(this.label,this.yLevel)}},
+										],	
+									},											
+									{label: "Mother",onMouseEnter: function(){z.zTest(this.label,this.level)}}
+								]
+							};
+							zMenu=new mMenu({menu:xMenu0,placeId:"mMenuId"});//args vem na forma {"menu": xMenu,placeId:"wrapper"} e monta logo this.targetNode="target"
+							handlerMenuResizeEnd.remove();
+							zMenu.refreshMenu();
+							console.log("after refreshMenu()");
+						});
+						handlerMenuArea=On(Dom.byId(x1.moveResizeDivId), "mouseenter", function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+							console.log("z.menuArea - entrou em x1 com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+							//if(!zMenu) //if its the second time zMenu was destroyed above(in the else)
+							//	zMenu=new mMenu({menu:xMenu0,placeId:"mMenuId"});//args vem na forma {"menu": xMenu,placeId:"wrapper"} e monta logo this.targetNode="target"
+							DomStyle.set(Dom.byId(x1.moveResizeDivId), "cursor", "move");
+							x1.activate();
+							handlerMenuArea.remove();
+						});						
+					};
+					z.formsArea=function(){
+						//alert("Forms Area"+x2);
+						if(formsAHandler)
+							formsAHandler.remove();
+						if(vPort)
+							vPort.destroy();
+						if(x2){
+							x2.activate();
+							fArea.destroyFields();
+							fArea.formObj.destroy();
+						}else{
+							x2=new MoveResizeArea("Forms Area",formsABox.l,formsABox.t,formsABox.w,formsABox.h,3,"crimson","red");
+						};
+						x2.on("move_resize_end", function(){
+							console.log("z.formsArea  Returned with --->Positions x="+x2.position.x+" y="+x2.position.y+" width="+x2.position.w+" height="+x2.position.h);
+							//alert("z.formsArea  Returned with --->Positions x="+x2.position.x+" y="+x2.position.y+" width="+x2.position.w+" height="+x2.position.h);
+							formsABox.l=x2.position.x;
+							formsABox.t=x2.position.y;
+							formsABox.w=x2.position.w;
+							formsABox.h=x2.position.h;
+						/*	
+							fArea=new fBuilder("Form Area","f"); //form para tab Visual Form Builder
+							fArea.gridPattern=20;
+							console.log("FBUILDER "+fArea.name);//ok
+							fArea.addChild("textBox",{left:80,top:130,value:"@|",width:100});   	//1	value="@|" means that we want a value=title
+							fArea.addChild("label",{left:32,top:220,value:"@|"});  				//2
+							fArea.addChild("numberBox",{left:34,top:280,value:"@|",width:100,height:49}); //3	value="@|" means that we want a value=title
+							console.log("vai chamar editViewPort...com x="+x2.position.x+" y="+x2.position.y+" w="+x2.position.w+" h="+x2.position.h);
+							vPort=new EditViewPort(x2.position.x+0,x2.position.y+0,x2.position.w-18,x2.position.h-18,fArea); //viewPort box and array -scroll bars size=18
+						*/
+							fArea=new fBuilder("Form Area","f",{viewPort:formsABox}); //form para tab Visual Form Builder
+							fArea.gridPattern=5;
+							//console.log("FBUILDER "+fArea.name);//ok
+							fArea.addChild("textBox",{left:80,top:130,value:"@|",width:100});   	//1	value="@|" means that we want a value=title
+							fArea.addChild("label",{left:32,top:220,value:"@|"});  				//2
+							fArea.addChild("numberBox",{left:34,top:280,value:"@|",width:100,height:49}); //3	value="@|" means that we want a value=title
+						});
+						formsAHandler=On(Dom.byId(x2.moveResizeDivId), "mouseenter", function(evt){//sem isto vai trocar handles de um elemento para outro
+							console.log("entrou em x2 com label="+x2.current.label+" order="+x2.current.order+" id="+x2.moveResizeDivId);
+							x2.activate();
+						}); 
+					};
+					z.zTest=function(xLabel,xLevel){
+						//xLevel is a string, an internal menu property that states the menu coordinates. Ex 0,2,3,1 (1st dropdown, 3rd menu, 4th menu inside, 2nd menu inside
+						//alert("zTest="+xLabel+" name="+menuProperties.name+" level="+xLevel);
+						menuProperties.setFieldProps("menup2",{value:xLabel});
+						menuProperties.setFieldProps("menup3",{value:xLevel});
+						console.log(xMenu0);
+						//alert("zTest !!!"+xMenu0);
+					};					
+					z.menuOk=function(){//ok button in menu properties
+						//alert("z.menuOk !!!");
+						var xNewLabel=menuProperties.fieldShownById("menup2");
+						var xPos=menuProperties.fieldShownById("menup3");
+						//alert("z.menuOk !!! new="+xNewLabel+" pos="+xPos);
+						updateLabel(xNewLabel,xMenu0,xPos);
+						zMenu.refreshMenu();
+					};
+					z.formPropOk=function(){//ok button in menu properties
+						var xFormName=formProperties.fieldShownById("formp2");
+						//xMenu0.menus[2].label=xFormName;
+						updateLabel(xFormName,xMenu0,"2");
+						zMenu.refreshMenu();
+						//alert("z.formPropOk !!! =>"+xFormName);
+					};
+					z.zpeerAbove=function(){//Insert a new menu above current
+						//alert("z.zpeerBelow !!!");
+						var xNewLabel=menuProperties.fieldShownById("menup2");
+						var xPos=menuProperties.fieldShownById("menup3");
+						//alert("z.zpeerAbove !!! NEW above="+xNewLabel+" pos="+xPos);
+						peerAbove(xMenu0,xPos);
+						zMenu.refreshMenu();
+					};
+					z.zpeerBelow=function(){//Insert a new menu bellow current
+						//alert("z.zpeerBelow !!!");
+						var xNewLabel=menuProperties.fieldShownById("menup2");
+						var xPos=menuProperties.fieldShownById("menup3");
+						peerBelow(xMenu0,xPos);
+						zMenu.refreshMenu();
+					};
+					z.zchildMenu=function(){//Insert a Child  menu at side
+						//alert("z.zchildMenu !!!");
+						var xNewLabel=menuProperties.fieldShownById("menup2");
+						var xPos=menuProperties.fieldShownById("menup3");
+						//alert("z.zchildMenu !!! NEW="+xNewLabel+" pos="+xPos);
+						childMenu(xMenu0,xPos);
+						zMenu.refreshMenu();
+					};					
+					z.zok2DeleteMenu=function(){
+						//alert("z.zpeerBelow !!!");
+						var xNewLabel=menuProperties.fieldShownById("menup2");
+						var xPos=menuProperties.fieldShownById("menup3");
+						alert("z.zok2DeleteMenu !!! to delete="+xNewLabel+" pos="+xPos);
+						//updateLabel(xNewLabel,xMenu0,xPos);
+						ok2DeleteMenu(xMenu0,xPos);
+						zMenu.refreshMenu();					
+					};
+					z.navigationArea=function(){
+						//alert("Navigation Area");
+						if(!x3){
+							x3=new MoveResizeArea("Nav.Area",landingLeft,landingTop+40,80,30,5,"orange","brown");
+							x3.on("move_resize_end", function(){
+								//alert("O evento mov_resize_end foi activado para x3 orange");
+							});
+							On(Dom.byId(x3.moveResizeDivId), "mouseenter", function(evt){
+								console.log("entrou em x3 com label="+x3.current.label+" order="+x3.current.order+" id="+x3.moveResizeDivId);				
+								x3.activate();
+							}); 					
+						}else{//x3 já existe
+							if(x3.active){//existe e ainda está activo
+								alert("the element is still active (notice the dotted line) - just drag it !!!");
+							}else{//já não está activo
+								x3.activate();
+							};				
+						};				
+					};									
+					z.sizeLayout=function(){
+						//called by the "Size" button, this function present the handlers for the zone selected in the combo id="layouttb4"
+						//Sets the tops of the 4 zones (0, xSubHeaderTop, xWorkingAreaTop, xFooterTop) preparing the call to resizeWidget
+						//   picks only the top corresponding to the combo content (the switch(zone)...)
+						//		inside the "onResizeComplete" event of the resizeWidget class calls  reajustZones
+						//      Note: this call to resizeWidget is a onecycle call. Readjust once and destroy
+						//alert("sizeLayout Area");
+						var xZone=layoutToolBox.fieldShownById("layouttb4");//gets combobox'content
+						var xLabel=xZone+" Area";//label depends on the content of layouttb4
+						//var xOldSize=getZoneStyleProp(xZone,"height");// here its is still actual
+						
+						// the actual top coordinate for each zone
+						var xHeaderTop=0;
+						var xTotHeight=DomStyle.get(Win.body(), "height")-10;//this is the actual height at the moment of definition  (it is a window with variable height remember...)
+						//var xTotWidth=DomStyle.get(Win.body(), "width");//this is the actual width at the moment of definition  (it is a window with variable width remember...)
+						var xTotWidth=getZoneStyleProp("Header","width");//all the zones are alike - Header is just the first
+						var xMarginLeft=getZoneStyleProp("Header","marginLeft");//all the zones are alike - Header is just the first
+						if(xMarginLeft<2)
+							xMarginLeft=2;// the minimum
+					
+						console.log("1-Total height is "+xTotHeight+" Total width is "+xTotWidth);
+						
+						//var xNode=Dom.byId("subheader-container");
+						
+						var xSubHeaderTop=0+DomStyle.get(Dom.byId("header-container"), "height");//ok
+						console.log("2-SubHeader Top="+xSubHeaderTop+" or via getZoneStyleProp()="+getZoneStyleProp("Header","height"));
+						
+						//var xWorkingAreaTop=xSubHeaderTop+DomStyle.get(Dom.byId("subheader-container"), "height");//top ok - height non OK 
+						var xWorkingAreaTop=xSubHeaderTop+DomStyle.get(Dom.byId("subheader-container"), "height");//top ok - height non OK 
+						console.log("3-WorkingArea Top="+xWorkingAreaTop+" or via getZoneStyleProp()="+(getZoneStyleProp("Header","height")+getZoneStyleProp("SubHeader","height")));
+						
+						var xFooterTop=xWorkingAreaTop+DomStyle.get(Dom.byId("working-container"), "height")+15;// os 15 são um tramanco azeiteiro
+						console.log("4-Footer Top="+xFooterTop+" or via getZoneStyleProp()="+(getZoneStyleProp("Footer","top")));
+						
+						//the total size of the 4 Zones may not be = total screen. The adjustment is done at "Footer" expenses
+						chooseSetStyleProp("Footer","height",xTotHeight-getZoneStyleProp("Header","height")-getZoneStyleProp("SubHeader","height")-getZoneStyleProp("Working Area","height")); //sets Footer Heigh according with available room
+						
+					
+					//--- sondas
+				/*
+					var yyy0 = DomConstruct.create("div"); //para total screen available
+					yyy0.innerHTML=util.makeAbsDivId("yyy0Id",xMarginLeft,0,xTotWidth-10,xTotHeight,4,"solid","lightpink");// a crimson abs rectangle
+					Win.body().appendChild(yyy0); //xxx is already a domNode
+					
+					var yyy1 = DomConstruct.create("div"); //para header
+					yyy1.innerHTML=util.makeAbsDivId("yyy1Id",xMarginLeft,0,xTotWidth-20,getZoneStyleProp("Header","height"),1,"dotted","yellow");// a crimson abs rectangle
+					Win.body().appendChild(yyy1); //xxx is already a domNode
+				
+					var yyy2 = DomConstruct.create("div"); //para subheader
+					//yyy2.innerHTML=util.makeAbsDivId("yyy2Id",xMarginLeft,xSubHeaderTop,xTotWidth-30,getZoneStyleProp("SubHeader","height"),1,"solid","greenyellow");// a crimson abs rectangle
+					yyy2.innerHTML=util.makeAbsDivId("yyy2Id",xMarginLeft,xSubHeaderTop,xTotWidth-30,DomStyle.get(Dom.byId("subheader-container"), "height"),1,"solid","greenyellow");// a crimson abs rectangle
+					Win.body().appendChild(yyy2); //xxx is already a domNode
+				
+					var yyy3 = DomConstruct.create("div"); //para Working Area - tramanco azeiteiro no height para compensar docking area....
+					yyy3.innerHTML=util.makeAbsDivId("yyy3Id",xMarginLeft,xWorkingAreaTop,xTotWidth-40,getZoneStyleProp("Working Area","height"),1,"dotted","lavender");// a lightpink abs rectangle
+					Win.body().appendChild(yyy3); //xxx is already a domNode
+				
+					var yyy4 = DomConstruct.create("div"); //para Footer - Heigh was reduced (-15) to try to get visibility to the lower handle without scrolling
+					yyy4.innerHTML=util.makeAbsDivId("yyy4Id",xMarginLeft,xFooterTop,xTotWidth-60,getZoneStyleProp("Footer","height")-15,5,"dotted","blue");// a lightpink abs rectangle
+					Win.body().appendChild(yyy4); //xxx is already a domNode
+					
+				*/	
+						//alert("WorkingArea Total height is "+(xFooterTop-xWorkingAreaTop)+" or via getZoneStyleProp()="+getZoneStyleProp("Working Area","height"));
+					
+						
+						var xOldSize=getZoneStyleProp(xZone,"height");// here its is still actual
+						var xTop=0;
+						var xHeight=0;
+						//gets the top coordinate for the zone defined in the comboBox
+						switch(xZone){
+							case "Header":
+								xTop=xHeaderTop;
+								xHeight=DomStyle.get(Dom.byId("header-container"), "height");
+								break;						
+							case "SubHeader":
+								xTop=xSubHeaderTop;
+								xHeight=DomStyle.get(Dom.byId("subheader-container"), "height");
+								break;						
+							case "Working Area":
+								xTop=xWorkingAreaTop;
+								xHeight=DomStyle.get(Dom.byId("working-container"), "height");
+								break;
+							case "Footer":
+								xTop=xFooterTop;//trying to have the lower handle visible
+								xOldSize=xOldSize-15;// -15 do tramanco azeiteiro
+								break;					
+							default: alert("sizeLayout - The zone "+xZone+" is unknown for the time being");
+						};
+					/*
+					var zzz3 = DomConstruct.create("div"); //para Working Area - tramanco azeiteiro no height para compensar docking area....
+					//zzz3.innerHTML=util.makeAbsDivId("zzz3Id",600,xTop,50,getZoneStyleProp(xZone,"height"),3,"solid","blue");// a lightpink abs rectangle
+					zzz3.innerHTML=util.makeAbsDivId("zzz3Id",600,xTop,50,xHeight,3,"solid","blue");// a lightpink abs rectangle
+					Win.body().appendChild(zzz3); //xxx is already a domNode
+					*/
+						// we can position the resize handles
+						var xAvatar=DomConstruct.create("div"); 
+						xAvatar.innerHTML=util.makeAbsDivId("xAvatarId",xMarginLeft,xTop,xTotWidth-6,xOldSize,2,"dotted","gold");
+						Win.body().appendChild(xAvatar); 
+						//alert("z.sizeLayout dentro de ready vai chamar ResizeWidget"); 
+						var objToSize=new ResizeWidget({"targetNode":"xAvatarId","targetType":"zzz"});
+						//var thiz=this;
+						dojo.connect(objToSize, "onResizeComplete", function() {
+							//este é o slot para fazer algo após uma action de resize (sem ser a final...)... Por exemplo adaptar a figura ao estado corrente dos handles...
+							//alert("voltou de ResizeWidget");
+							//this.clearResizeHandles();
+				//alert("o novo valor para height: height="+this.targetH+" a colocar em "+ xZone);
+						//chooseSetStyleProp(xZone,"height",this.targetH);
+						reajustZones(xZone,this.targetL,this.targetT,this.targetW,this.targetH,this.targetIL,this.targetIT,this.targetIW,this.targetIH);//adjust DOM accordingly to lower handles(height) or top handles(top)
+							this.destroy();
+							//this.clearResizeHandles();
+							DomConstruct.destroy("xAvatarId");//destroy visble node keeping xAvatar node
+							// -- destroi as sondas  --- to remove
+							/*
+							console.log("antes de destruir as sondas");
+							DomConstruct.destroy("yyy0Id");//destroy visble node keeping xAvatar node
+							DomConstruct.destroy("yyy1Id");//destroy visble node keeping xAvatar node
+							DomConstruct.destroy("yyy2Id");//destroy visble node keeping xAvatar node
+							DomConstruct.destroy("yyy3Id");//destroy visble node keeping xAvatar node
+							DomConstruct.destroy("yyy4Id");//destroy visble node keeping xAvatar node
+							console.log("depois de destruir as sondas");
+							*/
+
+						});
+						//objToSize.setEndResize(Lang.hitch(this,function(){
+						objToSize.setEndResize(function(){
+							this.destroy();
+							//z.afterSizeLayout();//a transformar num evento
+						});							
+					};	
+					z.afterSizeLayout=function(){
+						alert("Voltou para  afterSizeLayout !!!!");
+					};					
+					z.picker=function(){
+						//alert("Back Color");
+						if(!element){//if element does not exist build it !
+							console.log("criou element a primeira vez");
+							element = DomConstruct.create("div"); //cria HTML div - 
+							//element.innerHTML="<span id='test'>PlaceHolder for Picker</span>";
+							//element.innerHTML=util.makeDivId('test',188+220,255,208,140,3,"blue");//para left de borderContainer=220px
+							element.innerHTML=util.makeDivId('test',188+290,287,208,140,3,"blue");//por baixo de color button e para dentro da caixa
+							Win.body().appendChild(element);
+							var visibleElement = DomConstruct.create("div"); //cria outro HTML div 
+							visibleElement.innerHTML="<textArea id='pickerId'>Menu Area</textarea>"; //este é o que se vai ver...
+							Dom.byId("test").appendChild(visibleElement); //textarea will be child of inner element instead of child of element (element.appendChild(visibleElement))
+							//    <div> inicial (element)
+							//        <div id="test" style="position: absolute; top:500px; left:100px; height:200px; width:150px; border:3px solid blue;"> innerHTML id="test"
+							//				<div> (visible element)
+							//					 <textarea id="avatarId">Menu Area</textarea>   innerHTML id="pickerId"
+							//							<table> colorPicker
+							///*
+							var myPalette = new ColorPalette({
+								palette: "7x10",
+								//onChange: function(val){ alert(val); }
+								onChange: function(val){ chooseColor(val); }
+							}, "pickerId"); //placeholder
+						};
+						console.log("fim de z.picker...");
+					};				
+					z.fillCombo=function(){
+						//alert("Estou em fillCombo!");
+					};
+					z.setMenuHrz_Vrt=function(xOption){//true=>Vertical
+						//alert("Estou em setMenuHrz_Vrt="+xOption);
+						var xParent=Dom.byId("bootSnav");
+						if(xOption){//Vertical
+							DomClass.add(xParent,"nav-stacked span2");
+						}else{
+							DomClass.remove(xParent,"nav-stacked span2");
+						};						
+					};					
+					z.updateEffects=function(xLastValue){
+						console.log("----------------------------------------------->updateEffects entra com "+xLastValue);
+						var xParent=Dom.byId("bootSnav");
+						var xNewEffect=null;
+						//	var xxComboArr=[{name:"Blue Pills"},{name:"Red Pills"},{name:"Green Pills"},{name:"Black Pills"},{name:"Tabs"}];
+						switch(xLastValue){
+							case "Blue Pills":
+								xNewEffect="nav-pills";
+								break;						
+							case "Red Pills":
+								xNewEffect="nav-pills red";
+								break;						
+							case "Green Pills":
+								xNewEffect="nav-pills green";
+								break;						
+							case "Black Pills":
+								xNewEffect="nav-pills black";
+								break;						
+							case "Tabs":
+								xNewEffect="nav-tabs";
+								break;						
+							default: alert("z.updateEffects Effect - The effect "+xLastValue+" is unknown for the time being");
+						};
+						DomClass.replace(xParent,xNewEffect, "nav-pills nav-tabs blue red green black ");
+					};
+					z.updateHtmlMenu=function(xLastValue,xOption){
+						// Places xLastValue in position #xOption 
+						//		if option=-1 =>places nowhere=ignore
+					   console.log("----------------------------------------------->updateHtmlMenu entra  com "+xLastValue+" e option="+zOption);
+					   // alert("----------------------------------------------->updateHtmlMenu entra  com "+xLastValue+" e option="+xOption);
+						//devia desconectar onChange trigger
+						//menuToolBox.setFieldProps("menutb2",{disableChangeCode:true}); //2				
+						//menuToolBox.setFieldProps("menutb2",{changeCode:"alert('On change substituido !!!');"}); //2				
+					    //alert("----------------------------------------------->updateHtmlMenu desconectou !!!");
+
+						var xParent=Dom.byId("bootSnav");
+						var nodeList=dojo.query("> *", xParent);
+						console.log("z.updateHtmlMenu----Total de Nodes: "+nodeList.length);
+						if(xOption>=0){
+							console.log("z.updateHtmlMenu ----Vai alterar: "+nodeList[xOption].innerHTML+" para "+xLastValue);
+							//Html.set(node,"<a href='#'>"+xLastValue+"</a>");
+							nodeList[xOption].innerHTML="<a href='#'>"+xLastValue+"</a>";
+						};
+						xComboArr=readMenuTxt();
+						console.log("----------------------------------------------->updateHtmlMenu EXIT xLastValue="+xLastValue+" xOption="+xOption+" 0"+xComboArr[0].name);
+					};
+					z.dummy=function(xComboArr){
+						// On combobox' precode we set the combo's on Change - this will assure that any char written will fire onChange
+						console.log("z.dummy - ENTRY 0="+xComboArr[0].name+" 1="+xComboArr[1].name);
+						var x=Registry.byId("menutb2");
+						/*
+						x.set("onChange",function(){//eval(xProps.changeCode)
+							zOption=z.getMenuChoice(x.value,xComboArr)
+							//zOption=z.getMenuChoice(xComboArr)
+							//console.log("z.dummy chamou onChange  e devolveu ---------------------->"+zOption);					
+						}); //xFUNCIONA
+						*/
+						console.log("z.dummy 2- ENTRY");
+
+						x.autocomplete=true;
+						x.intermediateChanges=true;	
+						x.disableChangeCode=false;
+						//  var newarray = lang.clone(["a", "b", "c"]);
+						//zComboArr=Lang.clone(xComboArr);
+
+						console.log("z.dummy ------------------------------------------->"+x.id+" 0="+xComboArr[0].name);
+					};
+					z.getMenuChoice=function(xTxtChoice,xArrObj){
+					//z.getMenuChoice=function(xArrObj){
+						// For id="bootSnav" Updates the HTML child.		
+						// id="bootSnav" collection of:
+						//	 <li><a href="#"><i class="icon-picture icon-black"></i>About Us</a></li>  ...or
+						//   <li><a href="#">Feedback1</a></li>
+						// How can we now which item was changed ? Comparing the text in menuToolBox.fieldShownById("menutb2") with text in DOM
+						// Enter here for every single change, because 				intermediateChanges: true, in comboBox 
+						// the typical onChange event only fires when the field is blurred
+						//xTxtChoice=zCurrentMenu;
+						//xTxtChoice=this.value;
+						// keeps the match  (in zOption) until a new match is done
+						console.log("entrou em z.getMenuChoice com "+xTxtChoice+" first from list0="+xArrObj[0].name+" list1="+xArrObj[1].name);
+						for(var i=0;i<xArrObj.length;i++){
+							console.log("compara >"+xArrObj[i].name+"< com >"+xTxtChoice+"< ");
+							if(xArrObj[i].name==xTxtChoice){
+							    console.log("z.getMenuChoice EXIT encontrou "+xTxtChoice+" na posicao "+i);
+								zOption=i; //updates zOption in z Object
+								return i;
+							};
+						};
+						// if it does not find a match, uses the last good result
+						var xRet=zOption;
+					    console.log("z.getMenuChoice EXIT não encontrou "+xTxtChoice+" devolve "+xRet);
+						return xRet; //keeps the last good result
+					};
+					z.zReadMenuTxt=function(){//returns an array of objects in the form [{name:menu1},{name:menu2},...{name:menu9}]
+						var xComboArr=readMenuTxt();
+						return xComboArr;
+					};
+					z.buttonHandler=function(xFieldType){
+					//--------------------------------------------------------------------------------------------------
+					//This code handles the clicks in any of left pane accordion ToolBox buttons.
+						// Esta versão so suporta uma grid no form
+						//	  available types: textBox,label,numberBox,textArea,checkBox,dateBox,button,comboBox,grid,tabs
+						//     o id da grid tem de fazer match CSS id #grid que é unico ->logo o grid id não pode ser arbitrário (está fixado em JSON_Default_Grid !!!
+						//     Como conseguimos ter uma grid em Form Manager ? Obrigado o perfixo a ser "m" e neste caso particular duplicando o CSS
+						//alert("Chegou a button handler com "+xFieldType);
+						fArea.addChild(xFieldType,{left:0,top:0,value:"@|"}); //@| stands for use default=type of field+type order within form
+						fArea.compensationAll();//not 100% necessary, but a good practice (after widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+						//Para ligar o button ao viewport é necessário reestabelecer os eventos de EditViewPort para isso necessito de fazer vPort.Refresh
+						vPort.refreshEditViewPort(); //dá erro porque o dentro do eval em MotherLib3 este "this" é desconhecido...resolução:
+						//   por o vPort dentro de myFunctions ou fazer um closure
+					};					
+					function readMenuTxt(){
+						//for id="bootSnav" reads HTML and return an array of objects in the form [{name:menu1},{name:menu2},...{name:menu9}]
+						//at the end of the array it always add {name:"...New..."}
+						console.log("fillMenuTxt Entry");
+						var xHTMLArr=[];
+						var xParent=Dom.byId("bootSnav");
+						var i=0;
+						if(xParent){
+							dojo.query("> *", xParent).forEach(function (node) {
+								//console.log("o conteudo é:"+node.innerHTML); //ok
+								//console.log("o conteudo é:"+node.innerHTML+" -->"+node.firstChild.innerHTML);// ok
+								//console.log("o conteudo é:"+node.innerHTML+" Children="+node.childNodes.length+" -->"+node.firstChild.innerHTML);//ok
+								//podem ocorrer 3 casos:
+								// 1- <li><a href="#">Feedback2</a></li> =>node.innerHTML 
+								// 2- <li><a href="#"><i class="icon-picture icon-black"></i>About Us</a></li> =>node.innerHTML e substr
+								// 3- <li><a href="#"></a></li> =>node.innerHTML e substr
+								xInside_a=node.firstChild.innerHTML;// extracts the content between  <a> and </a> 
+								if(xInside_a.substr(0,2)=="<i"){//existe icon temos de procurar "</i>" para a partir daí extrair o conteudo do menu
+									var xPos=xInside_a.indexOf("</i>");
+									xInside_a=xInside_a.substr(xPos+4); //daí em diante
+									console.log("readMenuTxt inside a: xPos="+xPos+" o conteudo é:"+xInside_a);
+								}else{//icon does not exist, then checks  the content inside <a> and </a> if it empty stops
+									if(xInside_a==""){
+										//alert("fillMenuTxt Error - the content is empty for i="+i+" vai sair");
+									//xInside_a="...New...";
+									//xInside_a="Joaquim";
+									//xHTMLArr.push({name:"...New..."});//only for combo, add an extra slot for new	 DA ERRO !!!
+									//xHTMLArr.push({name:xInside_a});//normal load  DA ERRO !!!
+									//xHTMLArr.push({name:"abc"});//normal load  DA ERRO !!!
+									//xHTMLArr.push({name:xInside_a+"#"});//normal load		 DA ERRO !!!					
+										return xHTMLArr;
+									};	
+								};
+								//alert("tem o primeiro "+xInside_a);
+							    console.log("readMenuTxt loads i="+i+" Content="+xInside_a);	
+								xHTMLArr.push({name:xInside_a});//normal load
+							//xHTMLArr.push({name:"----"});//normal load DA ERRO !!!
+							    //console.log("fillMenuTxt loads i="+i+" Content="+xHTMLArr[i].name);						
+								//alert("conteudo="+xInside_a);
+								i++;	
+							});
+							// all nodes where loaded (no empty node on the way...
+						//xHTMLArr.push({name:"...New..."});//only for combo, add an extra slot for new
+							//alert("fillMenuTxt saida com i="+(i-1)+" 0="+xHTMLArr[0].name+" 1="+xHTMLArr[1].name+" 2="+xHTMLArr[2].name+" 3="+xHTMLArr[3].name+" 4="+xHTMLArr[4].name);
+							return xHTMLArr;//devolve o array preenchido com as descriptions do menu
+						}else{
+							alert("fillMenuTxt Error - the id 'bootSnav' does not exist in DOM !");
+						};
+						alert("fim de fillMenuTxt");
+					};
+					function chooseColor(x){
+						//sets CSS backgroundColor to color=x, for the zone pointed by combobox Id="layouttb4"  of fBuilder layoutToolbox
+						//  Mother assumes 4 zones: Header,SubHeader,Background and Footer - all zones have height except Background. Background height is the remaining of the other zones
+						var xChoice=layoutToolBox.fieldShownById("layouttb4");//checks what's in combobox
+						var node;
+						switch(xChoice){
+							case "Header":
+								node=Dom.byId("header-container");
+								DomStyle.set(node, "backgroundColor", x);
+								node=Dom.byId("logo-container");
+								DomStyle.set(node, "backgroundColor", x);
+								node=Dom.byId("before-logo");
+								DomStyle.set(node, "backgroundColor", x);
+								break;						
+							case "SubHeader":
+								console.log("chooseColor subheader a fazer ....");
+								node=Dom.byId("subheader");
+								DomStyle.set(node, "backgroundColor", x);
+								node=Dom.byId("subheader-container");
+								DomStyle.set(node, "backgroundColor", x);
+								node=Dom.byId("nav_container");
+								DomStyle.set(node, "backgroundColor", x);	
+								node=Dom.byId("before-nav");
+								DomStyle.set(node, "backgroundColor", x);							
+								node=Dom.byId("after-nav");
+								DomStyle.set(node, "backgroundColor", x);							
+								break;								
+							case "Working Area":
+								//DomStyle.set(Win.body(), "backgroundColor", x);//body() é um node como qq outro...
+								node=Dom.byId("working-container");
+								DomStyle.set(node, "backgroundColor", x);
+								break;
+							case "Footer":
+								node=Dom.byId("footer");
+								DomStyle.set(node, "backgroundColor", x);
+								break;					
+							default: alert("layoutArea chooseColor - The type "+xChoice+" is unknown for the time being");	
+						};
+					};
+					function chooseSetStyleProp(xZone,xProp,x){
+						//for zone=xZone sets CSS property xProp (ex "height","width","backgroundColor"...) to input x
+						//  Mother assumes 4 zones: Header,SubHeader,Working Area and Footer
+						//var xChoice=layoutToolBox.fieldShownById("layouttb4");//checks what's in combobox
+						var node;
+						//alert("layoutArea chooseSetStyleProp - Para a zona de "+xZone+" vai alterar a CSS property "+xProp+" para o valor "+x);
+
+						switch(xZone){
+							case "Header":
+								node=Dom.byId("header-container");
+								DomStyle.set(node, xProp, x);
+								//alert("layoutArea chooseSetStyleProp - Para a zona de "+xZone+" alterou a CSS property "+xProp+" para o valor "+x);
+
+								break;						
+							case "SubHeader":
+								node=Dom.byId("subheader-container");
+								DomStyle.set(node, xProp, x);
+								//node=Dom.byId("nav_container");
+								//DomStyle.set(node, xProp, x);							
+								break;						
+							case "Working Area": //--> remove -->grow by scrinking footer and vice-versa
+								//DomStyle.set(Win.body(), xProp, x);//body() é um node como qq outro...
+								node=Dom.byId("working-container");
+								DomStyle.set(node, xProp, x);
+								break;
+							case "Footer"://--> remove --> grow by scrinking Working Area and vice-versa
+								node=Dom.byId("footer");
+								DomStyle.set(node, xProp, x);
+								break;					
+							default: alert("layoutArea chooseSetStyleProp The type "+xZone+" is unknown for the time being");	
+						};
+					};
+					function reajustZones(xChangedZone,xNewLeft,xNewTop,xNewWidth,xNewHeight,xOldLeft,xOldTop,xOldWidth,xOldHeight){
+						//  Mother assumes 4 zones: Header,SubHeader,Working Area and Footer 
+						//  The interface here is the line - respecting the line move
+						//  Height:(the user changed one of the upperHandles - or a digonal handle)
+						// 		Changes in one area (except Working Area) are compensated by Working Area
+						// 		Changes in Working Area are compensated by Footer
+						//  Top:(the user changed one of the upperHandles)
+						// 		Changes in SubHeader are compensated by Header
+						// 		Changes in Working Area are compensated by SubHeader
+
+						//var xChoice=layoutToolBox.fieldShownById("layouttb4");//checks what's in combobox
+						var node;
+						if(xNewLeft!=xOldLeft){//this means that one of the left handles were moved = all lefts are common
+							//alert("reajustZones -------------------------------------->Left Change Old="+xOldLeft+" to New="+xNewLeft);
+							var xDif=xNewLeft-xOldLeft;
+							var xWidth=xOldWidth-xDif;//an increase of left => reduction of width
+							chooseSetStyleProp("Header","marginLeft",xNewLeft); //sets Header  new left in DOM		
+							chooseSetStyleProp("SubHeader","marginLeft",xNewLeft); //sets SubHeader new left in DOM		
+							chooseSetStyleProp("Working Area","marginLeft",xNewLeft); //sets Working Area new left in DOM		
+							chooseSetStyleProp("Footer","marginLeft",xNewLeft); //sets Footer new left in DOM
+							chooseSetStyleProp("Header","width",xWidth); //sets Header new width in DOM		
+							chooseSetStyleProp("SubHeader","width",xWidth); //sets SubHeader new width in DOM		
+							chooseSetStyleProp("Working Area","width",xWidth); //sets Working Area new width in DOM		
+							chooseSetStyleProp("Footer","width",xWidth); //sets Footer new width in DOM
+							DomStyle.set(Win.body(), "backgroundColor", "azure");//body() é um node como qq outro...
+							return;
+						};
+						if(xNewWidth!=xOldWidth){//this means change on width  - all widths are comon
+							//alert("reajustZones ======================================>Width Change");
+							chooseSetStyleProp("Header","width",xNewWidth); //sets Header new width in DOM		
+							chooseSetStyleProp("SubHeader","width",xNewWidth); //sets SubHeader new width in DOM		
+							chooseSetStyleProp("Working Area","width",xNewWidth); //sets Working Area new width in DOM		
+							chooseSetStyleProp("Footer","width",xNewWidth); //sets Footer new width in DOM
+							DomStyle.set(Win.body(), "backgroundColor", "azure");//body() é um node como qq outro...
+							console.log("reajustZones EXIT ======================================>Width Change");
+
+							return;
+						};
+						var heightChange=false;
+						if(xNewTop==xOldTop){//this means that the change were in lower handles or diagonal - we will assume lower =>only height Change
+							heightChange=true;						
+						}else{
+							//alert("reajustZones Top Change newTop="+xNewTop+" OldTop="+xOldTop);
+						};
+						//alert("layoutArea chooseSetStyleProp - Para a zona de "+xZone+" vai alterar a CSS property "+xProp+" para o valor "+x);
+						var xDif=null;
+						switch(xChangedZone){
+							case "Header"://if Header increases or decreases we increase or decrease working area - xNewTop is unimportant assumed=0
+								if(heightChange){
+									//xOldHeight=getZoneStyleProp(xChangedZone,"height");//Header height
+									//console.log("reajustZones Header xOldHeight="+xOldHeight+" Inicial="+xxOldHeight);
+									xDif=xNewHeight-xOldHeight;
+									chooseSetStyleProp(xChangedZone,"height",xNewHeight); //sets Header new height in DOM
+									var xTemp=getZoneStyleProp("Working Area","height");
+									chooseSetStyleProp("Working Area","height",xTemp-xDif); //sets Working Area new height in DOM		
+								}else{
+									//discarded change => Mother does not allow empty spaces above Header
+								};
+								break;						
+							case "SubHeader"://if SubHeader increases or decreases we increase or decrease working area
+								if(heightChange ){
+									xDif=xNewHeight-xOldHeight;//variation
+									chooseSetStyleProp(xChangedZone,"height",xNewHeight); //sets Header new height in DOM
+									var xTemp=getZoneStyleProp("Working Area","height");
+									chooseSetStyleProp("Working Area","height",xTemp-xDif); //sets Working Area new height in DOM
+								}else{
+									xDif=xNewTop-xOldTop;
+									chooseSetStyleProp(xChangedZone,"top",xNewTop); //sets SubHeader top in DOM - This change causes a change in Header height
+									var xOldHeaderHeight=getZoneStyleProp("Header","height"); 											
+									chooseSetStyleProp("Header","height",xOldHeaderHeight+xDif); //sets Header height in DOM - 
+									chooseSetStyleProp(xChangedZone,"height",xOldHeight-xDif); //sets SubHeader height in DOM - 
+								};								
+								break;						
+							case "Working Area": //grow by scrinking footer and vice-versa
+								if(heightChange ){
+									xDif=xNewHeight-xOldHeight;//variation
+									chooseSetStyleProp(xChangedZone,"height",xNewHeight); //sets Working Area new height in DOM - This change causes change in Footer top and Footer height
+									var xOldFooterTop=getZoneStyleProp("Footer","top"); 					
+									chooseSetStyleProp("Footer","top",xOldFooterTop+xDif); //Footer top changes because "Working Area" height changes
+									var xOldFooterHeight=getZoneStyleProp("Footer","height"); 
+									chooseSetStyleProp("Footer","height",xOldFooterHeight-xDif); //sets Footer new height in DOM 														
+								}else{
+									xDif=xNewTop-xOldTop;
+									chooseSetStyleProp(xChangedZone,"top",xNewTop); //sets Working Area top in DOM - This change causes a change in SubHeader height
+									var xOldSubHeaderHeight=getZoneStyleProp("SubHeader","height"); 											
+									chooseSetStyleProp("SubHeader","height",xOldSubHeaderHeight+xDif); //sets SubHeader height in DOM - 
+									chooseSetStyleProp(xChangedZone,"height",xOldHeight-xDif); //sets Working Area height in DOM - 
+								};
+								break;
+							case "Footer"://grow by scrinking Working Area and vice-versa
+								//xOldHeight=getZoneStyleProp(xChangedZone,"height");//Footer height
+								//xDif=xNewHeight-xOldHeight;//variation
+								chooseSetStyleProp(xChangedZone,"height",xNewHeight); //sets Footer new height in DOM - This change causes change in Working Area Height								orking area height
+								var xOldWAHeight=getZoneStyleProp("Working Area","height"); 
+								chooseSetStyleProp("Working Area","height",xOldWAHeight-xDif); //sets Working Area new height in DOM - This change causes change in Footer top								
+
+								var xOldFooterTop=getZoneStyleProp("Footer","top"); 					
+								chooseSetStyleProp(xChangedZone,"top",xOldFooterTop-xDif); //Footer top changes because "Working Area" height changes
+								break;					
+							default: alert("layoutArea chooseSetStyleProp The type "+xZone+" is unknown for the time being");	
+						};
+						//alert("reajustZones SAIDA");
+
+					};	
+				
+					function getZoneStyleProp(xZone,xProp){
+						//for zone=xZone gets  CSS property xProp (ex "height","width","backgroundColor"...) for Header,SubHeader,and Footer
+						//  Mother assumes 4 zones: Header,SubHeader,Working Area and Footer - all zones have CSS height (xxx except Working Area)
+						//  getZoneStyleProp also gets properties for Working Area (non CSS in this case) computed as follows:
+						//		Working Area top= CSS height of Header + CSS height of SubHeader		
+						//		Working Area height= Total height - CSS height of Header - CSS height of SubHeader CSS height of Footer			
+						//		Working Area backgroundColor= global backgroundColor
+						// NOTE: Working Area gets the remainer space after Header,SubHeader,and Footer.
+						var node;
+						var xRet=null;
+						//alert("layoutArea getZoneStyleProp - Para a zona de "+xZone+" recolhe a CSS property "+xProp);
+						//Working Area is not a CSS zone - (it was no definition in CSS) it is the remainder space. To make this a standard call it is defined here
+						// we will assume that Working Area will have the footer properties, except for "top","height" and "backgroundColor"
+						//alert("Verifica igualdade entre >"+xZone+"<  -->"+(xZone=="Working Area"));
+						/*
+						if(xZone=="!Working Area"){//não existe... a eliminar
+							node=Dom.byId("footer");
+							var xRet=DomStyle.get(node, xProp);	//the same as "Footer"
+							if(xProp=="height"){//except for prop="height"
+								xRet=DomStyle.get(Win.body(), "height")-DomStyle.get(Dom.byId("footer"),"height")-DomStyle.get(Dom.byId("header-container"),"height")-DomStyle.get(Dom.byId("subheader-container"),"height");
+							};
+							if(xProp=="top"){//except for prop="top"
+								xRet=DomStyle.get(Dom.byId("header-container"),"height")+DomStyle.get(Dom.byId("subheader-container"),"height");
+							};
+							
+							if(xProp=="backgroundColor"){//...and for prop="backgroundColor"
+								xRet=DomStyle.get(Win.body(), "backgroundColor");//Win.body() is also a node...
+							};
+						}else{//all "other" zones...
+						*/
+							switch(xZone){
+								case "Header":
+									node=Dom.byId("header-container");
+									break;						
+								case "SubHeader":
+									node=Dom.byId("subheader-container");
+									//node=Dom.byId("nav_container");
+									break;						
+								case "Working Area":
+									node=Dom.byId("working-container");
+									//node=Dom.byId("nav_container");
+									break;						
+								case "Footer":
+									node=Dom.byId("footer");
+									break;					
+								default: alert("layoutArea getZoneStyleProp The zone "+xZone+" is unknown for the time being");
+							};
+							xRet=DomStyle.get(node, xProp);	
+						//};
+						return xRet;
+					};
+					//-------------------------------------------------------------------------------------------
+					function updateLabel(xStr,xMenu,zLevel){
+					//-------------------------------------------------------------------------------------------
+						//xStr=new menu name,
+						//xMenu - json menu structure 
+						//zLevel - string like array ex "0,2,1"
+						// jsonStr has the format: {label:"lbl1",xPopup:[{m1},{m2},{m3}]} where {m1} as the same format....
+						// 		terminal leaves  ex.{label:"Menu Nr. 1", onClick: function(){test();}},
+						//		separator 		 ex.{label:"_@Sep"}, 
+						//      link to children ex.{label:"Menu Nr. 4",xPopup:[....repeating pattern
+						// 		validate menu is called whenever the tooltipDialog is closed
+						//this method runs either on close or when and option is choosed (this calls on close)
+						//zLevel=zLevel.substr(0,zLevel.length-1);//remove the # at the end
+						var xArrLevel=zLevel.split(","); //we are going to reconstruct the array
+						var xLen=xArrLevel.length;
+						switch(xArrLevel.length){
+							case 1:
+								xMenu.menus[xArrLevel[0]].label=xStr;//top menu 
+								break;
+							case 2:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].label=xStr;//2nd Level menu position 
+								break;	
+							case 3:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].label=xStr;//3nd Level menu position 
+								break;
+							case 4:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].label=xStr;//4nd Level menu position 
+								break;		
+							case 5:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].label=xStr;//5nd Level menu position 
+								break;		
+							case 6:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup[xArrLevel[5]].label=xStr;//6nd Level menu position 
+								break;		
+							default: alert("updateLabel "+xArrLevel+" is an unacceptable menu position. This menu has "+xArrLevel.length+" levels.(max=6)");	
+						}
+						console.log("Label updated to --->"+xStr);
+					};	
+					//-------------------------------------------------------------------------------------------
+					function peerAbove(xMenu,xLevel){
+					//-------------------------------------------------------------------------------------------
+						// inserts a "new" menu above the current position identified in zLevel
+						//alert ("peerAbove with ->"+xStr+" zLevel="+zLevel);
+						//updateLabel(xStr,zLevel); //update label
+						//xLabelUpdateDone=true;//informs tooltipClose that update is done
+						//zLevel=zLevel.substr(0,zLevel.length-1);//remove the # at the end
+						var xArrLevel=xLevel.split(","); //array reconstruction
+						//xMenu.menus.splice(1,0,{label:"New"}); //top menu in position 1(left), remove 0 and inserts code block 
+						// ---------- inserting a menu in position 0,1
+						//xBlock=xMenu.menus[0].xPopup; //isolates the array to insert
+						//xBlock.splice(1,0,{label:"New"}); //level 2 in position 1(left), remove 0 and inserts code block   
+						//xMenu.menus[0].xPopup=xBlock; //replacement of the old array position
+						// ---------- inserting a menu in position 0,3,1
+						//xBlock=xMenu.menus[0].xPopup[3].xPopup; //isolates the array to insert
+						//xBlock.splice(1,0,{label:"New"}); //level 2 in position 1(left), remove 0 and inserts code block   
+						//xMenu.menus[0].xPopup[3].xPopup=xBlock; //replacement of the old array position
+						switch(xArrLevel.length){
+							case 1:
+								xMenu.menus.splice(xArrLevel[0],0,{label:"New",onMouseEnter: function(){z.zTest(this.label,this.yLevel)}});//top menu 
+								break;
+							case 2:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup; //isolates the array to insert in level 2
+								xBlock.splice(xArrLevel[1],0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[1], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup=xBlock; //replacement of the old array position		
+								break;	
+							case 3:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(xArrLevel[2],0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[2], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup=xBlock; //replacement of the old array position		
+								break;
+							case 4:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(xArrLevel[3],0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[3], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup=xBlock; //replacement of the old array position		
+								break;		
+							case 5:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(xArrLevel[4],0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[4], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup=xBlock; //replacement of the old array position		
+								break;		
+							case 6:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(xArrLevel[5],0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[4], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup=xBlock; //replacement of the old array position		
+								break;		
+							default: alert("peerAbove "+xArrLevel+" is an unacceptable menu position. (max=6 levels)");	
+						}
+						//console.log("Json:"+JSON.stringify(xMenu));
+						console.log("New Peer Above:");
+						//dijit.popup.close(editDialog); //goes to tooltipClose
+					}; 					
+					//-------------------------------------------------------------------------------------------
+					function peerBelow(xMenu,xLevel){
+					//-------------------------------------------------------------------------------------------
+						// inserts a "new" menu below the current position identified in zLevel
+						//xMenu - json menu structure 
+						//zLevel - string like array ex "0,2,1"
+						var xArrLevel=xLevel.split(","); //array reconstruction
+						switch(xArrLevel.length){
+							case 1:
+								//xMenu.menus.splice(xArrLevel[0]+1,0,{label:"New"});//top menu array.splice(start,delete,arg3,...,argN) delete=0=>no0 deletes <args=new array elements>
+								xMenu.menus.splice(xArrLevel[0]+1,0,{label:"New",onMouseEnter: function(){z.zTest(this.label,this.yLevel)}});//top menu array.splice(start,delete,arg3,...,argN) delete=0=>no0 deletes <args=new array elements>
+								break;
+							case 2:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup; //isolates the array to insert in level 2
+								xBlock.splice(parseInt(xArrLevel[1])+1,0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[1], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup=xBlock; //replacement of the old array position		
+								break;	
+							case 3:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(parseInt(xArrLevel[2])+1,0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[2], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup=xBlock; //replacement of the old array position		
+								break;
+							case 4:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(parseInt(xArrLevel[3])+1,0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[3], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup=xBlock; //replacement of the old array position		
+								break;		
+							case 5:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(parseInt(xArrLevel[4])+1,0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}});  //for position xArrLevel[4], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup=xBlock; //replacement of the old array position		
+								break;		
+							case 6:
+								xBlock=xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup; //isolates the array to insert in level 3
+								xBlock.splice(parseInt(xArrLevel[5])+1,0,{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}); //for position xArrLevel[4], remove 0 and inserts code block   
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup=xBlock; //replacement of the old array position		
+								break;		
+							default: alert("peerBelow "+xArrLevel+" is an unacceptable menu position. (max=6 levels)");	
+						}
+						console.log("New peerBelow");
+						//dijit.popup.close(editDialog); //goes to tooltipClose
+					};	
+					//-------------------------------------------------------------------------------------------
+					function childMenu(xMenu,xLevel){
+					//-------------------------------------------------------------------------------------------
+						// inserts a "xPopup" array with a "New" child element in the current position identified in xLevel (a string "3,2,0,1"
+						//xLevel=xLevel+",0";
+						var xArrLevel=xLevel.split(","); //array reconstruction
+						switch(xArrLevel.length){
+							case 1:
+								xMenu.menus[xArrLevel[0]].xPopup=[{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}];//first child of xArrLevel[0]
+								break;
+							case 2:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup=[{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}];//first child of 2nd Level menu position xArrLevel[1]
+								break;	
+							case 3:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup=[{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}];//first child of 3nd Level menu position xArrLevel[2]
+								break;
+							case 4:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup=[{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}];//first child of 4nd Level 
+								break;
+							case 5:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup=[{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}];//first child of 5nd Level 
+								break;
+							case 6:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup[xArrLevel[5]].xPopup=[{label:"New",onClick: function(){z.zTest(this.label,this.yLevel)}}];//first child of 6nd Level 
+								break;
+							default: alert("childMenu "+xArrLevel+" is an unacceptable menu position. (max=6 levels)");	
+						}
+						console.log("New childMenu on -->:"+xLevel);
+						//dijit.popup.close(editDialog); //goes to tooltipClose
+					}; 	
+					//-------------------------------------------------------------------------------------------
+					function ok2DeleteMenu(xMenu,zLevel){
+					//-------------------------------------------------------------------------------------------
+						//alert ("deleteMenu with ->"+xStr+" zLevel="+zLevel);
+						//zLevel=zLevel.substr(0,zLevel.length-1);//remove the # at the end
+						var xArrLevel=zLevel.split(","); //array reconstruction
+						//xMenu.menus.splice(2,1);//remove [2]. For position 2 remove 1 item 
+						//xMenu.menus[0].xPopup.splice(1,1);//remove [0,1]. For position 1 remove 1 item 
+						switch(xArrLevel.length){
+							case 1:
+								xMenu.menus.splice([xArrLevel[0]],1);//remove at top level
+								break;
+							case 2:
+								xMenu.menus[xArrLevel[0]].xPopup.splice([xArrLevel[1]],1);//remove at 2nd level
+								break;	
+							case 3:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup.splice([xArrLevel[2]],1);//remove at 3th level
+								break;
+							case 4:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup.splice([xArrLevel[3]],1);//remove at 4th level
+								break;
+							case 5:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup.splice([xArrLevel[4]],1);//remove at 5th level
+								break;
+							case 6:
+								xMenu.menus[xArrLevel[0]].xPopup[xArrLevel[1]].xPopup[xArrLevel[2]].xPopup[xArrLevel[3]].xPopup[xArrLevel[4]].xPopup.splice([xArrLevel[5]],1);//remove at 5th level
+								break;
+							default: alert("ok2DeleteMenu "+xArrLevel+" is an unacceptable menu position. (max=6 levels)");	
+						}
+						//xLabelUpdateDone=true;//informs tooltipClose that update is done
+						//console.log("Deleted Menu -->:"+xStr+" -- "+zLevel);
+						//dijit.popup.close(editDialog); //goes to tooltipClose
+					}; 					
+				};//closing of toolBox			
+				//-----------------------------------------------------------------------------------------------------
+				function placeFormInPane(xFBuilder,xPaneId,xLeft,xTop,xWidth,xHeight,borderThickness,borderType,xColor){//places the form runDesign in pane xPaneId. If pane does not exist create a new one and places it in a div in the body()
+				//-----------------------------------------------------------------------------------------------------
+				//Parameters:fBuilder Object, ContentPaneId,left,top,width,height,borderThickness,BorderType,color
+				//borderType are: solid, dotted or dashed
+				//example 	placeFormInPane(runDesign,"PaneId1",900-3,3,300,25,1,"solid","gray");//places the form runDesign in pane xPaneId. If pane does not exist create a new one and places it in a div in the body()
+				//Content Pane if created here will get a CSS Class "Mother_"+(prefix of fBuilder Object)
+				// requires: "dijit/layout/ContentPane", "dojo/dom-class",							 
+					if(!dijit.byId(xPaneId)){//the ContentPane does not exist, it will be created in a div in the body
+						var xDiv = DomConstruct.create("div"); 
+						var xDivId="divPane_"+xPaneId;
+						xDiv.innerHTML="<div id='"+xDivId+"'></div>"; //the div id is "divPane_"+xPaneId
+						Win.body().appendChild(xDiv);//coloca o div no DOM
+						//var xStyle="position:absolute;left:"+xLeft+"px;top:"+xTop+"px;width:"+xWidth+"px;height:"+xHeight+"px;border: "+borderThickness+"px dotted "+xColor+";'";
+						var xStyle="position:absolute;left:"+xLeft+"px;top:"+xTop+"px;width:"+xWidth+"px;height:"+xHeight+"px;border: "+borderThickness+"px "+borderType+" "+xColor+";'";
+						var xPane=new ContentPane({
+							id:xPaneId,
+							content:"",
+							//style:'position:absolute;left:800px;top:5px;width:200px;height:30px;border: 1px dotted green;'
+							style:xStyle
+						}, xDivId);	//o carrierPane é colocado sobre o xDiv	
+						DomClass.add(xPane.domNode, "Mother_"+xFBuilder.prefix);//add the CSS class "Mother_"+(prefix of fBuilder Object) to ContentPane
+					};
+					//if ContentPane exists all parameters after xPaneId will be discarded
+					var formRunDesign=xFBuilder.formObj;
+					formRunDesign.placeAt(xPaneId);  //o form é colocado no pane que: ou já existe ou senão existe é criado e colocado num div no body
+				};
+			}//closing of main function				
+		);//closing of require function
+	</script>
+</head>
+<body class="claro Mother"> 
+	<div id="header-container">
+		<div id="header">
+			<div id="before-logo">
+				<section>.</section>			
+			</div>
+			<div id="logo-container">
+				<div id="logo">
+				   <a href="#"><img src="images/motherlogo211.jpg" /></a>
+				</div>
+			</div>
+			<div id="after-logo">
+				<section></section>			
+			</div>			
+		</div>
+	</div>
+	<div id="subheader-container">
+		<div id="subheader">
+			<div id="before-nav">
+				<section></section>			
+			</div>			
+			<div id="nav_container">
+				<section></section>			
+				<!--http://bootswatch.com/-->
+					<ul id="bootSnav" class= "nav nav-tabs" > <!-- the pills effect (blue pill) vs the the tabs effect: "nav nav-pillx", "nav nav-tabs", "nav nav-pills" "nav nav-pills nav-stacked span2"-->
+						<!--
+						<li><a href="#"><i class="icon-home icon-white"></i>Home</a></li>
+						<li><a href="#"><i class="icon-picture icon-black"></i>About Us</a></li>
+						<li><a href="#">Feedback1</a></li>
+						<li><a href="#">Feedback2</a></li>
+						<li><a href="#">Feedback3</a></li>
+						<li class="active"><a href="#"><i class="icon-tags icon-black"></i>About</a></li>
+						<li><a href="#">Feedback4</a></li>
+						<li><a href="#"><i class="icon-share icon-black"></i>Feedback5</a></li>
+						<li><a href="#">Contact</a></li>					
+						
+						<!-->
+						<li><a href="http://www.w3schools.com"><i class="icon-home icon-white"></i>Home</a></li>
+						<li class="active"><a href="http://www.oracle.com"><i class="icon-tags icon-white"></i>About Us</a></li>
+						<li><a href="http://www.microsoft.com"><i class="icon-user icon-white"></i>Contacts</a></li>
+						<li><a href="#"></a></li>
+						<li><a href="#"></a></li>
+					
+
+					</ul>
+			</div>
+			<div id="after-nav">
+				<section></section>			
+			</div>
+		</div>
+	</div>
+	<div id="working-container">
+		<p></p>	
+	</div>	
+	<div id="footer">
+		<section>F</section>
+	</div>	<!--
+	http://www.myinkblog.com/coding-website-header-navigation/
+	<h1 id="header-bar" class="skin" style="text-align:left; font-family:arial;font-size:24px; color:white;background:black;" img scr="images/motherlogo.jpg" alt="ligth blue button">Mother Builder</h1>
+	-->
+	<!-- themeforest admintasia
+    <p> align="text-align:center" background="images/motherlogo.jpg" >This is Mother Builder</p>
+    <p> This is a paragraph of Mother Builder</p>
+	  	<link rel="icon" type="image/jpg" href="images/motherlogo.jpg" />
+        <img scr="images/motherlogo.jpg" height="40" width="100"/>
+	-->
+	<script src="Mother1/bootstrap.js"></script>	
+</body> 
+</html>

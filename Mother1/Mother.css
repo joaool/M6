@@ -1,0 +1,366 @@
+/* This stylesheet provides the CSS definition of every widget in Mother */	
+/* For each form you can define the widgets introducing the selector Mother_+"form prefix" */	
+/* ---------- ViewPort fx -----------------------------------------------------------------*/
+.claro.Mother .dijitTextBox.Mother_fx{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox-todos os nodes c/dijitTextBox que tenham Mother_f à esquerda*/
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	border: 4px inset coral ;/*thickness,border-style,color -  outset inset ridged grooved */
+	/*filter:alpha(opacity=50); */
+	/*-moz-opacity:0.5; */
+	/*-khtml-opacity: 0.5; */
+	/*opacity: 0.5;*/ 
+	background-color:navajowhite;/*orange sandybrown*/
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:2.4 em;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitContentPane.Mother_fx{/*trata do ContentPane - não esquecer que um tab widget tem contentPanes */
+	 /*background-color: burlywood; //goldenrod peru lightsalmon burlywood sandybrown tan*/
+	background: url("../images/Blue_hills2.jpg") no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+/* ---------- ViewPort rd -----------------------------------------------------------------*/
+.claro.Mother .dijitTextBox.Mother_rd{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox-todos os nodes c/dijitTextBox que tenham Mother_f à esquerda*/
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	border: 4px inset coral ;/*thickness,border-style,color -  outset inset ridged grooved */
+	/*filter:alpha(opacity=50); */
+	/*-moz-opacity:0.5; */
+	/*-khtml-opacity: 0.5; */
+	/*opacity: 0.5;*/ 
+	background-color:navajowhite;/*orange sandybrown*/
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:2.4 em;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitButtonNode.Mother_rd{/* button - selecciona todos os que tenham .dijitButtonNode e Mother_x - NOta é o span abaixo do top container do button*/
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	border: 1px solid;
+	border: 4px inset coral ;/*thickness,border-style,color -  outset inset ridged grooved */
+	 background-color : navajowhite;
+	-moz-border-bottom-colors: coral;
+	-moz-border-image: green;
+	-moz-border-left-colors: coral;
+	-moz-border-right-colors: chocolate;
+	-moz-border-top-colors: chocolate;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:2.4 em;
+	padding: 2px 7px 0px 7px;
+}
+/* ---------- Inside accordeon pane -----------------------------------------------------------------*/
+.claro.Mother .dijit.Mother_layouttb{  /*.dijitButtonNode*/
+	/*width: 100%; !important;*/
+	/*height:15px; //!important;*/
+	font-weight:bold;
+	margin:3px 0px 12px 2px;
+	padding:3px 0px;
+	font-size:small;/*x-large;*/
+}
+.claro.Mother .dijit.Mother_toolb{  /*.dijitButtonNode*/
+	width: 100% !important;
+	height:15px !important;
+	font-weight:bold;
+	margin:3px 0px 12px 2px;
+	padding:3px 0px;
+	font-size:small;/*x-large;*/
+}
+/* ---------- FORM'WIDGETS ALL TEMPLATES  -----------------------------------------------------------------*/
+
+/* --------------------- textBox -----------------------------------------------------------------*/
+.dijitTextBox.Mother_A{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox-todos os nodes c/dijitTextBox que tenham Mother_f à esquerda*/
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	border: 4px inset coral ;/*thickness,border-style,color -  outset inset ridged grooved */
+	/*filter:alpha(opacity=50); */
+	/*-moz-opacity:0.5; */
+	/*-khtml-opacity: 0.5; */
+	/*opacity: 0.5;*/ 
+	background-color:navajowhite;/*orange sandybrown*/
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:2.4 em;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+}
+.dijitTextBox.Mother_B{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox*/
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+	 border-radius: 10px;
+	 border: 1px solid;
+	 background-color : #99FFCC;
+	-moz-border-bottom-colors: green;
+	-moz-border-image: green;
+	-moz-border-left-colors: green;
+	-moz-border-right-colors: green;
+	-moz-border-top-colors: green;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}
+.dijitTextBox.Mother_C{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox-todos os nodes c/dijitTextBox que tenham Mother_f à esquerda*/
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+	border: 2px inset blue ;/*thickness,border-style,color -  outset inset ridged grooved */
+	/*filter:alpha(opacity=50); */
+	/*-moz-opacity:0.5; */
+	/*-khtml-opacity: 0.5; */
+	/*opacity: 0.5;*/ 
+	background-color:azure;/*orange sandybrown*/
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+}
+.dijitTextBox.Mother_D{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox-todos os nodes c/dijitTextBox que tenham Mother_f à esquerda*/
+-moz-border-radius-topleft: 10px;
+-moz-border-radius-topright: 20px;
+-moz-border-radius-bottomright: 30px;
+-moz-border-radius-bottomleft: 0;
+	box-shadow:inset 0 0 10px #000000
+	-moz-box-shadow:    3px 3px 5px 6px #ccc;
+	-webkit-box-shadow: 3px 3px 5px 6px #ccc;
+	box-shadow:         3px 3px 5px 6px #ccc;
+	border-color:crimson;
+	background-color : orangered;
+	color:white;
+ 	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight: bold;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+ }
+.dijitTextBox.Mother_E{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox-todos os nodes c/dijitTextBox que tenham Mother_f à esquerda*/
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+	-moz-box-shadow:    1px 1px 2px 2px #104E8B;
+	-webkit-box-shadow: 1px 1px 2px 2px #104E8B;
+	box-shadow:         1px 1px 2px 2px #104E8B;
+	border-width: small 2px 3px;
+	border-color:white;
+ 	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight: bold;
+	padding: 2px 7px 0px 7px;
+ }
+.dijitButtonNode.Mother_E{/* button - selecciona todos os que tenham .dijitButtonNode e Mother_x - NOta é o span abaixo do top container do button*/
+	border-width: small 2px 3px;
+	border-color:blue;
+	color:white;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	font-weight: bold;
+	padding: 2px 7px 0px 7px;
+	-moz-box-shadow:    1px 1px 2px 2px #104E8B;
+	-webkit-box-shadow: 1px 1px 2px 2px #104E8B;
+	box-shadow:         1px 1px 2px 2px #104E8B;
+	background: -webkit-gradient(linear, left top, left bottom, from(#1874CD), to(#104E8B));
+	background: -moz-linear-gradient(top,  #1874CD,  #104E8B);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#1874CD', endColorstr='#104E8B');	
+}
+.dijitCheckBox, .dijitCheckBoxIcon .Mother_E{
+  background-image: url("../form/images/checkboxRadioButtonStates.png");
+  
+  background-repeat: no-repeat;
+  width: 25px;
+  height: 26px;
+  margin: 0 2px 0 0;
+  padding: 0;
+}
+.claro.Mother .dijitTextBox.Mother_F{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox-todos os nodes c/dijitTextBox que tenham Mother_f à esquerda*/
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+	border: 2px inset blue ;/*thickness,border-style,color -  outset inset ridged grooved */
+	background-color:azure;/*orange sandybrown*/
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+}
+
+/* --------------------- button -----------------------------------------------------------------*/
+.claro.Mother .dijitButtonNode.Mother_A{/* button - selecciona todos os que tenham .dijitButtonNode e Mother_x - NOta é o span abaixo do top container do button*/
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	border: 1px solid;
+	border: 4px inset coral ;/*thickness,border-style,color -  outset inset ridged grooved */
+	 background-color : navajowhite;
+	-moz-border-bottom-colors: coral;
+	-moz-border-image: green;
+	-moz-border-left-colors: coral;
+	-moz-border-right-colors: chocolate;
+	-moz-border-top-colors: chocolate;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:2.4 em;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitButtonNode.Mother_B{/*trata de tab, button e Grid*/
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+	 border-radius: 10px;
+	 border: 2px solid;
+	 background-color : #99FFCC;
+	-moz-border-bottom-colors: green;
+	-moz-border-image: green;
+	-moz-border-left-colors: green;
+	-moz-border-right-colors: green;
+	-moz-border-top-colors: green;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitButtonNode.Mother_C{/* button - selecciona todos os que tenham .dijitButtonNode e Mother_x - NOta é o span abaixo do top container do button*/
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+	border: 2px inset blue ;/*thickness,border-style,color -  outset inset ridged grooved */
+	background-color : aliceblue;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}
+.dijitButtonNode.Mother_D{/* button - selecciona todos os que tenham .dijitButtonNode e Mother_x - NOta é o span abaixo do top container do button*/
+	color:white;
+	border-width: medium 2px 3px;
+	border-color:crimson;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	font-weight: bold;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+	-moz-box-shadow:    3px 3px 5px 6px #ccc;
+	-webkit-box-shadow: 3px 3px 5px 6px #ccc;
+	box-shadow:         3px 3px 5px 6px #ccc;
+	background: -webkit-gradient(linear, left top, left bottom, from(#dc143c), to(#f47a20));
+	background: -moz-linear-gradient(top,  #dc143c,  #f47a20);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#dc143c', endColorstr='#f47a20');	
+}
+.dijitContentPane.Mother_E{/*trata do ContentPane - não esquecer que um tab widget tem contentPanes */
+	 /*background-color: burlywood; //goldenrod peru lightsalmon burlywood sandybrown tan*/
+	background-color :#F0FFFF;
+}
+.claro.Mother .dijitButtonNode.Mother_F{/* button - selecciona todos os que tenham .dijitButtonNode e Mother_x - NOta é o span abaixo do top container do button*/
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+	border: 2px inset blue ;/*thickness,border-style,color -  outset inset ridged grooved */
+	background-color : aliceblue;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}
+
+/* --------------------- tabs -----------------------------------------------------------------*/
+.claro.Mother .dijitTabContainer.Mother_A{/*trata de tab*/
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	border: 4px inset coral ;/*thickness,border-style,color -  outset inset ridged grooved */
+	 background-color : navajowhite;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:2.4 em;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitTabContainer.Mother_B{/*trata de tab, button e Grid*/
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+	 border-radius: 10px;
+	 border: 2px solid;
+	 background-color : #99FFCC;
+	-moz-border-bottom-colors: green;
+	-moz-border-image: green;
+	-moz-border-left-colors: green;
+	-moz-border-right-colors: green;
+	-moz-border-top-colors: green;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitTabContainer.Mother_F{/*trata de tab*/
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+	border: 2px inset blue ;/*thickness,border-style,color -  outset inset ridged grooved */
+	 background-color : aliceblue;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:12px;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitTabPaneWrapper.Mother_F{/*trata de tab*/
+	border: 1px solid;
+	-moz-border-bottom-colors: blue;
+	-moz-border-image: green;
+	-moz-border-left-colors: red;
+	-moz-border-right-colors: yellow;
+	-moz-border-top-colors: chocolate;
+	background-color : navajowhite;
+	border-color: -moz-use-text-color chocolate;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:2.4 em;
+	padding: 2px 7px 0px 7px;
+}
+/*------------------- content Pane -----------------------------------------*/
+.dijitContentPane.Mother_A{/*trata do ContentPane - não esquecer que um tab widget tem contentPanes */
+	 /*background-color: burlywood; //goldenrod peru lightsalmon burlywood sandybrown tan*/
+	background: url("../images/Blue_hills2.jpg") no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+.dijitContentPane.Mother_C{/*trata do ContentPane - não esquecer que um tab widget tem contentPanes */
+	 /*background-color: burlywood; //goldenrod peru lightsalmon burlywood sandybrown tan*/
+	 background: url("../images/tree-winter1.jpg") no-repeat center bottom fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+.claro.Mother .dijitContentPane.Mother_D{/*trata do ContentPane - não esquecer que um tab widget tem contentPanes */
+	 /*background-color: burlywood; //goldenrod peru lightsalmon burlywood sandybrown tan*/
+	 background: url("../images/chess1.jpg") no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+.claro.Mother .dijitContentPane.Mother_F{/*trata do ContentPane - não esquecer que um tab widget tem contentPanes */
+	 /*background-color: burlywood; //goldenrod peru lightsalmon burlywood sandybrown tan*/
+	 background: url("../images/tree-winter1.jpg") no-repeat center bottom fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.claro.Mother .xdijitTab{/*trata de tab, button e Grid*/
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:2.4 em;
+	padding: 2px 7px 0px 7px;
+}

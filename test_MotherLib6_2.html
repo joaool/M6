@@ -1,0 +1,199 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Teste de MotherLib6 v2.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!--<link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> -->
+		<link rel="stylesheet" type="text/css" href="Mother1/Mother.css"/>
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;
+z={};
+thiz=this;
+require([
+	"Mother1/utils.js",
+	"Mother1/debug.js",
+	"Mother1/editFBuilder3.js",
+	"MotherLib6.js",
+    "Mother1/ResizeMoveArea2.js",  
+	"dojo/_base/declare",	 
+	"dojo/_base/window",
+    "dojo/on",
+	"dojo/parser",//recomendation from JS
+	"dojo/dom",
+	"dojo/dom-construct",//used outside class
+	"dojo/dom-style",	
+	"dojo/ready",
+	//----- para editFBuilder on,Lang,DomGeom
+    "dojo/_base/lang",
+	"dojo/dom-geometry",
+	"dojo/Evented" //necessário para emit e recepção de eventos
+	], 
+	//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Menu,MenuItem,MenuBar,MenuSeparator,PopupMenuBarItem,DropDownMenu,TooltipDialog,TextBox,Button,Declare,Win,Event,Registry,Dom,Html,On,Evented,Moveable,Mover,DomGeom,DomConstruct,DomStyle,DomClass,Lang,ContentPane,BorderContainer,AccordionContainer,TabContainer,FloatingPane,ColorPalette,Ready){ 
+	//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Menu,MenuItem,PopupMenuItem,MenuBar,MenuSeparator,
+	function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,Lang,DomGeom,Evented){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_MotherLib6_2","",{"main":true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("MotherLib6"          ,"-->",{constructor:true,setTemplate:true,placeFormInPane:false,addChild:false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("editFBuilder3"       ,"-->",{constructor:true,removeAreas:true,removeWListeners:true,setAListeners:false,resumeWListeners:true,suspendWListeners:true,overWidget:true,outWidget:true});
+		//this.oDbg.setDbg("json2FormDsgn2"      ,"-->",{constructor:true,buildWidgets:true});
+
+		this.oDbg.setDbg("ResizeMoveArea"      ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+
+		this.oDbg.setThis("test_MotherLib6_2");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//------------------------------------------------------------------------	
+		//TEST DESCRIPTION: 
+		//this test shows the new Motherlib6 features 
+		//new Motherlib6 features:
+		//   a) floating forms with viewPort property "floatF" (possible values-> "nonFloat","modal" or "nonModal". The default is  "nonFloat".
+		//	 b) silent forms with args property "silent" (true/false) ->default=false.
+		//	 c) template support with args property "template" ->default=null. To choose a template programmer can select template:"A" ->A..F with current Mother.CSS file
+		//
+		//   a) The test builds a form fx (named "a)switch run/design") that has viewPort:{l:1180,t:5,w:220,h:299,floatF:"nonModal"}
+		//        the property "floatF" defines if the form is "nonFloat","modal" or "nonModal" ->default "nonFloat".
+		//		  we can change floatF to modal and nonFloat to evaluate the behaviour
+		//	 b) the silent property allows a form to be called later on with f1.showForm(); or hidden with f1.hideForm();	
+		//			Use the button Grid in fx to hide the f1 form - still to be implemented
+		//			See working exemples with floating windows in test_editFBuilder3_1.html
+		//
+		//   c)Form fx has a comboBox that shows several pre-prepared templates.
+		//			var xArr0=[{name:"Claro",template:null},{name:"Blue Hills",template:"A"},{name:"Simple Green",template:"B"},{name:"Autumn Tree",template:"C"},{name:"Chess",template:"D"},{name:"Light Blue",template:"E"},{name:"A+C background",template:"F"}];
+		//			the fBuilder method f1.setTemplate(xTemplate); allows a dynamic template change !!!
+		//
+		//		 If the "silent" property is used in a "nonFloat" viewport the form will be placed in ContentPane 
+		//--- definition of auxiliar form fx
+		var xEntity="Test";
+		var fx=new FBuilder("a)switch run/design","fx",{viewPort:{l:1180,t:5,w:220,h:330,floatF:"nonModal"},borderColor:"red",borderType:"solid",borderThickness:1});//experimentar template:"D"
+		//var fx=new FBuilder("a)switch run/design","fx",{viewPort:{l:1190,w:210,h:253},borderColor:"black",borderType:"solid",borderThickness:1});
+		fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"thiz.z.test('Design/Run')"});//1
+		
+		fx.addChild("label",{value:"Entity:",left:2,top:30}); //2
+		fx.addChild("textBox",{value:xEntity,left:45,top:30,width:160}); //2
+		fx.addChild("label",  {left:2,top:58,value:"Form Description:"}); //3
+		fx.addChild("textArea",{left:2,top:78,width:205,height:50}); //4
+		
+		var xArr=[{name:"Claro"},{name:"Blue Hills"},{name:"Simple Green"},{name:"Autumn Tree"},{name:"Chess"},{name:"Light Blue"},{name:"A+C background"}];
+		fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=thiz.z.getComboChoice(this.value);"});//2
+
+		
+		fx.addChild("label",{value:"Insert widgets:",left:5,top:162}); //3
+
+		var xTop=182;
+		fx.addChild("button",{left:0,top:xTop,width:65,height:25,value:"Text",clickCode:"thiz.z.insertW('textBox')"});//4 we use thiz because in motherLib this refer to itself - here he have thiz defined globally
+		fx.addChild("button",{left:68,top:xTop,width:65,height:25,value:"Label",clickCode:"thiz.z.insertW('label')"});//5
+		fx.addChild("button",{left:136,top:xTop,width:65,height:25,value:"Num.",clickCode:"thiz.z.insertW('numberBox')"});//6
+		
+		fx.addChild("button",{left:0,top:xTop+25,width:65,height:25,value:"Area",clickCode:"thiz.z.insertW('textArea')"});//4
+		fx.addChild("button",{left:68,top:xTop+25,width:65,height:25,value:"Check",clickCode:"thiz.z.insertW('checkBox')"});//4
+		fx.addChild("button",{left:136,top:xTop+25,width:65,height:25,value:"Date",clickCode:"thiz.z.insertW('dateTextBox')"});//4
+
+		fx.addChild("button",{left:0,top:xTop+50,width:65,height:25,value:"Button",clickCode:"thiz.z.insertW('button')"});//4
+		fx.addChild("button",{left:68,top:xTop+50,width:65,height:25,value:"Combo",clickCode:"thiz.z.insertW('comboBox')"});//4
+		fx.addChild("button",{left:136,top:xTop+50,width:65,height:25,value:"Grid",clickCode:"thiz.z.insertW('grid')"});//4
+
+		fx.addChild("button",{left:0,top:xTop+76,width:90,height:35,value:"Save Form",clickCode:"thiz.z.saveF()"});//4
+		fx.addChild("button",{left:95,top:xTop+76,width:100,height:35,value:"Restore",clickCode:"thiz.z.restoreF()"});//4
+		
+		var xVal=fx.fieldById("fx1").props.value; //the same as .label
+		
+		if(this.oDbg.isDbg("main")) this.oDbg.display("valor inicial do button DESIGN/RUN="+xVal);		
+		//------------------ base form f1 - tests: nonfloatxtemplate=null OK , nonfloatxtemplate="A" OK, floatxtemplate=null OK ,nonfloatxtemplate="A" OK
+		//var viewPortX={l:50,t:5,w:1100,h:350};
+		var viewPortX={l:50,t:5,w:1100,h:400,floatF:"nonModal"};
+		var f1=new FBuilder("form f1","f1",{viewPort:viewPortX,borderColor:"green",borderType:"ridge",borderThickness:1}); //template:"D"form test 
+		//var f1=new FBuilder("form f1","f1",{viewPort:viewPortX,borderColor:"green",borderType:"ridge",borderThickness:1,template:"A"}); //template:"D"form test 
+		f1.gridPattern=1;
+		f1.addChild("textBox",{left:5,top:5,width:100,height:30}); //1
+		f1.addChild("label",{left:120,top:5,value:"label content",width:120}); //2
+		f1.addChild("numberBox",{left:250,top:80,width:100,height:30}); //3
+		f1.addChild("textArea",{left:400,top:5,width:190,height:150}); //4
+		f1.addChild("checkBox",{left:600,top:5,title:"Check for vertical menu "}); //5
+		var d= new Date("October 13, 2012 11:13:00");//javascript date definition
+		f1.addChild("dateTextBox",{left:650,top:5,value:d,width:120}); //6   //if value of date is specified as a string
+     	f1.addChild("button",{left:800,top:5,value:"test Button",width:100,height:49}); //7
+		var xComboArr=[{name:"Blue Pills"},{name:"Red Pills"},{name:"Green Pills"},{name:"Black Pills"},{name:"Tabs"}];
+		f1.addChild("comboBox",{left:940,top:5,value:"backColor",comboArr:xComboArr,width:110,height:24});//8
+		//---tabs ---- Não esquecer que os tabs ficam fora do form (embora em cima do ContentPane) -------------
+		f1.addChild("tabs",{left:600,top:80,width:250,height:230});//9 // ok
+		//f1.addChild("grid",{left:1050,top:-15,width:200,height:220});//10
+	//f1.addChild("grid",{left:880,top:80,width:200,height:220,showId:false,headers:"Name,Value",colTypes:"text/50,text/100"});//10
+		f1.addChild("grid",{left:880,top:80,width:200,height:220,showId:false,headers:"Name/text(50),Value/text(100)"});//10
+		//f1.setFieldStyle("f110",{left:1050,top:20});
+		//alert("vai chamar EditFBuilder");
+		editF=new EditFBuilder(f1,"click"); //"mouseenter","click"
+		editF.on("widget_selected",function(){
+			//console.log("test_MotherLib5_4 -- 	CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
+			//DomStyle.set(editF.currentWidget.id,"display","none");//to make it invisible while resizeMove 
+			var xOrder=editF.currentWidget.posInArr;
+			//console.log("test_MotherLib5_4 -- Pos="+xOrder+" x="+editF.currentWidget.left+" y="+editF.currentWidget.top);
+			if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("Pos="+xOrder+" x="+editF.currentWidget.left+" y="+editF.currentWidget.top);
+			f1.unVisibleById(editF.currentWidget.id)
+			//alert("widget_selected");
+		});
+		editF.on("widget_unselected",function(){
+			//console.log("test_MotherLib5_4 -- CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
+		if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
+			f1.visibleById(editF.currentWidget.id)
+			editF.reset();//volta a por listeners à escuta
+		});	
+		this.z.test=function(x){//to test buttons (z is defined globally)
+			alert("test:You pressed "+x);
+		};	
+		this.z.getComboChoice=function(x){//to test buttons (z is defined globally)
+			//alert("getComboChoice:You this.value="+x);
+			var xArr0=[{name:"Claro",template:null},{name:"Blue Hills",template:"A"},{name:"Simple Green",template:"B"},{name:"Autumn Tree",template:"C"},{name:"Chess",template:"D"},{name:"Light Blue",template:"E"},{name:"A+C background",template:"F"}];
+			var xTemplate=null;
+			for(var i=0;i<xArr0.length;i++){
+				if (x==xArr0[i].name){
+					xTemplate=xArr0[i].template
+				};
+			};
+			f1.setTemplate(xTemplate);
+			alert("Test:selected "+x+" ==>template="+xTemplate);
+		};			
+		this.z.insertW=function(x){//to test buttons (z is defined globally)
+			alert("insert Widget:You pressed "+x);
+		};
+		this.z.saveF=function(x){//to test buttons (z is defined globally)
+			alert("saveF:You pressed "+x);
+		};	
+		this.z.restoreF=function(x){//to test buttons (z is defined globally)
+			alert("restoreF:You pressed "+x);
+		};			
+		function test(){
+			alert("test message in function test - this call is defined in menu object exterior to the class...");
+		}
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro Mother"> 
+		<div id="xwrapper" </div>
+	</body>
+</html>

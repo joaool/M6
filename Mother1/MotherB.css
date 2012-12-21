@@ -1,0 +1,53 @@
+/* This stylesheet provides the CSS definition of every widget in Mother */	
+/* For each form you can define the widgets introducing the selector Mother_+"form prefix" */	
+.claro.Mother .dijitTextBox.Mother_f{/*trata de textBox,label,numberBox,textArea,datetextBox,comboBox*/
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+	 border-radius: 10px;
+	 border: 1px solid;
+	 background-color : #99FFCC;
+	-moz-border-bottom-colors: green;
+	-moz-border-image: green;
+	-moz-border-left-colors: green;
+	-moz-border-right-colors: green;
+	-moz-border-top-colors: green;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitButtonNode.Mother_f{/*trata de tab, button e Grid*/
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+	 border-radius: 10px;
+	 border: 2px solid;
+	 background-color : #99FFCC;
+	-moz-border-bottom-colors: green;
+	-moz-border-image: green;
+	-moz-border-left-colors: green;
+	-moz-border-right-colors: green;
+	-moz-border-top-colors: green;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}
+.claro.Mother .dijitTabContainer, .dojoxGrid{/*trata de tab, button e Grid*/
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+	 border-radius: 10px;
+	 border: 2px solid;
+	 background-color : #99FFCC;
+	-moz-border-bottom-colors: green;
+	-moz-border-image: green;
+	-moz-border-left-colors: green;
+	-moz-border-right-colors: green;
+	-moz-border-top-colors: green;
+	border-color: -moz-use-text-color green #B5BCC7;
+	border-width: medium 2px 3px;
+	font-family:Verdana, Arial, Helvetica, sans-serif, bold;
+	font-size:14px;
+	padding: 2px 7px 0px 7px;
+}

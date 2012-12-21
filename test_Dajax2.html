@@ -1,0 +1,100 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Test for Dajax v3.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+require([
+	"MotherLib6.js",
+	"Mother1/json2FormDsgn.js",
+	"Dajaxtest01class.js",
+	"dojo/_base/declare",	 
+	"dojo/_base/lang",
+	 "dojo/domReady!"
+	], 
+	//function(FBuilder,FJson,DajaxTest,Declare,Lang){ 
+	function(FBuilder,FJson,DajaxTest,Declare,Lang){ 
+		console.log(document.title+"......  inicio..");//document title tem "Layout Area 6.0" ... a property <title> que está no head		
+		console.log(document.title+"......  começa o teste ..");
+		//---------------------------------------------------------------------------------------	
+		var viewPortX={l:50,t:5,w:1250,h:100};
+		var f0=new FBuilder("form f0","f0",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1});
+		f0.addChild("label",{value:"Entity",left:80,top:10,width:100}); //1
+		var xArr=[{name:"Invoice"},{name:"InvoiceLine"},{name:"Product"},{name:"Customer"}];
+		f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120});//2
+
+		f0.addChild("label",{value:"Master Data",left:80,top:40,width:100}); //3
+		f0.addChild("textBox",{left:180,top:40,width:250});//4
+
+		f0.addChild("label",{value:"isCreateDelTrueChild",            left:500,top:10}); //5
+		f0.addChild("label",{value:"isCreateNormalChildWithParent",   left:500,top:40}); //6
+		f0.addChild("label",{value:"isCreateNormalChildWITHOUTParent",left:500,top:70}); //7
+		f0.addChild("checkBox",{left:480,top:10+5,title:"true/false for boolean isCreateDelTrueChild"}); //8
+		f0.addChild("checkBox",{left:480,top:40+5,title:"true/false  for boolean isCreateNormalChildWithParent"}); //9
+		f0.addChild("checkBox",{left:480,top:70+5,title:"true/false  for boolean isCreateNormalChildWITHOUTParent"}); //10
+
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:10}); //11
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:40}); //12
+		f0.addChild("textBox",{left:920,top:10,title:"pls introduce number with a comma separator ex:9,3,7"});//13
+		f0.addChild("textBox",{left:920,top:40,title:"pls introduce number with a comma separator ex:9,3,7"});//14
+		
+		f0.addChild("button",{left:1100,top:10,width:80,height:80,value:"GO",clickCode:"z.test()"});//15
+	    var	z=Lang.getObject("z",true);
+		//------------------------------------------------------------------
+		z.test=function(){
+/*		
+			var sEntity=f0.fieldShownById("f02");
+			var sMasterData=f0.fieldShownById("f04");
+			var isCreateDelTrueChild=f0.fieldShownById("f08");
+			var isCreateNormalChildWithParent=f0.fieldShownById("f09");
+			var isCreateNormalChildWITHOUTParent=f0.fieldShownById("f010");
+			var aIdMasterRelatedRecords1=f0.fieldShownById("f013");
+			var aIdMasterRelatedRecords2=f0.fieldShownById("f014");
+			
+			var toTest={sEntity:sEntity,sMasterData:sMasterData,isCreateDelTrueChild:isCreateDelTrueChild,isCreateNormalChildWithParent:isCreateNormalChildWithParent,
+			isCreateNormalChildWITHOUTParent:isCreateNormalChildWITHOUTParent};
+			var toTest2={aIdMasterRelatedRecords1:aIdMasterRelatedRecords1,aIdMasterRelatedRecords2:aIdMasterRelatedRecords2};
+			//alert("test_Dajax -->JSON="+JSON.stringify(toTest)+" -->"+JSON.stringify(toTest2));
+*/			
+			alert("prepareAllProps ->"+JSON.stringify(f0.prepareAllProps("abc",{left:69,top:26,invalidMessage:"Please take care..."})));
+			alert("content="+f0.formContent2Json());
+			json_of_f0=f0.formDsgn2Json();
+			alert("Form Design to Json="+json_of_f0);
+			//Do not forget that in JSON standard double quotes are mandatory
+			//objFjson=new FJson('{"fName":"form f0","fprefix":"f0","fLayout":{"viewPort":{"l":50,"t":5,"w":1250,"h":100},"borderColor":"green","borderType":"solid","borderThickness":1}}');
+			objFjson=new FJson(json_of_f0);
+			objFjson.viewPort.t=130;
+			var f1=objFjson.buildNoWidgets("form f1","f1");//builds form with name "form f1" and prefix "f1" assigning it to variable f1.
+			objFjson.buildWidgets(f1);
+			//objDajaxTest=new DajaxTest(toTest,toTest2);
+			
+		}
+		function test(){
+			alert("test message in function test - this call is defined in menu object exterior to the class...");
+		};
+		console.log(document.title+"......  fim..");//document title tem "Layout Area 6.0" ... a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

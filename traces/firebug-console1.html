@@ -1,0 +1,1615 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <title>Firebug Main Panel</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <link type="text/css" href="chrome://firebug/skin/panel.css" rel="stylesheet" />
+<style charset="utf-8" type="text/css" id="chrome://firebug/skin/cookies/cookies.css">/* See license.txt for terms of usage */
+
+.panelNode-cookies {
+    overflow-x: hidden;
+}
+
+.cookieTable {
+    width: 100%;
+}
+
+/************************************************************************************************/
+/* Support for console */
+
+.cookieEvent .cookieDomainLabel {
+    font-family: Lucida Grande, sans-serif;
+    font-weight: bold;
+    color: #0000FF;
+}
+
+.logRow-cookie,
+.logRow-cookiesCleared,
+.logRow-cookiesRejected,
+.logRow-cookie:hover {
+    padding: 2px 0px 1px 22px !important;
+    background-image: url(chrome://firebug/skin/cookies/cookie.svg) !important;
+    background-repeat: no-repeat !important;
+    background-position: 4px 2px !important;
+}
+
+.logRow-cookiesRejected .cookieRejectedList {
+    font-weight: bold;
+}
+
+.logRow-cookiesRejected .cookieList {
+    color: rgb(128, 128, 128);
+}
+
+.logRow-cookiesRejected {
+    border-bottom: 1px solid #D7D7D7;
+}
+
+.logRow-cookiesRejected .cookieCol,
+.logRow-cookiesRejected &gt; .logRow {
+    border-bottom: 0;
+    font-weight: normal;
+    padding-top: 0px;
+}
+
+.logRow-cookiesRejected &gt; .logRow:hover {
+    text-decoration: none;
+}
+
+.logRow-cookiesRejected &gt; .logGroupBody {
+    margin-top: 3px;
+}
+
+.logRow-cookiesRejected &gt; .cookieEvent {
+    text-decoration: none;
+}
+
+.logRow-cookiesCleared &gt; DIV {
+    padding: 1px 0 2px 0 !important;
+}
+
+/* Container for document.cookie log within the Console panel */
+.logRow-documentCookie {
+    padding: 0;
+}
+
+/************************************************************************************************/
+/* Console filtering */
+
+.panelNode.hideType-cookies .logRow-cookie {
+    display: none !important;
+}
+
+/************************************************************************************************/
+/* Header for cookie list */
+
+.cookieHeaderRow {
+    height: 16px;
+}
+
+.cookieHeaderCell {
+    cursor: pointer;
+    -moz-user-select: none;
+    border-bottom: 1px solid #9C9C9C;
+    padding: 0 !important;
+    font-weight: bold;
+    background: #C8C8C8 -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2)) repeat-x;
+    white-space: nowrap;
+}
+
+.cookieHeaderRow &gt; .cookieHeaderCell:first-child &gt; .cookieHeaderCellBox {
+    padding: 2px 14px 2px 18px;
+}
+
+.cookieHeaderCellBox {
+    padding: 2px 14px 2px 10px;
+    border-left: 1px solid #D9D9D9;
+    border-right: 1px solid #9C9C9C;
+}
+
+.cookieHeaderCell:hover:active {
+    background-color: #B4B4B4;
+}
+
+.cookieHeaderSorted {
+    background-color: #8CA0BE;
+}
+
+.cookieHeaderSorted &gt; .cookieHeaderCellBox {
+    border-right-color: #6B7C93;
+    background: url(chrome://firebug/skin/arrowDown.png) no-repeat right;    
+}
+
+.cookieHeaderSorted.sortedAscending &gt; .cookieHeaderCellBox {
+    background-image: url(chrome://firebug/skin/arrowUp.png);
+}
+
+.cookieHeaderSorted:hover:active {
+    background-color: #6E87AA;
+}
+
+/************************************************************************************************/
+/* Column visibility */
+
+/*
+ * Every row is for one column, the first selector hides column in the header
+ * (e.g. id=colName) and the second selector in all rows (e.g. class=cookieNameCol)
+ * 
+ * If a column is hidden, it's presented in a 'hiddenCols' attribute of the .cookieTable
+ * element. Value of the attribute is a whitespace separated list of columns IDs.
+ */
+.cookieTable[hiddenCols~=colName] #colName,
+.cookieTable[hiddenCols~=colName] .cookieNameCol,
+.cookieTable[hiddenCols~=colValue] #colValue,
+.cookieTable[hiddenCols~=colValue] .cookieValueCol,
+.cookieTable[hiddenCols~=colRawValue] #colRawValue,
+.cookieTable[hiddenCols~=colRawValue] .cookieRawValueCol,
+.cookieTable[hiddenCols~=colDomain] #colDomain,
+.cookieTable[hiddenCols~=colDomain] .cookieDomainCol,
+.cookieTable[hiddenCols~=colSize] #colSize,
+.cookieTable[hiddenCols~=colSize] .cookieSizeCol,
+.cookieTable[hiddenCols~=colPath] #colPath,
+.cookieTable[hiddenCols~=colPath] .cookiePathCol,
+.cookieTable[hiddenCols~=colExpires] #colExpires,
+.cookieTable[hiddenCols~=colExpires] .cookieExpiresCol,
+.cookieTable[hiddenCols~=colHttpOnly] #colHttpOnly,
+.cookieTable[hiddenCols~=colHttpOnly] .cookieHttpOnlyCol,
+.cookieTable[hiddenCols~=colSecurity] #colSecurity,
+.cookieTable[hiddenCols~=colSecurity] .cookieSecurityCol,
+.cookieTable[hiddenCols~=colStatus] #colStatus,
+.cookieTable[hiddenCols~=colStatus] .cookieStatusCol {
+    display: none;
+}
+
+/************************************************************************************************/
+/* Breakpoints */
+
+.panelNode-cookies .cookieRowHeader {
+    display: block;
+}
+
+/* This is the breakpoint column */
+.cookieDebugCol {
+    border-right: 1px solid #CCCCCC;
+    background-color: #EEEEEE;
+    cursor: pointer;
+}
+
+.cookieDebugCol .sourceLine {
+    border-right: none;
+}
+
+/* When mouse is hovering over a cookie row, the breakpoint/debug column is highlighted. */
+.cookieRow:hover &gt; .cookieDebugCol,
+.cookieRow:hover &gt; .cookieDebugCol &gt; .cookieRowHeader {
+    background-color: #F6F6F6;
+}
+
+.cookieRowHeader {
+    margin-right: 0 !important;
+}
+
+/* Display breakpoint disc */
+.cookieRow .cookieRowHeader {
+    background-position: 5px 1px;
+}
+
+.cookieRow[breakpoint="true"] .cookieRowHeader {
+    background-image: url(chrome://firebug/skin/breakpoint.png);
+}
+
+.cookieRow[breakpoint="true"][disabledBreakpoint="true"] .cookieRowHeader {
+    background-image: url(chrome://firebug/skin/breakpointDisabled.png);
+}
+
+#cookieBreakpointBar {
+    max-width: 38px;
+}
+
+#colName &gt; .cookieHeaderCellBox {
+    border-left: 0px;
+}
+
+/************************************************************************************************/
+/* Break on Next*/
+
+/* panel badges */
+#fbBreakOnNextButton[panelName="cookies"] #fbBreakOnImageCookies {
+    visibility: visible;
+    padding-right: 2px;
+}
+
+/************************************************************************************************/
+
+.cookieNameLabel:hover {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}
+
+/* Session cookies */
+.sessionCookie &gt; .cookieExpiresCol {
+    color: green;
+}
+
+/* Rejected cookies are red in the Cookies tab */
+.panelNode-cookies .rejectedCookie .cookieLabel {
+    color: red !important;
+}
+
+/************************************************************************************************/
+
+.cookieRow {
+    background: white;
+}
+
+.cookieRow:hover {
+    background: #EFEFEF;
+}
+
+.cookieCol {
+    padding: 0;
+    vertical-align: top;
+    border-bottom: 1px solid #EFEFEF;  
+    white-space: nowrap;
+}
+
+.cookieLabel {
+}
+
+/* Support for search box */
+.panelNode.searching .cookieRow {
+    display: none;
+}
+
+.cookieRow.matched {
+    display: table-row !important;
+}
+
+/************************************************************************************************/
+
+.cookieNameLabel {
+    -moz-box-sizing: padding-box;
+    overflow: hidden;
+    padding-top: 1px;
+    font-weight: bold;
+    min-width: 70px;
+    margin-left: 5px;
+}
+
+.cookieNameCol &gt; .cookieNameLabel {
+    padding-left: 18px;
+}
+
+.cookieDomainLabel,
+.cookieSizeLabel,
+.cookiePathLabel,
+.cookieExpiresLabel,
+.cookieValueLabel {
+    padding: 1px 0 2px 0 !important;
+    /*width: 100%; See issue 63*/
+}
+
+.cookieDomainLabel {
+    color: rgb(0, 0, 255);
+}
+
+.cookieDomainLabel:hover {
+    text-decoration:underline;
+    cursor:pointer;
+}
+
+.cookieValueLabel {
+    color: rgb(128, 128, 128);
+}
+
+/* This style makes sure that only portion of text is visible
+ depending on current size (width) of the parent column */
+.cookiePathLabel,
+.cookieValueLabel {
+    overflow: hidden;
+    display: -moz-box;
+}
+
+/* This style is to avoid warning: XUL box for div element contained 
+ an inline span child, forcing all its children to be wrapped in a block, 
+ which is caused by the previous style.
+ 
+ Related to following message:
+ nsIScriptError: XUL box for div element contained an inline #text child,
+ forcing all its children to be wrapped in a block. [JavaScript Warning:
+ "XUL box for div element contained an inline #text child, forcing all
+ its children to be wrapped in a block."
+ {file: "chrome://firebug/content/panel.html" line: 0}]
+ */
+.cookiePathLabel span,
+.cookieValueLabel span {
+    display: inline-block;
+}
+
+.cookieDomainCol,
+.cookieSizeCol,
+.cookiePathCol,
+.cookieExpiresCol,
+.cookieValueCol,
+.cookieSecurityCol,
+.cookieStatusCol,
+.cookieHttpOnlyCol {
+    padding-left: 10px;
+}
+
+.cookieHttpOnlyCol {
+    color: green;
+}
+
+.cookieSizeCol {
+    text-align :right;
+    padding-right: 10px;
+}
+
+/************************************************************************************************/
+
+.cookieInfoCol {
+    border-top: 1px solid #EEEEEE;
+    background: #FFFFFF -moz-linear-gradient(top, rgba(0, 0, 0, 0.1), transparent 33px) repeat-x;
+}
+
+.cookieInfoBody {
+    margin: 10px 0 4px 10px;
+}
+
+.cookieInfoTabs {
+    position: relative;
+    padding-left: 14px;
+}
+
+.cookieInfoTab {
+    position: relative;
+    top: -3px;
+    margin-top: 10px;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    font-weight: bold;
+    color: #565656;
+}
+
+.cookieInfoTab:hover {
+    cursor: pointer;
+}
+
+.cookieInfoTab[selected="true"] {
+    cursor: default !important;
+    border-color: #D7D7D7;
+    -moz-border-radius: 4px 4px 0 0;
+    background-color: #FFFFFF;
+}
+
+.cookieInfoText {
+    display: none;
+    margin: 0;
+    border: 1px solid #D7D7D7;
+    border-right: none;
+    padding: 8px;
+    background-color: #FFFFFF;
+    font-family: monospace;
+    overflow-x: auto;
+}
+
+.cookieInfoText[selected="true"] {
+    display: block;
+}
+
+/************************************************************************************************/
+
+/* Support for Net panel */
+.netInfoCookiesText {
+    padding-top: 0;
+    font-family: inherit;
+}
+
+.netInfoCookies {
+    margin: 5px 0;
+    color: inherit;
+}
+
+.netInfoCookies &gt; .cookieTable {
+    border-left: solid 1px rgb(239, 239, 239);
+}
+
+.netInfoCookies .cookieInfoRow:last-child &gt; .cookieInfoCol {
+    border-bottom: 1px solid #EEEEEE;
+}
+
+.cookieInfoRow .cookieRowHeader {
+    display: table-cell;
+}
+
+/************************************************************************************************/
+
+/* Hide breakpoint column + proper header field (ie the cookieBreakpointBar) within the net
+   panel info body */
+.netInfoCookiesText .cookieInfoRow .cookieRowHeader,
+.netInfoCookiesText #cookieBreakpointBar,
+.netInfoCookiesText .cookieDebugCol {
+    display: none;
+}
+
+/* Hide breakpoint column + proper header field (ie the cookieBreakpointBar) within the
+   console panel (when logging document.cookie) */
+.documentCookieBody .cookieInfoRow .cookieRowHeader,
+.documentCookieBody #cookieBreakpointBar,
+.documentCookieBody .cookieDebugCol {
+    display: none;
+}
+
+/************************************************************************************************/
+
+.disabledPanelBox .descImage-cookies {
+    background-image: url(chrome://firebug/skin/cookies/activation-menu-cookies.png);
+}
+
+/************************************************************************************************/
+</style><style charset="utf-8" type="text/css" id="resource://firephp/content/lib/console.css">
+
+
+.objectLink-PHPVariable {
+  color: DarkGreen;
+  font-family: Monaco, monospace;
+}
+
+.objectLink-PHPVariable:hover {
+  cursor: pointer;
+}
+
+
+
+.firephp-row-label {
+  font-family: Monaco, monospace;
+  color: black;
+}
+
+
+.objectLink-firephp-array {
+    font-family: Lucida Grande, sans-serif;
+    color: black;
+    white-space: -moz-pre-wrap;
+}
+.objectLink-firephp-array:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+.objectBox-firephp-class {
+    color: brown;
+    font-weight: bold;
+    white-space: -moz-pre-wrap;
+}
+
+.objectBox-firephp-class SPAN.props {
+    font-weight: normal;
+}
+
+
+.objectBox-firephp-number {
+    color: green;
+}
+
+.objectBox-firephp-text {
+    font-family: Monaco, monospace;
+    color: black;
+}
+
+.objectBox-firephp-boolean {
+    color: navy;
+}
+
+
+.objectBox-firephp-more {
+    color: green;
+    font-weight: bold;
+}
+
+
+
+.logRow-firephp-trace,
+.logRow-firephp-exception {
+    padding: 0px;
+    margin: 0px;
+}
+
+.logRow-firephp-trace &gt; .head,
+.logRow-firephp-exception &gt; .head {
+  margin: 0px;
+  padding-bottom: 1px;
+  padding-top: 2px;
+  padding-right: 10px;
+  background-color: LightYellow;
+}
+
+.logRow-firephp-trace &gt; .head &gt; .title,
+.logRow-firephp-exception &gt; .head &gt; .title {
+  cursor: pointer;
+  padding-left: 22px;    
+  padding-bottom: 0px;
+  padding-top: 2px;
+  font-family: Monaco, monospace;
+  background-image: url(chrome://firebug/skin/errorIcon.png);
+  background-repeat: no-repeat;
+  background-position: 4px 2px;
+  color: red;
+  font-weight: normal;
+  text-decoration: underline;
+}
+
+.logRow-firephp-trace &gt; .head &gt; .title:hover,
+.logRow-firephp-exception &gt; .head &gt; .title:hover {
+    color: blue;
+    text-decoration: none !important;
+}
+
+.logRow-firephp-trace &gt; .head &gt; .title:hover,
+.logRow-firephp-exception &gt; .head &gt; .title:hover {
+    text-decoration: underline !important;
+    color: blue;
+}
+
+.logRow-firephp-trace.opened,
+.logRow-firephp-exception.opened {
+    border-bottom: 1px solid #D7D7D7;
+}
+
+
+.logRow-firephp-trace &gt; .head &gt; .info,
+.logRow-firephp-exception &gt; .head &gt; .info {
+    display: none;
+    padding-left: 10px;
+    margin-top: 2px;
+    padding-bottom: 10px;
+}
+
+.logRow-firephp-trace.opened &gt; .head &gt; .info,
+.logRow-firephp-exception.opened &gt; .head &gt; .info {
+    display: block;
+}
+
+
+.logRow-firephp-trace.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.headerFile,
+.logRow-firephp-exception.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.headerFile {
+  white-space:nowrap;
+  font-weight: bold;
+}
+
+.logRow-firephp-trace.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.headerLine,
+.logRow-firephp-trace.exception &gt; .head &gt; .info &gt; TABLE TBODY TR TD.headerLine {
+  white-space:nowrap;
+  font-weight: bold;
+  text-align: right;
+}
+.logRow-firephp-trace.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.headerInst,
+.logRow-firephp-exception.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.headerInst {
+  white-space:nowrap;
+  font-weight: bold;
+  padding-left: 10px;
+  width: 100%;
+}
+
+.logRow-firephp-trace.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.cellFile,
+.logRow-firephp-exception.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.cellFile {
+  white-space:nowrap;
+  vertical-align: top;
+  border:1px solid #D7D7D7;
+  padding-right: 10px;
+}
+.logRow-firephp-trace.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.cellLine,
+.logRow-firephp-exception.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.cellLine {
+  white-space:nowrap;
+  vertical-align: top;
+  border:1px solid #D7D7D7;
+  text-align: right;
+}
+.logRow-firephp-trace.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.cellInst,
+.logRow-firephp-exception.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.cellInst {
+  border:1px solid #D7D7D7;
+  vertical-align: top;
+  padding-left: 10px;
+  font-weight: bold;
+}
+
+
+
+.logRow-firephp-trace &gt; .head &gt; .title {
+  background-image: url(chrome://firephp/skin/traceIcon.png) !important;
+  color: black;
+  font-weight: normal;
+  text-decoration: none;
+}
+.logRow-firephp-trace &gt; .head {
+  background-color: #f0f3f9;
+}
+
+
+
+.logRow-firephp-table {
+    padding: 0px;
+    margin: 0px;
+}
+
+.logRow-firephp-table &gt; .head {
+  margin: 0px;
+  padding-bottom: 1px;
+  padding-top: 2px;
+  padding-right: 10px;
+  background-color: #f0f3f9;
+}
+
+.logRow-firephp-table &gt; .head &gt; .title {
+  cursor: pointer;
+  padding-left: 23px;    
+  padding-bottom: 0px;
+  padding-top: 2px;
+  font-family: Monaco, monospace;
+  background-image: url(chrome://firephp/skin/tableIcon.png);
+  background-repeat: no-repeat;
+  background-position: 4px 2px;
+  color: black;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+.logRow-firephp-table &gt; .head &gt; .title:hover {
+    color: blue;
+    text-decoration: none !important;
+}
+
+.logRow-firephp-table &gt; .head &gt; .title:hover {
+    text-decoration: underline !important;
+    color: blue;
+}
+
+.logRow-firephp-table.opened {
+    border-bottom: 1px solid #D7D7D7;
+}
+
+
+.logRow-firephp-table &gt; .head &gt; .info {
+    display: none;
+    padding-left: 10px;
+    margin-top: 2px;
+    padding-bottom: 10px;
+}
+
+.logRow-firephp-table.opened &gt; .head &gt; .info {
+    display: block;
+}
+
+
+.logRow-firephp-table.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.header {
+  font-weight: bold;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.logRow-firephp-table.opened &gt; .head &gt; .info &gt; TABLE TBODY TR TD.cell {
+  vertical-align: top;
+  border:1px solid #D7D7D7;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
+
+DIV.logRow-firephpRequestGroup {
+  background: url(chrome://firephp/skin/group.png) repeat-x #FFFFFF;
+}
+
+DIV.logRow-firephpRequestGroup &gt; DIV &gt; SPAN.objectBox {
+  color: #445777;
+}
+
+
+DIV.logRow-firephp-upgrade {
+  background-image: url(chrome://firephp/skin/FirePHP_16.png);
+  background-repeat: no-repeat;
+  background-position: 3px 5px;
+  padding-left: 23px;
+  background-color: LightYellow;
+}
+
+DIV.logRow-firephp-upgrade DIV {
+  color: red;
+  font-weight: bold;
+  height: 19px;
+  padding-top: 4px;
+}  
+
+DIV.logRow-firephp-upgrade A {
+  padding-left: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+</style><style charset="utf-8" type="text/css" id="chrome://cssUpdater/skin/cssUpdater.css">body {
+	background: #f1f1f1;
+	margin:0px;
+	padding:0px;
+}
+
+
+
+.panelNode-cssUpdater div,
+.panelNode-cssUpdater div.cssUpdater {
+	padding: 0 10px;
+	height:22px;
+	line-height:22px;
+	background: #f1f1f1;
+	border-bottom:1px solid #a8a8a8;
+	font-size: 11px;
+	font-family: Arial;
+}
+
+div.cssUpdater:hover {
+	background: #f8f8f8;
+}
+
+div.cssUpdater .row {
+	padding: 0 10px;
+}
+
+span.cssUpdaterdate {
+	color: #353535; 
+	font-weight:bold;
+}
+
+</style><style charset="utf-8" type="text/css" id="chrome://illumination/skin/illumination.css">
+.illuminationTable .memberRow.hasChildren &gt; .memberLabelCell &gt; .memberLabel:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.illuminationTable .memberHeaderCell {
+    width: 0;
+}
+
+.illuminationTable .memberLabelCell {
+    white-space: nowrap;
+    padding: 1px 0;
+    width: 100%;
+}
+
+.illuminationTable .memberLabel {
+    vertical-align: top;
+}
+
+.illuminationTable .objectLink {
+    height: 16px;
+    display: inline-block;
+}
+
+.panelNode-illumination_properties .memberLabelCell ,
+.panelNode-illumination_events .memberLabelCell ,
+.panelNode-illumination_methods .memberLabelCell 
+{
+    padding: 1px 0;
+}
+
+.panelNode-html_illumination_properties .memberLabelCell {
+    display: none;
+}
+
+.panelNode-html_illumination_properties .memberValueCell,
+.panelNode-html_illumination_properties .memberValueCell span {
+    width: 100% !important;
+    white-space: nowrap;
+}
+
+.IlluminationSelected {
+    background-color: #F0DCFF;
+}
+
+.domTable .seen a , .domTable .seen div, .domTable .seen span {
+    text-decoration: line-through !important;
+}
+.domTable .private a , .domTable .private div, .domTable .private span {
+    opacity: 0.65;
+}
+
+.Namespace {
+    background-image: url(chrome://illumination/skin/Namespace.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 12px;
+}
+.SimpleClass {
+    background-image: url(chrome://illumination/skin/SimpleClass.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px;
+    color: purple !important;
+}
+.Data,.DataTable {
+    background-image: url(chrome://illumination/skin/Data.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px;
+    color: purple !important;
+}
+.Element {
+    background-image: url(chrome://illumination/skin/Element.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px;
+    color: purple !important;
+}
+.Singleton {
+    background-image: url(chrome://illumination/skin/Singleton.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px;
+    color: purple !important;
+}
+.Widget {
+    background-image: url(chrome://illumination/skin/Widget.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px;
+    color: purple !important;
+}
+
+.Widget.selectorHidden , .Element.selectorHidden  {
+    opacity: 0.5;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.accordion {
+    background-image: url(chrome://illumination/skin/fugue/ui-accordion.png);
+}
+.progressbar {
+    background-image: url(chrome://illumination/skin/fugue/ui-progress-bar.png);
+}
+.flow {
+    background-image: url(chrome://illumination/skin/fugue/ui-flow.png);
+}
+.picker {
+    background-image: url(chrome://illumination/skin/fugue/ui-color-picker.png);
+}
+.colorpicker {
+    background-image: url(chrome://illumination/skin/fugue/ui-color-picker-transparent.png);
+}
+.combobox {
+    background-image: url(chrome://illumination/skin/fugue/ui-combo-box.png);
+}
+.label {
+    background-image: url(chrome://illumination/skin/fugue/ui-label.png);
+}
+.paginator {
+    background-image: url(chrome://illumination/skin/fugue/ui-paginator.png);
+}
+.menu {
+    background-image: url(chrome://illumination/skin/fugue/ui-menu.png);
+}
+.button {
+    background-image: url(chrome://illumination/skin/fugue/ui-button.png);
+}
+.toggle {
+    background-image: url(chrome://illumination/skin/fugue/ui-button-toggle.png);
+}
+.buttons {
+    background-image: url(chrome://illumination/skin/fugue/ui-buttons.png);
+}
+.toolbar {
+    background-image: url(chrome://illumination/skin/fugue/ui-toolbar.png);
+}
+.splitter {
+    background-image: url(chrome://illumination/skin/fugue/ui-splitter.png);
+}
+.tab {
+    background-image: url(chrome://illumination/skin/fugue/ui-tab.png);
+}
+.grid {
+    background-image: url(chrome://illumination/skin/fugue/table.png);
+}
+.tooltip {
+    background-image: url(chrome://illumination/skin/fugue/balloon-small-left.png);
+}
+.palette {
+    background-image: url(chrome://illumination/skin/fugue/ui-palette.png);
+}
+.panel {
+    background-image: url(chrome://illumination/skin/fugue/application-medium.png);
+}
+.treepanel {
+    background-image: url(chrome://illumination/skin/fugue/application-tree.png);
+}
+.tabpanel {
+    background-image: url(chrome://illumination/skin/fugue/ui-tab-content.png);
+}
+.node {
+    background-image: url(chrome://illumination/skin/fugue/node-select-all.png);
+}
+.nodeui {
+    background-image: url(chrome://illumination/skin/fugue/node.png);
+}
+.viewport {
+    background-image: url(chrome://illumination/skin/fugue/desktop-empty.png);
+}
+.dataview {
+    background-image: url(chrome://illumination/skin/fugue/document-small-list.png);
+}
+.listbox {
+    background-image: url(chrome://illumination/skin/fugue/ui-list-box.png);
+}
+.textfield {
+    background-image: url(chrome://illumination/skin/fugue/ui-text-field.png);
+}
+.password {
+    background-image: url(chrome://illumination/skin/fugue/ui-text-field-password.png);
+}
+.fieldset {
+    background-image: url(chrome://illumination/skin/fugue/ui-group-box.png);
+}
+.hiddenfield {
+    background-image: url(chrome://illumination/skin/fugue/ui-text-field-hidden.png);
+}
+.searchfield {
+    background-image: url(chrome://illumination/skin/fugue/ui-search-field.png);
+}
+.textarea {
+    background-image: url(chrome://illumination/skin/fugue/ui-text-area.png);
+}
+.slider {
+    background-image: url(chrome://illumination/skin/fugue/ui-slider.png);
+}
+.multislider,.ruler {
+    background-image: url(chrome://illumination/skin/fugue/ui-ruler.png);
+}
+.radio {
+    background-image: url(chrome://illumination/skin/fugue/ui-radio-button.png);
+}
+.radiogroup {
+    background-image: url(chrome://illumination/skin/fugue/ui-radio-buttons.png);
+}
+.checkbox {
+    background-image: url(chrome://illumination/skin/fugue/ui-check-box.png);
+}
+.checkboxgroup {
+    background-image: url(chrome://illumination/skin/fugue/ui-check-boxes.png);
+}
+.resizer,.splitter,.resizer-v,.splitter-v {
+    background-image: url(chrome://illumination/skin/fugue/ui-splitter.png);
+}
+.resizer-h,.splitter-h {
+    background-image: url(chrome://illumination/skin/fugue/ui-splitter-horizontal.png);
+}
+.window {
+    background-image: url(chrome://illumination/skin/fugue/application.png);
+}
+.Data,.table {
+    background-image: url(chrome://illumination/skin/fugue/table.png);
+}
+.column {
+    background-image: url(chrome://illumination/skin/fugue/table-select-column.png);
+}
+.row {
+    background-image: url(chrome://illumination/skin/fugue/table-select-row.png);
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.propheaderRow {
+    padding: 2px 18px;
+    background-color: LightYellow;
+    color: #555;
+    border-bottom: 1px solid #BEBEBE;
+}
+
+.propheaderRow td {
+    min-height: 15px;
+    border-top: 1px solid #BEBEBE;
+    border-bottom: 1px solid #BEBEBE;
+}
+
+.propheaderLabel {
+    background-color:  transparent;
+}
+
+.propheaderRow .objectBox {
+    color: #999;
+}
+
+.panelNode-illumination_records td:first-child &gt; a {
+    height: 16px;
+    width: 1px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+</style><style charset="utf-8" type="text/css" id="chrome://dojofirebugextension/skin/dojofirebugextension.css">/* Released under BSD license (see license.txt) */
+/*
+ * dojofirebugextension 
+ * Copyright IBM Corporation 2010, 2010. All Rights Reserved. 
+ * U.S. Government Users Restricted Rights -  Use, duplication or disclosure restricted by GSA ADP 
+ * Schedule Contract with IBM Corp. 
+ */
+
+.selectableObject {
+	cursor: pointer;
+}
+
+.selectableObject:hover{
+	color: blue;
+	text-decoration: underline;
+}
+
+.object {
+    color: red;
+    background-image:url('chrome://dojofirebugextension/skin/object.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+
+.incomingConnections {
+    color: red;
+    background-image:url('chrome://dojofirebugextension/skin/incomming.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+	cursor: default;
+}
+
+.outgoingConnections {
+    color: red;
+    background-image:url('chrome://dojofirebugextension/skin/outgoing.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+	cursor: default;
+}
+
+.event {
+    color: green;
+    background-image:url('chrome://dojofirebugextension/skin/event.gif');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+	cursor: default;
+}
+
+.inline-event {
+    color: red;
+}
+	
+.function {
+    color: green;
+    background-image:url('chrome://dojofirebugextension/skin/function.png');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+	cursor: default;
+}
+
+.inline-connection {
+    color: blue;
+}
+
+.connection {
+    color: black;
+    background-image:url('chrome://dojofirebugextension/skin/connection.gif');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+.connectionInc {
+    color: black;
+    margin-left: 15px;
+    background-image:url('chrome://dojofirebugextension/skin/event.gif');
+    background-repeat:no-repeat;
+	background-position:left top;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+.connectionOut {
+    color: black;
+    margin-left: 15px;
+    background-image:url('chrome://dojofirebugextension/skin/function.png');
+    background-repeat:no-repeat;
+	background-position:left top;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+.inline-subscription {
+    color: green;
+}
+
+.subscription {
+    color: green;
+    margin-left: 20px;
+    background-image:url('chrome://dojofirebugextension/skin/subscription.gif');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+	cursor: default;
+}
+
+.topic {
+    color: red;
+    background-image:url('chrome://dojofirebugextension/skin/topic.gif');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding : 1px;
+	padding-left: 20px;
+}
+
+.inline-topic {
+    color: red;
+}
+
+
+.dojo-warning{
+	background-color:#D8E4F1;
+	border:1px solid #6699CC;
+	margin-bottom: 5px;
+	color: gray;
+	padding-left: 10px;
+	position: fixed;
+	left: 2px;
+	right: 18px;
+}
+
+.dojo-warning img{
+	vertical-align: middle;
+	margin-right: 2px;
+}
+
+.dojo-warning input{
+	font-size:9px;
+	color: black;
+}
+
+.connections-table{
+	border: 1px solid #666666;
+}
+
+.connections-table th{
+	padding: 2px;
+	background-color: #FFCC00;
+	border: 1px solid white;
+}
+
+.connections-table th:hover { 
+/* TODO preyna sorted table: enable again! */	
+/*	text-decoration: underline; */ 
+}
+
+.connections-table th{
+/* TODO preyna sorted table: enable again! */
+/*	cursor: pointer; */
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.connections-table td{
+	padding: 2px;
+	border: 1px solid white;
+}
+
+.connections-table .row-odd{
+	background-color: #FFEEAA;
+}
+
+.connections-table .row-even{
+	background-color: white;
+}
+
+.connections-table .superHeader{
+	background-color: #E2F3B8;
+	text-align: center;
+	font-weight: bold
+}
+
+.connections-table .columnPriority0{
+	background-image:url('chrome://firebug/skin/arrowDown.png');
+	background-repeat:no-repeat;
+	background-position:right center;
+}
+
+.widgetDeclaredClass{
+	color: gray;
+} 
+
+.widgetId{
+	font-weight: bold;
+}
+
+.detached {
+	opacity: 0.5;
+}
+
+.counterLabel{
+	color: green;
+	font-weight: bold;
+}
+
+.counterValue{
+	color: red;
+	font-weight: bold
+}
+
+.countOfConnectionLabel{
+	margin-left: 1px;
+    background-image:url('chrome://dojofirebugextension/skin/connection.gif');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+.countOfSubscriptionLabel{
+	margin-left: 1px;
+    background-image:url('chrome://dojofirebugextension/skin/subscription.gif');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+.countOfOnAspectObserverLabel{
+	margin-left: 1px;
+    background-image:url('chrome://dojofirebugextension/skin/connection.gif');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+.countOfWidgetsLabel {
+	margin-left: 1px;
+    background-image:url('chrome://dojofirebugextension/skin/widgetIcon.3.png');
+    background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 20px;
+}
+
+.disabledPanelBox .descImage-dojofirebugextension {
+    background-image:url('chrome://dojofirebugextension/skin/disabled-extension-message.png');
+    width: 400px;
+}
+
+.infoMessage{
+	background-image:url('chrome://dojofirebugextension/skin/info.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	font-weight: bold;
+	margin: 20px;
+	padding: 2px;
+	padding-left: 20px;
+	color: gray;
+}
+
+.simpleMessage{
+	font-weight: bold;
+	color: gray;
+	margin: 20px;
+}
+
+.subscriptions , .connectionsInfo{
+	padding: 5px;
+}
+
+.currentSelection, .currentSelection *{
+	background-color:highlight !important;
+	border-color:highlight !important;
+	color:highlighttext !important;
+}
+
+.tree-selection .widgets-tree-node {	
+	border-color: highlight !important;
+}
+
+.container-opened .collapsable-label{
+	background-image:url('chrome://firebug/skin/win/twistyOpen.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 15px;
+}
+
+.container-collapsed .collapsable-label {
+	background-image:url('chrome://firebug/skin/win/twistyClosed.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 15px;
+}
+
+.children-opened .collapsable-children-label {
+	background-image:url('chrome://firebug/skin/win/twistyOpen.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 15px;
+}
+
+.children-collapsed .collapsable-children-label {
+	background-image:url('chrome://firebug/skin/win/twistyClosed.png');
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding: 2px;
+	padding-left: 15px;
+}
+
+.collapsable-children-label.with-no-children {
+	background-image:none;
+	padding: 2px;
+	padding-left: 15px;
+}
+
+.collapsable-content{
+	margin-left: 15px;
+}
+
+.container-opened .collapsable-content{
+	display: inherit;
+}
+
+.container-collapsed .collapsable-content{
+	display: none;
+}
+
+.widget-info-level-specific .widget-specific-data {
+	display: inherit;
+}
+
+.widget-info-level-specific .widget-full-data {
+	display: none;
+}
+
+.widget-info-level-full .widget-full-data {
+	display: inherit;
+}
+
+.widget-info-level-full .widget-specific-data {
+	display: none;
+}
+
+.widget-data {
+    background-color: rgba(221,255,221,0.2);
+    border: 1px solid #009900;
+}
+
+.children-opened .collapsable-children {
+	display: inherit;
+}
+
+.children-collapsed .collapsable-children {
+	display: none;
+}
+
+.widget-data.widget-data-collapsed {
+	display: none;
+}
+
+.widget-data.widget-data-opened {
+	display: inherit;
+}
+
+.widget-label{
+	margin: 5px;
+}
+
+.widget-label select {
+	border: none;
+	height: 15px;
+	color: gray;
+	font-size: 95%;
+}
+
+.infoLevelToggle{
+	padding-left: 16px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	cursor: pointer;
+}
+
+.widget-info-level-specific &gt; .widget-label &gt; .infoLevelToggle{
+	background-image:url('chrome://dojofirebugextension/skin/specific_info_level.gif');
+	background-repeat:no-repeat;
+	background-position:center;
+}
+
+.widget-info-level-full &gt; .widget-label &gt; .infoLevelToggle{
+	background-image:url('chrome://dojofirebugextension/skin/full_info_level.gif');
+	background-repeat:no-repeat;
+	background-position:center;
+}
+
+.widget-info-level-none &gt; .widget-label &gt; .infoLevelToggle{
+	background-image:url('chrome://dojofirebugextension/skin/none_info_level.png');
+	background-repeat:no-repeat;
+	background-position:center;
+}
+
+.infoLevelToggle.not-displayed {
+	display: none;
+} 
+
+#fbDojo_dojoFilter-boxes {
+	display: none;
+}
+
+#fbDojo_dojoConnFromIndexBox {
+	width: 50px;
+}
+
+#fbDojo_dojoConnCountBox {
+	width: 50px;
+}
+
+#fbDojo_dojoConnFilterBox {
+    margin-left: 0;
+    margin-right: 6px;
+    width: 100% !important;
+    /*display: block;*/
+    /*-moz-border-radius: 1px;*/
+}
+
+textbox[type="dojoConnFilterBox"] {
+    /* This prevents the drop shadow from appearing See nsLayoutUtils::GetFrameTransparency*/
+    -moz-border-radius: 1px;
+}
+
+.dojoConnFilterBox-attention {
+    color: red;
+    font-weight: bold;
+}
+
+
+
+/*************************************************************************************************/
+/* Firefox context menu */
+
+
+#fbDojo_menu_dojofirebugextension_inspect {
+    /*list-style-image: url(chrome://dojofirebugextension/skin/dojo-logo-icon.png);*/
+    list-style-image: url(chrome://dojofirebugextension/skin/logo-icon-2.png);
+}
+
+/*************************************************************************************************/
+</style><style charset="utf-8" type="text/css" id="chrome://eventbug/skin/eventbug.css">/* See license.txt for terms of usage */
+
+.panelNode-ElementEvents {
+} 
+
+.panelNode-events-script {
+    overflow: hidden;
+    font-family: monospace !important;
+}
+
+.panelNode-events-targetChain {
+    padding: 8px;
+}
+
+/************************************************************************************************/
+
+.eventInfoTable {
+    width: 100%;
+    font-size: 11px;
+}
+
+.eventRow {
+    background: white;
+    white-space: nowrap;
+}
+
+.eventRow:hover {
+    background: #EFEFEF;
+    cursor: pointer;
+}
+
+.eventRow &gt; .eventTypeCol {
+    text-align: left;
+}
+
+.eventLabel {
+    padding: 2px 0 3px 0 !important;
+}
+
+.eventRow .eventTypeLabel {
+    background-image: url(chrome://firebug/skin/win/twistyClosed.png);
+    background-repeat: no-repeat;
+    background-position: 3px 4px;
+}
+
+.eventRow.opened .eventTypeLabel {
+    background-image: url(chrome://firebug/skin/win/twistyOpen.png);
+}
+
+.eventTypeLabel {
+    font-weight: bold;
+    padding-left: 18px !important;
+}
+
+.eventTypeLabel:hover {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}
+
+.capturingLabel {
+    color: black;
+}
+
+.eventRow .infoLabel {
+    color: gray;
+}
+
+.eventScriptCol {
+    font-family: monospace;
+}
+
+/************************************************************************************************/
+
+.eventRow.selected .eventListenerInfo {
+    border-color: Highlight;
+    background-color: Highlight;
+    -moz-border-radius: 3px;
+}
+
+.eventRow.selected .capturingLabel,
+.eventRow.selected .infoLabel,
+.eventRow.selected .objectLink,
+.eventRow.selected .selectorTag,
+.eventRow.selected .selectorId,
+.eventRow.selected .selectorClass,
+.eventRow.selected .selectorValue,
+.eventRow.selected .arrayComma {
+    color: HighlightText !important;
+}
+
+/************************************************************************************************/
+
+.eventListenerInfo {
+    padding: 2px 0 2px 4px !important;
+}
+
+/************************************************************************************************/
+
+.eventTypeBodyRow TABLE {
+    width: 100%;
+}
+
+.eventRowBox {
+    padding-left: 14px;
+}
+
+/************************************************************************************************/
+
+.eventWarning {
+    text-align: center;
+}
+
+/************************************************************************************************/
+/* FBTrace */
+
+.DBG_EVENTS {
+    color: rgb(0, 126, 236);
+}
+</style></head>
+<body role="application">
+<div role="progressbar" class="disabledPanelNode" collapsed="true"></div>
+
+
+<div class="infoTip " style="left: 550px; right: auto; top: 12px; bottom: auto;"><a class="objectLink objectLink-function a11yFocus ">function()</a></div><div class="panelNode panelNode-net contextUID=48338"></div><div class="panelNode panelNode-html contextUID=48338"></div><div class="panelNode panelNode-stylesheet contextUID=48338"></div><div class="panelNode panelNode-script contextUID=48338"><div class="scriptTooltip obscured" aria-live="polite"></div></div><div class="panelNode panelNode-dom contextUID=48338"></div><div class="panelNode panelNode-cookies contextUID=48338"><table cellspacing="0" cellpadding="0" class="cookieTable " hiddencols="colRawValue colStatus"><tbody class=" "><tr class="cookieHeaderRow "><td width="1%" class="cookieHeaderCell " id="cookieBreakpointBar"> </td><td class="cookieHeaderCell alphaValue a11yFocus " role="columnheader" id="colName"><div class="cookieHeaderCellBox " title="Name of the cookie">Name</div></td><td class="cookieHeaderCell alphaValue a11yFocus " role="columnheader" id="colValue"><div class="cookieHeaderCellBox " title="Value stored for the cookie">Value</div></td><td class="cookieHeaderCell alphaValue a11yFocus " role="columnheader" id="colRawValue"><div class="cookieHeaderCellBox " title="Raw value stored for the cookie">Raw Value</div></td><td class="cookieHeaderCell alphaValue a11yFocus " role="columnheader" id="colDomain"><div class="cookieHeaderCellBox " title="Domain that has stored the cookie">Domain</div></td><td class="cookieHeaderCell a11yFocus " role="columnheader" id="colSize"><div class="cookieHeaderCellBox " title="Size of the stored cookie">Size</div></td><td class="cookieHeaderCell alphaValue a11yFocus " role="columnheader" id="colPath"><div class="cookieHeaderCellBox " title="Directory where the cookie is active">Path</div></td><td class="cookieHeaderCell a11yFocus " role="columnheader" id="colExpires"><div class="cookieHeaderCellBox " title="Expiration date for the cookie">Expires</div></td><td class="cookieHeaderCell alphaValue a11yFocus " role="columnheader" id="colHttpOnly"><div class="cookieHeaderCellBox " title="Shows if the cookie is an HTTP only cookie">HttpOnly</div></td><td class="cookieHeaderCell alphaValue a11yFocus " role="columnheader" id="colSecurity"><div class="cookieHeaderCellBox " title="Shows whether it is a secure cookie or not">Security</div></td></tr></tbody></table></div><div class="panelNode panelNode-illumination contextUID=48338"><table cellspacing="0" cellpadding="0" class="domTable illuminationTable " aria-label="DOM properties" role="tree"><tbody class=" " role="presentation"><tr class=" " role="presentation"><td class=" "></td><td class=" "></td></tr><tr class="memberRow  widgetsRow hasChildren " disabledbreakpoint="undefined" breakpoint="undefined" breakable="undefined" level="0" role="presentation"><td class="memberHeaderCell "><div class="sourceLine memberRowHeader "> </div></td><td class="memberLabelCell " role="presentation" style="padding-left: 0px"><span class="memberLabel widgetsLabel "><span class="memberLabelPrefix "></span><span class=" " style="display:none">fx_PaneId</span></span><a class="objectLink objectLink-object a11yFocus Dojo-1 Widget  "><span class="objectTitle ">[Trial] dijit.layout.ContentPane </span><span class="objectLeftBrace " role="presentation">{</span> id<span class="objectEqual " role="presentation">=</span><pre class="objectBox inline objectBox-string " role="presentation">"fx_PaneId"</pre><span class="objectComma " role="presentation"></span><span class="objectRightBrace ">}</span></a></td></tr><tr class="memberRow  widgetsRow hasChildren " disabledbreakpoint="undefined" breakpoint="undefined" breakable="undefined" level="0" role="presentation"><td class="memberHeaderCell "><div class="sourceLine memberRowHeader "> </div></td><td class="memberLabelCell " role="presentation" style="padding-left: 0px"><span class="memberLabel widgetsLabel "><span class="memberLabelPrefix "></span><span class=" " style="display:none">fProp_PaneId</span></span><a class="objectLink objectLink-object a11yFocus Dojo-1 Widget  "><span class="objectTitle ">[Trial] dijit.layout.ContentPane </span><span class="objectLeftBrace " role="presentation">{</span> id<span class="objectEqual " role="presentation">=</span><pre class="objectBox inline objectBox-string " role="presentation">"fProp_PaneId"</pre><span class="objectComma " role="presentation"></span><span class="objectRightBrace ">}</span></a></td></tr><tr class="memberRow  widgetsRow hasChildren " disabledbreakpoint="undefined" breakpoint="undefined" breakable="undefined" level="0" role="presentation"><td class="memberHeaderCell "><div class="sourceLine memberRowHeader "> </div></td><td class="memberLabelCell " role="presentation" style="padding-left: 0px"><span class="memberLabel widgetsLabel "><span class="memberLabelPrefix "></span><span class=" " style="display:none">f0_PaneId</span></span><a class="objectLink objectLink-object a11yFocus Dojo-1 Widget  "><span class="objectTitle ">[Trial] dijit.layout.ContentPane </span><span class="objectLeftBrace " role="presentation">{</span> id<span class="objectEqual " role="presentation">=</span><pre class="objectBox inline objectBox-string " role="presentation">"f0_PaneId"</pre><span class="objectComma " role="presentation"></span><span class="objectRightBrace ">}</span></a></td></tr><tr class="memberRow  widgetsRow hasChildren " disabledbreakpoint="undefined" breakpoint="undefined" breakable="undefined" level="0" role="presentation"><td class="memberHeaderCell "><div class="sourceLine memberRowHeader "> </div></td><td class="memberLabelCell " role="presentation" style="padding-left: 0px"><span class="memberLabel widgetsLabel "><span class="memberLabelPrefix "></span><span class=" " style="display:none">mouseenter_PaneId</span></span><a class="objectLink objectLink-object a11yFocus Dojo-1 Widget  "><span class="objectTitle ">[Trial] dijit.layout.ContentPane </span><span class="objectLeftBrace " role="presentation">{</span> id<span class="objectEqual " role="presentation">=</span><pre class="objectBox inline objectBox-string " role="presentation">"mouseenter_PaneId"</pre><span class="objectComma " role="presentation"></span><span class="objectRightBrace ">}</span></a></td></tr></tbody></table></div><div class="panelNode panelNode-dojofirebugextension_GFX contextUID=48338"><div class="infoMessage ">There aren't any GFX Surfaces to display. Try doing "refresh" in this panel menu, and/or F5 if using dojo async loader. If using dojo 1.7+, make sure the dojo build has "'dojo-publish-privates':1", and to use "trace:{'loader-finish-exec':1}" in page's dojoConfig.</div></div><div class="panelNode panelNode-dojofirebugextension contextUID=48338"><div class="widgets-tree "><div class=" " style="padding-left: 0px"><div class="collapsable-container container-collapsed collapsable-children-container children-collapsed widget-info-level-none "><div class="widget-label "><span class="collapsable-children-label with-children "><a class="objectLink objectLink-object a11yFocus "><span class="dojo-widget dojo-tracked-obj   ">[<span class="widgetId ">fx_PaneId</span> <span class="widgetDeclaredClass ">(Widget dijit.layout.ContentPane)</span>]</span></a></span></div><div class="widget-data widget-data-collapsed collapsable-content "><div class="widget-specific-data not-loaded "></div><div class="widget-full-data not-loaded "></div><div class="widget-none-data not-loaded "></div></div><div class="collapsable-children "><div class="children not-loaded "></div></div></div></div><div class=" " style="padding-left: 0px"><div class="collapsable-container container-collapsed collapsable-children-container children-collapsed widget-info-level-none "><div class="widget-label "><span class="collapsable-children-label with-children "><a class="objectLink objectLink-object a11yFocus "><span class="dojo-widget dojo-tracked-obj   ">[<span class="widgetId ">fProp_PaneId</span> <span class="widgetDeclaredClass ">(Widget dijit.layout.ContentPane)</span>]</span></a></span></div><div class="widget-data widget-data-collapsed collapsable-content "><div class="widget-specific-data not-loaded "></div><div class="widget-full-data not-loaded "></div><div class="widget-none-data not-loaded "></div></div><div class="collapsable-children "><div class="children not-loaded "></div></div></div></div><div class=" " style="padding-left: 0px"><div class="collapsable-container container-collapsed collapsable-children-container children-collapsed widget-info-level-none "><div class="widget-label "><span class="collapsable-children-label with-children "><a class="objectLink objectLink-object a11yFocus "><span class="dojo-widget dojo-tracked-obj   ">[<span class="widgetId ">f0_PaneId</span> <span class="widgetDeclaredClass ">(Widget dijit.layout.ContentPane)</span>]</span></a></span></div><div class="widget-data widget-data-collapsed collapsable-content "><div class="widget-specific-data not-loaded "></div><div class="widget-full-data not-loaded "></div><div class="widget-none-data not-loaded "></div></div><div class="collapsable-children "><div class="children not-loaded "></div></div></div></div><div class=" " style="padding-left: 0px"><div class="collapsable-container container-collapsed collapsable-children-container children-collapsed widget-info-level-none "><div class="widget-label "><span class="collapsable-children-label with-children "><a class="objectLink objectLink-object a11yFocus "><span class="dojo-widget dojo-tracked-obj   ">[<span class="widgetId ">mouseenter_PaneId</span> <span class="widgetDeclaredClass ">(Widget dijit.layout.ContentPane)</span>]</span></a></span></div><div class="widget-data widget-data-collapsed collapsable-content "><div class="widget-specific-data not-loaded "></div><div class="widget-full-data not-loaded "></div><div class="widget-none-data not-loaded "></div></div><div class="collapsable-children "><div class="children not-loaded "></div></div></div></div></div></div><div class="panelNode panelNode-cssUpdater contextUID=48338"></div><div class="panelNode panelNode-events contextUID=48338"></div><div class="panelNode panelNode-console contextUID=48338" active="true"><div class=" "><table width="100%" cellspacing="0" cellpadding="0" class=" "><tbody class=" "><tr class="netRow netLimitRow collapsed "><td class="netCol netLimitCol " colspan="8"><table cellspacing="0" cellpadding="0" class=" "><tbody class=" "><tr class=" "><td class=" "><span class="netLimitLabel ">Firebug's log limit has been reached. 0 entries not shown.</span></td><td class=" " style="width:100%"></td><td class=" "><button class="netLimitButton " title="In order to change the limit modify 'extensions.firebug.console.logLimit'">Preferences</button></td><td class=" "> </td></tr></tbody></table></td></tr></tbody></table></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">----&gt; resizeWidget._onMouseUp emite EVENT 'endResize'</pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 297)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">18164/11828-----&gt;ResizeMoveArea      -&gt;"activate":    [1---&gt;callback de ENDRESIZE em resizeMoveArea.activate() left=905 top=127 width=80 height=80] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">18168/0004 -----&gt;ResizeMoveArea      -&gt;"activate":    [---&gt;ResizeWidget -callback de ENDRESIZE em resizeMoveArea.activate() - CLICK OUTSIDE - ENVIA PARA afterResizeEnd -&gt;vai emitir evento de saida...] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24599/18165---&gt;editFBuilder2         -&gt;"overWidget":  [-&gt;1 a)callback resizeMoveEnd CLICK DE SAIDA  guarda em MotherLib Positions: x=854 y=121 width=80 height=80] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24604/0005 ---&gt;editFBuilder2         -&gt;"overWidget":  [-&gt;1 b)callback resizeMoveEnd reposiciona Area=A15_inner-&gt;Positions x=901 y=123 width=92 height=88] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24606/0002 ---&gt;editFBuilder2         -&gt;"overWidget":  [-&gt;1 c)callback resizeMoveEnd --&gt; VAI para outWidget()] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24609/0003 ---&gt;editFBuilder2         -&gt;"outWidget":   [SAIU] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24612/0003 ---&gt;editFBuilder2         -&gt;"outWidget":   [-&gt;SAIU 2 - entrada em outWidget -&gt;o valor de z.me=I am z!] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24615/0003 ---&gt;editFBuilder2         -&gt;"outWidget":   [saved _moveResizeDiv0.w=80  _moveResizeDiv0.h=80] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24619/0004 ---&gt;editFBuilder2         -&gt;"outWidget":   [-&gt;SAIU de f016 Vai emitir widget_unselected event] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24621/0002 ---&gt;editFBuilder2         -&gt;"resumeWListeners":[-&gt;RESUME all listeners] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24624/0003 ---&gt;editFBuilder2         -&gt;"outWidget":   [-&gt;regressou de widget_unselected] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div><div class="logRow logRow-log"><pre class="objectBox inline objectBox-text " role="presentation">24626/0002 ---&gt;editFBuilder2         -&gt;"outWidget":   [-&gt;regressou de widget_unselected 2 -&gt;o valor de z.me=I am z!] </pre><a class="objectLink objectLink-sourceLink a11yFocus "><div class=" ">dojo.js (line 130)</div><div class=" "></div></a></div></div></body></html>

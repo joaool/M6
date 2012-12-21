@@ -1,0 +1,130 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Teste Data Dictionary v2.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;
+//thiz=this;
+require([
+	"Mother1/utils.js",
+	"Mother1/debug.js",
+	"Mother1/dDictionary.js",
+	"MotherLib6.js",
+    "Mother1/ResizeMoveArea2.js",  
+	"dojo/_base/declare",	 
+	"dojo/_base/window",
+    "dojo/on",
+	"dojo/parser",//recomendation from JS
+	"dojo/dom",
+	"dojo/dom-construct",//used outside class
+	"dojo/dom-style",	
+	"dojo/ready",
+	//----- para editFBuilder on,Lang,DomGeom
+    "dojo/_base/lang",
+	"dojo/dom-geometry",
+	"dojo/Evented" //necessário para emit e recepção de eventos
+	], 
+	function(Utils,Dbg,dDictionary,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,Lang,DomGeom,Evented){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_dataDictionary"          ,"",{"main":true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("editFBuilder2"       ,"-->",{"constructor":true,"setAListeners":false,"resumeWListeners":true,suspendWListeners:true,"overWidget":true,"outWidget":true});
+		//this.oDbg.setDbg("ResizeMoveArea"      ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+
+		this.oDbg.setThis("test_dataDictionary");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//------------------------------------------------------------------------	
+		//write code HERE !
+		//-------- test functions --------------------------------------------------------------
+		testShowEntity=function(xTestName,oEntity){
+			if(this.oDbg.isDbg("main")) this.oDbg.display("----------"+ xTestName+"--------------");
+			if(this.oDbg.isDbg("main")) this.oDbg.display("Semantics 1)->"+dDictionary.entitySemantics(oEntity,"A","En"));
+			if(this.oDbg.isDbg("main")) this.oDbg.display("Semantics 2)->"+dDictionary.entitySemantics(oEntity,"B","En"));
+		};		
+		testShowAttributes=function(xTestName,oEntity){
+			if(this.oDbg.isDbg("main")) this.oDbg.display("----------"+ xTestName+"--------------  typeof oEntity="+typeof(oEntity)+" oEntity=" + JSON.stringify( oEntity ) );
+			if(this.oDbg.isDbg("main")) this.oDbg.display("singular="+oEntity.singular);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("plural="+oEntity.plural);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("description="+oEntity.description);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("attributes="+oEntity.attributes);
+			xTotAttr=oEntity.attributes.length;
+			for(var i=0;i<xTotAttr;i++){
+				//if(this.oDbg.isDbg("main")) this.oDbg.display(i+"-"+" The "+oEntity.attributes[i].name+" of "+oEntity.singular+" is the "+oEntity.attributes[i].description);
+				if(this.oDbg.isDbg("main")) this.oDbg.display(i+"-"+dDictionary.attributeSemantics(oEntity.attributes[i].name,oEntity.attributes[i].description,oEntity,"En"));
+			};
+			if(this.oDbg.isDbg("main")) this.oDbg.display("------------- compressed to Logical (using C2L) ------------");
+			var maxKey=oEntity.lastId;
+			for(var i=0;i<maxKey;i++){
+				var xId=dDictionary.getCompressed(i);
+				if(this.oDbg.isDbg("main")) this.oDbg.display(i+"---->for compressed Name="+xId+" The name is "+dDictionary.getAttributeName(oEntity,xId));
+			};	
+			if(this.oDbg.isDbg("main")) this.oDbg.display("------------- Logical to compressed (using L2C)------------");
+			xTotAttr=oEntity.attributes.length;
+			for(var i=0;i<xTotAttr;i++){
+				var xLogicalName=oEntity.attributes[i].name;
+				if(this.oDbg.isDbg("main")) this.oDbg.display(i+"---->for Logical Name="+xLogicalName+" the compressed name is "+dDictionary.getCompressedName(oEntity,xLogicalName));
+			};				
+		};
+		
+		//-------- main code --------------------------------------------------------------
+		//--------------- now we restore the initial entity (saved in a previous step) an show it !!!!---------------------
+		//x=dDictionary.makeSemStr("Client","Individual or Company to whom we may send invoices","A","En");
+		//x=dDictionary.makeSemStr("Client","clients","B","En");
+		//alert("---END---"+x)
+		if(this.oDbg.isDbg("main")) this.oDbg.display("In this test we restore the entity created in test_dataDictionary -- and show it");
+		var xEnt="xClient";
+		dDictionary.read(xEnt).then( 
+			//--------accepted
+			function(  oEntity) {
+				if(this.oDbg.isDbg("main")) this.oDbg.display("@@@INSIDE THEN() @@ oEntity="+JSON.stringify(oEntity));
+				if(oEntity){
+					if(this.oDbg.isDbg("main")) this.oDbg.display("Localizou "+xEnt);
+					testShowEntity("testing....createEntity, entitySemantics",oEntity);//add atributes to entity
+					if(this.oDbg.isDbg("main")) this.oDbg.display("testShowEntity done");
+					testShowAttributes("testing ....renameAttribute,addAttribute,removeAttribute", oEntity); //showing changes
+					if(this.oDbg.isDbg("main")) this.oDbg.display("testShowAttributes done");
+
+				}else{
+					if(this.oDbg.isDbg("main")) this.oDbg.display(" There is no entity="+xEnt+" in the database !!!");
+				};	
+			},
+			function(err){
+				 alert("An error occurred: " + err);//shows the error message prepared in dDictionary.read
+			},
+			this
+		);
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

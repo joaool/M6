@@ -1,0 +1,421 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Test Dgrid v2.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;
+//thiz=this;
+require([
+	"Mother1/utils.js",
+	"Mother1/debug.js",
+	"Mother1/dDictionary.js",
+	"MotherLib6.js",
+	"dojo/store/util/QueryResults",
+    "Mother1/ResizeMoveArea2.js",  
+	"dojo/_base/declare",	 
+	"dojo/_base/window",
+    "dojo/on",
+	"dojo/parser",//recomendation from JS
+	"dojo/dom",
+	"dojo/dom-construct",//used outside class
+	"dojo/dom-style",	
+	"dojo/ready",
+	//----------------- grid
+        "dgrid/Editor",
+		"dojo/store/Memory",
+		"dojo/store/Observable", 
+		"dgrid",
+		"dgrid/extensions/ColumnResizer", 
+		"dgrid/extensions/ColumnReorder", 
+		"dgrid/extensions/ColumnHider", 
+		"dgrid/Selection",	
+		"dojo/store/JsonRest",		
+	//----- para editFBuilder on,Lang,DomGeom
+    "dojo/_base/lang",
+	"dojo/dom-geometry",
+	"dojo/Evented" //necessário para emit e recepção de eventos
+	], 
+	function(Utils,Dbg,dDictionary,FBuilder,QueryResults,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,
+		Editor,Memory,Observable,Grid,ColumnResizer,ColumnReorder,Hider,Selection,JsonRest,//grid block	
+		Lang,DomGeom,Evented){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_Dgrid1"          ,"",{"main":true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldProps:true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("editFBuilder2"       ,"-->",{"constructor":true,"setAListeners":false,"resumeWListeners":true,suspendWListeners:true,"overWidget":true,"outWidget":true});
+		//this.oDbg.setDbg("ResizeMoveArea"      ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+
+		this.oDbg.setThis("test_Dgrid1");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//------------------------------------------------------------------------	
+		/*
+		This test shows:
+			1- How to load an array in dGrid - f0.setFieldProps("f01",{load:xArr1}); //where xArr1 has a patten -->{ idCol: 1, col1:"col11",col2:"col12",col3:"col13"}
+					This needs a formatter to adjust an array to the mother dGrid pattern !!!!
+			2- How to set a status line that updates whenever the user highligth a dGrid line
+					we set the line : f0.addChild("label",  {name:"semantic",left:5,top:250,width:500,value:"Please change Entity and Entity Description until this statement makes sense to you"}); //5
+					we use the "dgrid-select" event to update the line with any combination of columns: 
+						f0.setFieldPropsByName("semantic",{value:dDictionary.makeSemAttrStr(event.rows[0].data.col1,event.rows[0].data.col2,oEntity.singular,"En")});
+			3- How to add items to dGrid:
+					f0.fieldWById("f01").store.data.put({ idCol:4,col1:"jajakinzinho",col2:"Manel da Silva"});//in the grid
+					f0.fieldWById("f01").store.put({ idCol:60, col1:"kaim",col2:"Abel da Costa"});//in the store supporting the grid
+			4- How to update a dGrid Item:
+					f0.fieldWById("f01").store.data[3].col2=contentPosition32;
+				NOTE:the editing features of the grid will fill the memory store with the edited content. At the end in a single operation we will save the content
+					 to the persistence mechanism.
+			5- How to remove a dGrid line:
+					f0.fieldWById("f01").store.remove(2);// removes the whole line object
+			6- How to sort a dGrid
+					grid=f0.fieldWById("f01");
+					grid.sort("idCol");//this will SET THE ORDER for that column !!! ascending DEPRECATED
+					grid.sort("idCol",true);//this will SET THE ORDER for that column !!! descending DEPRECATED
+					grid.set("sort","idCol");//OK this will be used in dGrid 1.0
+					grid.set("sort","idCol",true);//OK this will be used in dGrid 1.0
+			7- How to get the total number of memory store elements 
+					grid=f0.fieldWById("f01");
+					var xLast=grid.store.data.length; //using the grid as a reference
+			8- How to change a subset of the memory store. We wanted to mark all elements of col1 (Attribute Name) beggining by "a" with "@"+<idCol>. How ?
+			     8.1- We set a query for all elements of col 1 beginning by "a".
+						var xQuery0=function(line){//for each line returns true or false - meaning its included(true) or not
+							xRet=false;
+							if(line.col1.substr(0,1)=="a") //only the col1 beginning by "a" will be shown
+								xRet=true;
+							return (xRet);
+						};				
+			     8.2- We change each element of the query subset
+						grid.store.query(xQuery0).forEach(function(x){
+							k++;
+							console.log("############>"+x.col1+" - "+x.col2);
+							xId=x.idCol;//+1;
+							console.log("######################### para id="+xId+" marca com X col1="+x.col1+"X"+" - "+x.col2);
+							x.col1+="@"+k;
+							x.col2="@"+x.col2;
+							grid.store.put(x);  //put poe toda a linha !!!!
+						});				 
+		*/
+		//write code HERE !
+		oEntity=dDictionary.createEntity("Client","clients","Individual or Company to whom we may send invoices");//singular, plural, description
+		dDictionary.addAttribute(oEntity,"address","address to send invoices","text"); //xEntity,xAttribute,xDescription,xType
+		dDictionary.addAttribute(oEntity,"dlvryAddress","place where goods should be delivered","text"); //xEntity,xAttribute,xDescription,xType
+		dDictionary.addAttribute(oEntity,"salesRep","professional responsible for customer's follow-up","text"); //xEntity,xAttribute,xDescription,xType
+		dDictionary.addAttribute(oEntity,"birthday","date of her/his aniversary","text"); //xEntity,xAttribute,xDescription,xType
+		
+
+		//var xRet=formatter(oEntity.attributes);
+		//var xArr1=xRet.formattedArr;
+		//alert("after formatter !!! Headers="+xRet.candidateHeaders);
+		//var memoryStore = new Memory({idProperty : "idCol",data: xArr1});//make a store...with attributes
+		//memoryStore.put({ idCol: 5, col1:"jakim",col2:"Manel da Silva"});//OK
+		//var nextId=memoryStore.data.length;
+		//console.log("a) nextId="+nextId);
+
+		var viewPortX={l:50,t:5,w:600,h:400,floatF:"nonModal"};//,floatF:"nonModal";//floatF default will be "noFloat"
+		var f0=new FBuilder("test_Dgrid2","f0",{viewPort:viewPortX,borderColor:"b",borderType:"solid",borderThickness:1});//
+
+		var xQuery=function(line){return (line.idCol>=3 );}//&& line.idCol<25) ;
+
+		//1- test case OK : minimum grid: no load, no headers, (if no  showId it means showId=true)
+		//f0.addChild("grid",{left:5,top:5});// OK this will present col0,col1,col2 with default content - AUTOMATIC FILLER
+		//f0.addChild("grid",{left:5,top:5,showId:false});// OK this will present col1,col2 with default content - AUTOMATIC FILLER
+		//f0.addChild("grid",{left:5,top:5,width:500,height:220});// OK this will present col0...col1...col7 with default content - AUTOMATIC FILLER
+		//f0.addChild("grid",{left:5,top:5,width:500,height:220,showId:true});// OK this will present col0...col1...col7 with default content - AUTOMATIC FILLER
+		//f0.addChild("grid",{left:5,top:5,width:500,height:220,showId:false});// OK this will present col1...col8 with default content - AUTOMATIC FILLER
+
+		//2-test case OK: addChild defined:  headers,  load:undefined
+		//f0.addChild("grid",{headers:"#order/text,#Attribute Name/text,#Description/text",left:5,top:5,width:500,height:220,showId:true});//OK
+		//f0.addChild("grid",{headers:"order/text(40),#Attribute Name/text(300),#Description/text(100)",left:5,top:5,width:500,height:220,showId:true});// OK
+		//f0.addChild("grid",{headers:"Att/text(100),Descr/text(300)",left:5,top:5,width:500,height:220,showId:false});// OK
+
+		//3-test case OK: addChild defined: load, query -- undefined: headers,  
+		//  in this case the object keys (in load) will be the headers
+		//f0.addChild("grid",{load:oEntity.attributes,left:5,top:5});// OK  lateral scroll if load has more columns than the default size can show
+		//f0.addChild("grid",{load:oEntity.attributes,left:5,top:5,width:500,height:220});// OK
+		//f0.addChild("grid",{load:oEntity.attributes,query:xQuery,left:5,top:5,width:550,height:220,showId:false});// OK
+		//f0.addChild("grid",{load:oEntity.attributes,query:xQuery,left:5,top:5,width:500,height:220});// OK
+
+		//4-test case OK: addChild defined: load, defined: headers,  
+		//f0.addChild("grid",{load:oEntity.attributes,headers:"#order/text,#Attribute Name/text,#Description/text",left:5,top:5,width:500,height:220,showId:true});//OK
+		//f0.addChild("grid",{load:oEntity.attributes,headers:"order/text(40),#Attribute Name/text(100),#Description/text(300)",left:5,top:5,width:500,height:220,showId:true});// OK
+		//f0.addChild("grid",{load:oEntity.attributes,query:xQuery,headers:"Att/text(300),Descr/text(100)",left:5,top:5,width:500,height:220,showId:false});// OK
+
+		//5-test case: load and query undefined on addChild. Load and query are defined on setFieldProps
+		f0.addChild("grid",{name:"grid0",left:5,top:5,width:500,height:220,showId:true,headers:"order/text(20),Attribute Name/text(100),Description/text(300)"});//1
+		//f0.addChild("grid",{left:5,top:5,width:500,height:220,showId:false,headers:"Attribute Name/text(100),Description/text(300)"});//1
+		//f0.setFieldProps("f01",{load:oEntity.attributes}) 
+		f0.setFieldPropsByName("grid0",{load:oEntity.attributes}) 
+		//f0.setFieldProps("f01",{headers:"order/text(50),xSimply name/text(300),xSimply description/text(200)"});//do not forget to assure that showId=true 
+		//f0.setFieldProps("f01",{headers:"xSimply name/text(300),xSimply description/text(200)"});//fo showId=false
+		//f0.setFieldProps("f01",{showId:true,headers:"order/text(30),xSimply name/text(300),xSimply description/text(200)"});//do not forget to assure that showId=true 
+	//f0.setFieldProps("f01",{showId:false,headers:"xSimply name/text(300),xSimply description/text(200)"});//do not forget to assure that showId=true 
+	f0.setFieldPropsByName("grid0",{showId:false,headers:"xSimply name/text(300),xSimply description/text(200)"});//do not forget to assure that showId=true 
+		// ERRO --> showid should appear UPFRONT f0.setFieldProps("f01",{headers:"xSimply name/text(300),xSimply description/text(200)",showId:false});//do not forget to assure that showId=true  ERRO  
+		
+		
+		
+		//f0.addChild("grid",{left:5,top:5,width:500,height:220,query:xQuery,showId:true,headers:"order,Attribute Name,Description",colTypes:"text/3,text/150,text/300"});//1
+		//f0.addChild("grid",{load:oEntity.attributes,query:xQuery,left:5,top:5,width:500,height:220,query:xQuery,showId:true,headers:"order,Attribute Name,Description",colTypes:"text/3,text/150,text/300"});//1
+
+//f0.addChild("grid",{left:5,top:5,width:500,height:220,showId:true,headers:"order,Attribute Name,Description",colTypes:"text/3,text/150,text/300"});//1
+
+//f0.setFieldProps("f01",{load:oEntity.attributes}) //recebe um array com um formato qualquer e ransforma-o para memoryStore efaz set
+
+		f0.addChild("label",  {name:"semantic",left:5,top:250,width:500,value:"Please change Entity and Entity Description until this statement makes sense to you"}); //5
+
+		//var dijitObj=f0.static.zarrWidgets[f0.currentFormNumber][0];
+		//alert("STOP HERE");
+		
+		//How to add another element ?
+	
+		var grid=f0.static.zarrWidgets[f0.currentFormNumber][0];
+	    var nextId=grid.store.data.length;
+		var gridf0=f0.fieldWById("f01").store;
+		//var gridf0=f0.fieldWByName("grid0").store;
+		console.log("The total number of elements in the Grid (==memeory store) is "+nextId);
+		var xLast=f0.fieldWById("f01").store.data.length;
+		var xLast=f0.fieldWByName("grid0").store.data.length;
+		var  contentPosition32=f0.fieldWById("f01").store.data[3].col2;//loads row 3 (the 4th row) column 2
+		
+
+		console.log("HEADERS Next element="+xLast+" - f0.fieldByName('grid0').props.headers="+f0.fieldByName("grid0").props.headers);
+		console.log("SHOWID Next element="+xLast+" - f0.fieldByName('grid0').props.showId="+f0.fieldByName("grid0").props.showId);
+		console.log("LAST EL IN STORE Next element="+xLast+" - f0.fieldByName('grid0').props.store.data.length="+f0.fieldByName("grid0").props.store.data.length);
+		console.log("LAST EL IN STORE Next element="+xLast+" - f0.fieldWById('f01').store.data.length="+f0.fieldWById("f01").store.data.length);
+		console.log("Position 3,2 before change =>"+contentPosition32);//date of her/his aniversary
+		//changing a specific row/col
+		
+		contentPosition32="date to give congratulations for being alive";
+		f0.fieldWById("f01").store.data[3].col2=contentPosition32;
+		contentPosition32=f0.fieldWById("f01").store.data[3].col2;//loads row 3 (the 4th row) column 2
+		console.log("Position 3,2 after change =>"+contentPosition32);//date of her/his aniversary
+		 
+		xLast=f0.fieldWById("f01").store.data.length;
+		f0.fieldWById("f01").store.put({idCol: xLast+1, col1:"juju",col2:"the king of mambo"});
+		var xArr=f0.fieldWById("f01").store.data;
+		
+		f0.setFieldProps("f01",{showId:true,headers:"order/text(50),Attribute Name/text(100),Description/text(300)"});//1
+
+		//----------- TO INSERT  this code still removes ex position 4 now renamed to 5
+		var k=1;//first position
+		var z=4;//we want ot insert before this position
+		var nIncr=0;
+		var newArr = dojo.map(xArr, function(item){
+			if(k==z)
+				nIncr=1;
+			item.idCol=k+nIncr; 
+			k++;
+			return item;
+		});
+		f0.fieldWById("f01").store.data=newArr;
+	//	f0.fieldWById("f01").store.put({idCol:4,col1:"salesBirth",col2:"after sales/before birthday"},{before:5,overwrite:true});
+		//grid.store.put({ idCol:4,col1:"jajakinzinho",col2:"Manel da Silva"});//o objecto já existe
+	
+		
+		//------------- ADDING ITEMS -------------------------------------
+		//grid.store.put({ idCol: nextId, col1:"jakim",col2:"Manel da Silva"});//OK
+		//grid.store.put({ idCol:30,col1:"jajakinzinho",col2:"Manel da Silva"},{before:true,overwrite:false});//o objecto já existe
+		//grid.store.put({ idCol:25,col1:"jajakinzinho",col2:"Manel da Silva"});//o objecto já existe
+		//grid.store.put({  idCol:5,col1:"jajakim",col2:"Manel da Silva"});//nada faz para alem de por no fim....
+		grid.store.put({ idCol:60, col1:"kaim",col2:"Abel da Costa"});//nada faz para alem de por no fim....
+		grid.store.put({ idCol:70,  col1:"antrab",col2:"António Rabastrunco"});//nada faz para alem de por no fim....
+		grid.store.put({  idCol:80, col1:"Mabasta",col2:"Malhuco daBastunco"});//nada faz para alem de por no fim....
+		grid.store.put({  idCol:90, col1:"Kagu",col2:"Kaly Guterres"});//nada faz para alem de por no fim....
+		
+		//------------ UPDATE ITEM 25 ------------ 100% ok
+					var xItem = grid.store.get(3);
+					console.log("acedeu a col1="+xItem.col1+"----"+xItem.col2); //OK
+					//ou melhor:
+					console.log("--------------------------");
+					for(var i in xItem){
+						console.log(i, "=", xItem[i]);
+					};
+					console.log("--------------------------");
+					// now the final update
+					xItem.col1="xJaja-Kim-Zinho";
+					grid.store.put(xItem);
+		//------------------------------------------
+		
+		//Now we define the query object
+		/*
+		grid.store.query(function(object){
+			return object.idCol > 10;
+		}) // Pass a function to do more complex querying
+		*/
+		//grid.store.query(null,{sort:[{attribute:"col2"}]});
+		//-----------------------   ORDER IT !!! ----------------------------------------------------------
+		var k=0;
+		//grid.store.query({},{sort:[{attribute:"col1", descending: false}], start: 2,	count: 3})//
+		//grid.store.query({},{sort:[{attribute:"col1", descending: false}]})//
+		
+		/*
+		grid.store.query({},{sort:[{attribute:"idCol", descending: false}], start: 2,	count: 3})//
+				//ATTENCION this will begin by sorting the whole store - then it will process 3 elements beggining in offset 2 (position 3)
+				// descending:false - means ascending order.
+				//takes the subset start/count - sort by idCol and then map and forEach
+				//idCol ok e liga a 2 count3 . com col1 não funciona
+				.map(function(x){//this is a transformer
+					// the results should be sorted by department, with a limit of 3 objects,
+					// starting at an offset of 2
+					k++;
+					x.col1+="-X"+k;
+					x.col2="X"+k+"-"+x.col2;
+					return x; // return just the name, mapping to an array of names
+				}).forEach(function(x){
+						console.log("Inside query-->"+x.idCol+"-"+x.col1+"-->"+x.col2);
+					});		
+		*/
+		
+		//grid.store.query().forEach(function(x){//empty query returns all
+		//	console.log("Dentro do query-->"+x.idCol+"-"+x.col1+"-->"+x.col2);
+		//});
+		//----------------- END OF ORDERING -----------------------------------------------
+		//grid.store.remove(2);// OKfunciona
+		//var gridQuery=function(line){//OK line is a store element
+		//	return (line.idCol>=50 );
+		//};//&& line.idCol<25) ;	
+
+		/*
+		var xQuery0=function(line){//line is a store element OK
+			//line.reId=k
+			//line.col1=line.col1+"X";
+			xRet=false;
+			if(line.col1.substr(0,1)=="a") //only the col1 beginning by "a" will be shown
+				xRet=true;
+			return (xRet);//for each line returns true or false - meaning its included(true) or not
+			//return (line.idCol>=0 );//for each line returns true or false - meaning its included(true) or not
+		};//&& line.idCol<25) ;	
+		*/
+		var xQuery0=function(line){//for each line returns true or false - meaning its included(true) or not
+			//line.reId=k
+			//line.col1=line.col1+"X";
+			xRet=false;
+			if(line.col1.substr(0,1)=="a") //only the col1 beginning by "a" will be shown
+				xRet=true;
+			return (xRet);//(line.idCol>=0);
+		};	
+		// x=xQuery0({col1:"anel"}); seria executar o método atrás definido x=true
+		//
+		// o objecto Memory store ---> aqui acedido por grid.store tem uma propriedade query que quando invocada chama a function que é o seu value tantas vezes quantas os elenmetos do store
+		//
+		//var xQuery1=function(line){return (line.idCol>=0)};//&& line.idCol<25) ;	//OK FUNCIONA!!!
+		var xQuery1=function(line){return (line.idCol>=0)};//&& line.idCol<25) ;	
+		var xQoptions={sort: [{attribute: "idCol"}]};
+		//grid.store.query(xQuery1, {sort: [{attribute: "idCol"}]}).forEach(function(x){
+		grid.store.query(xQuery1, xQoptions).forEach(function(x){
+						x.col1=x.col1+" - "+x.idCol;
+						console.log("+-->Novo query xQuery1-->"+x.idCol+"-"+x.col1+"-->"+x.col2);
+					});	
+		//the method query of memory store accepets an options parameter
+		var xQuery1=function(line){return (line.idCol>=0)};//&& line.idCol<25) ;	
+		
+		//f0.setFieldProps("f01",{query:(xQuery1,[{attribute: "idCol"}])}); //recebe um array com o formato { idCol: 1, col1:"col11",col2:"col12",col3:"col13"},.. transforma-o em memoryStore efaz set
+		//var xQoptions=QueryResults([{attribute: "idCol"}]);	//transforms the array in a result set ready to be used by .forEach, filter and  .map methods
+		var xQoptions={sort:[{attribute: "idCol"}]};	//transforms the array in a result set ready to be used by .forEach, filter and  .map methods
+		//f0.setFieldProps("f01",{query:(xQuery1,xQoptions)}); //recebe um array com o formato { idCol: 1, col1:"col11",col2:"col12",col3:"col13"},.. transforma-o em memoryStore efaz set
+
+//f0.setFieldProps("f01",{query:xQuery1}); //recebe um array com o formato { idCol: 1, col1:"col11",col2:"col12",col3:"col13"},.. transforma-o em memoryStore efaz set
+
+		//the above line will set xQuery0 has the function that will filter the grid f01
+		
+		//grid.sort("idCol");//this will SET THE ORDER for that column !!! ascending
+		//grid.sort("idCol",true);//this will SET THE ORDER for that column !!! descending
+		grid.set("sort","idCol");
+		//grid.set("sort","idCol",true);
+		
+		//grid.store is a memorystore. http://forums.arcgis.com/threads/70053-dgrid-displays-but-does-not-populate-with-query-results
+		//alert("line 1="+grid.store.get(70).col1);//returns "antrab" confirming everything - this is access to a plain object in the store (no filters...)
+		//
+		//Next line uses the filter and does something with the filtered contents
+		var k=0;
+		grid.store.query(xQuery0).forEach(function(x){
+			k++;
+			console.log("############>"+x.col1+" - "+x.col2);
+			xId=x.idCol;//+1;
+			console.log("######################### para id="+xId+" marca com X col1="+x.col1+"X"+" - "+x.col2);
+			//x.colId=xId;
+			x.col1+="@"+k;
+			x.col2="@"+x.col2;
+			grid.store.put(x);  //put poe toda a linha !!!!
+		});
+	    var xLast=grid.store.data.length;
+		console.log("The total number of elements in the Grid (==memeory store) is "+xLast);
+		grid.refresh(); //a grid limita-se a apresnetar tudo o que está no memory store com o filtro estabelecido na sua propriedade "query" 
+		//                     without this refresh the "@"+k would not appear because they were introduced after the comunication with the grid
+		
+		//to include observable:http://dojo-toolkit.33424.n3.nabble.com/Observable-dojo-store-Memory-put-is-not-observed-td2775321.html
+		
+		
+		grid.on("dgrid-select", function (event) {
+			console.log("Key of selected row:"+event.rows[0].data.idCol);
+			currentRow=event.rows[0].data.idCol;
+			//console.dir(event.rows[0]);
+			console.log("---------->Key of selected row:"+currentRow);
+			f0.setFieldPropsByName("semantic",{value:dDictionary.makeSemAttrStr(event.rows[0].data.col1,event.rows[0].data.col2,oEntity.singular,"En")});
+			for (var rowId in grid.selection){ 
+				var j=0;
+				for (var columnId in grid.selection[rowId]) { 
+					//console.log("Conteudo da key da linha="+rowId+" j="+columnId+" "+grid.selection[rowId][columnId]);
+					console.log("Key da linha="+rowId+" Field="+columnId);
+				}
+			}
+			//grid.selection é uma matriz com o conjunto de células linhas seleccionadas: selectionMode="multiple"
+			//      linhas - o primeiro [] - tem a key da linha (conteudo de idProperty (Memory store)) 
+			//      colunas - o segundo [] - tem para cada linha o field da coluna seleccionada 
+			//grid.selection[rowId][columnId]=true (não sei para que serve isto)
+	
+		});
+		grid.on("dgrid-deselect", function (event) {
+			console.log("Row de-selected: ", event.rows[0].data);
+			//alert("de-select");
+		});
+		grid.on("dgrid-datachange", function (event) {
+			console.log("Data changed!! row="+event.cell.row.id+" col="+event.cell.column.id+" oldvalue="+event.oldValue+" new="+event.value);
+			//alert("Data changed!! row="+event.cell.row.id+" col="+event.cell.column.id+" oldvalue="+event.oldValue+" new="+event.value);
+			//f0.setFieldPropsByName("semantic",{value:"Mudou!!!"}); //OK
+			//f0.setFieldPropsByName("semantic",{value:"Mudou para "+event.value}); //OK
+			// ex: dDictionary.makeSemAttrStr("address","the address to send invoices","Client","En");
+			//      returns --->  The <address> of <Client> is <the address to send invoices>
+			console.log("############################## antes");
+			var line=event.cell.row.id;
+			var col=event.cell.column.id;
+			if(col=="col1")
+				f0.setFieldPropsByName("semantic",{value:dDictionary.makeSemAttrStr(event.value,"o segundo",oEntity.singular,"En")});
+			else if (col=="col2")
+				f0.setFieldPropsByName("semantic",{value:dDictionary.makeSemAttrStr("o primeiro",event.value,oEntity.singular,"En")});
+			else
+				console.log("Only 2 columns are available in this grid !!!");
+		});			
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

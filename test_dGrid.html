@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>dGrid 16.0</title>
+	<meta name="viewport" content="width=570" />
+
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--subst por dgrid/css/skin <link rel="stylesheet" href="../../../resources/style/demo.css"> -->
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/grid/resources/claroGrid.css" rel="stylesheet">-->
+	<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script>
+		// we’re creating a dojoConfig object *before* we load dojo.js
+		var dojoConfig = {
+			async: true,
+		};
+	</script>
+	<script src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js"></script>
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<script src="Mother1/bootstrap.js"></script>	
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> -->
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/grid/resources/claroGrid.css" rel="stylesheet">-->
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/FloatingPane.css " rel="stylesheet">
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">
+	<link rel="stylesheet" href="Dojo Toolkit/dojo-release-1.7.1/dgrid/css/dgrid.css"> 
+	<!--------- special for dgrid test ------------------------------------------------------------>
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojo/resources/dojo.css " rel="stylesheet">
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dojo/resources/dnd.css " rel="stylesheet">
+	<link href="Dojo Toolkit/dojo-release-1.7.1/dgrid/css/skins/claro.css " rel="stylesheet">
+	<!------ Mother CSS ------------------------------------------------------------------- -->
+		<!--- For Mother Builder -->
+		<!--<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> -->
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fx,f0)--->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/>  
+	<!------------------------------------------------------------------------------------- -->
+
+	<script src="Dojo Toolkit/dojo-release-1.7.1/dgrid/dgrid.js"></script>
+	<style type="text/css">
+		.heading {
+			font-weight: bold;
+			padding-bottom: 0.25em;
+		}
+		.ui-widget{
+			margin: 10px;
+		}
+		/* add styles to size this grid appropriately */
+		#grid {
+			height: 20em;
+		}
+		.field-idCol {
+			width: 3em;
+			background-color: blue;
+		}
+		.field-col1 {
+			width: 5em;
+		}
+		.field-col2 {
+			width: 5em;
+		}
+		.field-col3 {
+			width: 5em;
+			background-color: gold;		
+		}
+		
+		
+		.dgrid-row-odd {
+			background: #F2F5F9;
+		}
+		
+	</style>
+
+	<script>
+			/*
+			function hello(x){
+				alert("Hello de "+x);
+			};
+			*/
+			//thiz=this;
+		require([
+				 "MotherLib4.js",
+				 "Mother1/editViewPort3.js",  
+				 "Mother1/moveResizeArea2.js",  
+				 "Mother1/exchanger2.js",
+				 "Mother1/resizeWidget2.js",
+				 "Mother1/moveCanvas2.js",
+				 "Mother1/utils.js",
+				 "dojo/_base/declare",	 
+				 "dojo/keys",	 
+				 "dojo/_base/window",
+				 "dojo/_base/event",
+				 "dijit/registry",				 
+				 "dojo/dom",
+				 "dojo/html",
+				 "dojo/on",
+				 
+				 "dojo/store/Memory",
+				 "dojo/store/Observable", 
+				 "dojo/data/ObjectStore",
+				 
+				 "dojo/Evented",  
+				 "dojo/dnd/Moveable",
+				 "dojo/dnd/Mover",	
+				 "dojo/dom-geometry",
+				 "dojo/dom-construct",
+				 "dojo/dom-style",	
+				 "dojo/dom-class",							 
+				 "dojo/_base/lang",
+				 "dojo/aspect",
+				 "dijit/layout/ContentPane",
+				 "dijit/layout/BorderContainer",
+				 "dijit/layout/AccordionContainer",
+				 "dijit/layout/TabContainer",
+				 "dojox/layout/FloatingPane",
+				 "dijit/ColorPalette",	
+				 
+				 
+				"dijit/form/NumberTextBox",
+				"dijit/form/ComboBox",			
+				"dojo/data/ItemFileReadStore",
+				"dijit/form/DateTextBox",
+				"dojo/date/locale",
+
+				 //---------- dgrid -------------
+				 //"dgrid/Grid",
+				 "dgrid",
+				 "dgrid/OnDemandGrid",
+				 "dgrid/selector",
+
+				 "dgrid/extensions/ColumnResizer", 
+				 "dgrid/extensions/ColumnReorder", 
+				 "dgrid/extensions/ColumnHider", 
+				"dgrid/Keyboard", 
+				"dgrid/Selection",				 
+				"dgrid/CellSelection",				 
+				 "dgrid/Editor",
+				 "dijit/form/TextBox",
+		 		"dijit/form/CheckBox",
+				 "dijit/form/ComboBox",
+				 "dijit/form/CurrencyTextBox",	
+				 //-------------------------------
+				 "dojo/ready",
+				 "dojo/domReady!"], //só consome
+			//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Declare,Win,Registry,Dom,On,Evented,Moveable,Mover,DomGeom,DomConstruct,DomStyle,DomClass,Lang,ContentPane,BorderContainer,AccordionContainer,TabContainer,ColorPalette,Ready){ 
+			function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Declare,Keys,Win,Event,Registry,
+			Dom,Html,On,Memory,Observable,ObjectStore,Evented,Moveable,Mover,DomGeom,DomConstruct,DomStyle,DomClass,Lang,Aspect,
+			ContentPane,BorderContainer,AccordionContainer,TabContainer,FloatingPane,ColorPalette,
+			NumberTextBox,ComboBox,ItemFileReadStore,DateTextBox,Locale,Grid,OnDemandGrid,Selector,ColumnResizer,ColumnReorder,Hider,Keyboard, Selection,CellSelection,Editor,TextBox,CheckBox,ComboBox,CurrencyTextBox,Ready){ 
+				//---------------------------------------------------------------------------------------	
+				console.log(document.title+"......  inicio..");//document title tem "Layout Area 6.0" ... a property <title> que está no head
+				// Version 16 - existing grid features:
+				//   ColumnResize, ColumnReorder, Column Hide/Show
+				//   Default content RowxColumn default Matrix (ex 	makeData(10,30,xDataArr);
+				//   Default Header (ex makeColumns(10,xColumns);
+				//   update of a column header (ex updateHeader(5,"Jesus","text",xColumns,grid))
+				//   dgrid-datachange -> event controled
+				// -------------------------------------
+				//   Missing:
+				//      insert lines (at the end, in between)
+				//      insert columns
+				//      set column size (not manually)
+				//      integration in MotherLib
+				//http://www.unionplatform.com/?page_id=3316
+				var util=new Utils(); //to use utils functions
+				var currentRow=null;
+				var lastRow=null;
+				
+				var f0=new fBuilder("testGrid","f0"); //to support a single button
+				//var z = dojo.getObject('z', true);//the optional true will create the property if it does not exist - that's the case here
+				f0.addChild("button",{left:0,top:3,value:"X-Header",width:60,clickCode:"z.header();"}); //1
+				f0.addChild("textBox",{left:80,top:3,value:"Header pos 5"}); //2
+				f0.addChild("button",{left:200,top:3,value:"New",clickCode:"z.new();"}); //3
+				f0.addChild("button",{left:250,top:3,value:"Query",clickCode:"z.query();"}); //4
+				f0.addChild("button",{left:320,top:3,value:"Remove",clickCode:"z.remove();"}); //5
+
+				//cria div para conter ContentPane que vai receber um form de fBuilder
+				//placeFormInPane(runDesign,"PaneId1",900-3,3,300,25,2,"solid","silver");//places the form runDesign in pane xPaneId. If pane does not exist create a new one and places it in a div in the body()
+				f0.placeFormInPane(900-3,3,400,25,2,"solid","silver");//places the form in a div in the body()
+				f0.compensationAll();//not 100% necessary, but a good practice (after widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+
+				
+				// This story is not working - just for documentation - the memory store is nuilt by makedata() ....
+				var XmemoryStore = new Memory({idProperty : "idCol",data: [
+					{ idCol: 1, col1:"col11",col2:"col12",col3:"col13"},
+					{ idCol: 2, col1:"col21",col2:"col22",col3:"col23"},
+					{ idCol: 3, col1:"col31",col2:"col32",col3:"col33"},
+					{ idCol: 4, col1:"col41",col2:"col42",col3:"col43"},
+					{ idCol: 5, col1:"col51",col2:"col52",col3:"col53"},
+					{ idCol: 6, col1:"col61",col2:"col62",col3:"col63"},
+					{ idCol: 7, col1:"col71",col2:"col72",col3:"col73"},
+					{ idCol: 8, col1:"col81",col2:"col82",col3:"col83"},
+					{ idCol: 9, col1:"col91",col2:"col92",col3:"col93"}
+				]}); 
+				var nColumns=10;
+				var nRows=30;
+				xDataArr=[];		
+				makeData(nRows,nColumns,xDataArr);
+				var memoryStore = new Memory({idProperty : "idCol",data: xDataArr});//make a store...
+				
+				//memoryStore = Observable(memoryStore);//...that issues notices 
+				observer = new Observable(memoryStore);// create the initial Observable store - observer is a store wrapper
+				//Wrap it 
+				/*
+				var dataStore = new dojo.data.ObjectStore({
+					objectStore: memoryStore
+				});
+				*/
+				// query the store
+				
+				query=observer.query(function(line){
+					//this method will return a result set with the structure query.observe(listener, includeObjectUpdates);
+					//		listener will be called with arguments: listener(object, removedFrom, insertedInto);
+					//http://www.sitepen.com/blog/2011/02/15/dojo-object-stores/
+					// types of query:
+					//  by name-value maches ex store.query({rating:5});
+					//  or by using a function for filtering -> store.query(function(line){...});
+					return (line.idCol>12 );//&& line.idCol<25) ;
+				});
+				testQuery=function(line){return (line.idCol>=12 );}//&& line.idCol<25) ;				
+				 // now listen for any changes
+				//*
+				var observeHandle = query.observe(function(object, removedFrom, insertedInto){
+					if(removedFrom > -1){ // existing object removed
+						console.log("Observe captou um REMOVE !!!"+removedFrom);//insert into 30 (abaixo de 30..)
+						//removeRow(removedFrom);
+					}
+					if(insertedInto > -1){ // new or updated object inserted
+						console.log("Observe captou um insert !!!"+insertedInto);//insert into 30 (abaixo de 30..)
+						//insertRow(insertedInto, object);
+					}
+				},true);//closing observe
+				//*/
+				xColumns={};
+				makeColumns(nColumns,xColumns);
+				//var headers=["Header 1","Header 2","Header 3","Header 4"];
+				//var headers=[{H:"Order",width:60},{H:"Header 1",width:80},{H:"jojo 2",width:80},{H:"chuchu 3",width:80}];
+				//updateHeaders(headers,xColumns,grid);
+				//grid.styleColumn("idCol", xStyleWidth);// set width for column with id="idCol"
+				//grid.styleColumn("col1", xStyleWidth);// set width for column
+				//grid.styleColumn("col2", xStyleWidth);// set width for column				
+				//grid.styleColumn("col3", "width: 70px;");// set width for column  //o ultimo desformata....
+				//updateHeaders(headers,xColumns);
+				//https://github.com/SitePen/dgrid/wiki/Core-Components -->tem as props do column definition object 
+				columns0 = {
+					idCol: "#", // give column a custom name
+					col1: {},
+					col2: { label: "col2", sortable: true },
+					col3:{}
+				};
+				columns1 = {
+					idCol: "step", // give column a custom name
+					col3: {},
+					col2: { label: "col2", sortable: false },
+					col1:{}
+				};
+				
+				//var grid = new Declare([Grid, Selection,CellSelection, Keyboard])({
+				//var grid = new Declare([OnDemandGrid, Selection,ColumnResizer,ColumnReorder,Keyboard])({
+				//var grid = new Declare([Grid, Selection,ColumnResizer,ColumnReorder,Hider,Keyboard])({
+				//var grid = new Declare([Grid, Selection,ColumnResizer,ColumnReorder,Hider,Keyboard])({
+				grid = new Declare([Grid, ColumnReorder, ColumnResizer, Hider,Selection])({
+				//grid = new Declare([Grid, ColumnReorder, ColumnResizer, Hider])({
+					store:memoryStore,
+					//store:store,
+					//store:dataStore,
+					//store:observer,
+					//store:query, //erro
+					columns:xColumns,
+					query:testQuery,
+					/*
+					columns: {//hash map where the key is used as the "field"
+						idCol: "col0",
+						col1: "col1",
+						col2:"col2",   
+						col3:"col3" 
+					},
+					*/
+					selectionMode: "single", // "single" for Selection; only select a single row at a time - "multiple"
+					cellNavigation: false // for Keyboard; allow only row-level keyboard navigation
+				}, "grid"); 
+				
+			//updateHeader(5,"Jesus","text",xColumns,grid);//column to update, header, type of edition <"text","numberBox","comboBox","dateTextBox">
+				//to insert a new line we need the next number...
+				// http://livedocs.dojotoolkit.org/dojo/data/ItemFileReadStore#how-many-items-are-in-my-store
+				//memoryStore.fetch({ onBegin: function(total){ console.log("There are ", total, " items in this store."); } });
+				var gotItems = function(items, request){
+					console.log("Number of items located: " + items.length);
+				};
+				//alert("STOP on total items..."+memoryStore.fetch({onComplete: gotItems}));
+		//	var xNext=memoryStore.data.length+1;
+				//alert("STOP on total items..."+xNext);
+		//	memoryStore.add({idCol:xNext,col1:"",col2:"",col3:"rabeuu",col4:"",col5:"",col6:"",col7:"Joomla",col8:"",col9:""});
+				//tree --> http://pastebin.com/EDevSMi9 
+				
+				/* 
+				memoryStore.add({first:"Manel",last:"Jakim",payment:256});
+				memoryStore.remove("Bob");//DELETE ok funciona !
+				var xLine = memoryStore.get("Vanna"); //get data from the store (from key=name=idProperty)
+				xLine.last="Branco";//update object
+				xLine.payment=333;//update object
+				memoryStore.put(xLine);//store the change back in the store
+				*/
+				
+				 //grid.renderArray(gridData);
+				 //over the bare-bones grid we should introduce:
+				 //keyboard navigation, row-cell selection, cell editors, column resizing
+				 grid.on("dgrid-select", function (event) {
+					console.log("Key of selected row:"+event.rows[0].data.idCol);
+					currentRow=event.rows[0].data.idCol;
+					//console.dir(event.rows[0]);
+					alert("Key of selected row:"+currentRow);
+					for (var rowId in grid.selection){ 
+						var j=0;
+						for (var columnId in grid.selection[rowId]) { 
+							//console.log("Conteudo da key da linha="+rowId+" j="+columnId+" "+grid.selection[rowId][columnId]);
+							console.log("Key da linha="+rowId+" Field="+columnId);
+						}
+					}
+					//grid.selection é uma matriz com o conjunto de células linhas seleccionadas: selectionMode="multiple"
+					//      linhas - o primeiro [] - tem a key da linha (conteudo de idProperty (Memory store)) 
+					//      colunas - o segundo [] - tem para cada linha o field da coluna seleccionada 
+					//grid.selection[rowId][columnId]=true (não sei para que serve isto)
+			
+				});
+				grid.on("dgrid-deselect", function (event) {
+					//console.log("Row de-selected: ", event.rows[0].data);
+					//alert("de-select");
+				});
+				grid.on(".dgrid-row:click", function (event) {
+					var row = grid.row(event);
+					console.log("Row clicked:", row.data.idCol+" "+row.data.col1+" "+row.data.col2+" "+row.data.col3);//row.data dá {} da linha toda
+					//alert("row click");
+				});
+				grid.on("dgrid-datachange", function (event) {
+					console.log("Data changed!! row="+event.cell.row.id+" col="+event.cell.column.id+" oldvalue="+event.oldValue+" new="+event.value);
+					//alert("Data changed!! row="+event.cell.row.id+" col="+event.cell.column.id+" oldvalue="+event.oldValue+" new="+event.value);
+				});			
+				//*
+				xTotWidth=nColumns*70;
+				xStyleWidth="width:70px;";
+				/*
+				grid.styleColumn("idCol", xStyleWidth);// set width for column with id="idCol"
+				grid.styleColumn("col1", xStyleWidth);// set width for column
+				grid.styleColumn("col2", xStyleWidth);// set width for column	
+				*/				
+				//grid.styleColumn("col3", "width: 70px;");// set width for column  //o ultimo desformata....
+				DomStyle.set("grid","top","50px");//changes top  FUNCIONA!
+				DomStyle.set("grid","left","500px");//changes left FUNCIONA!
+				//DomStyle.set("grid","width","300px");//changes left FUNCIONA!
+				DomStyle.set("grid","width",xTotWidth+"px");//changes left FUNCIONA!
+				DomStyle.set("grid","height","300px");//changes left FUNCIONA!
+
+				
+				
+				
+				//grid.startup();
+				//*/
+				/*
+				grid.styleColumn("payment", "display: none;");// to hide column with id="payment"
+				grid.styleColumn("payment", "display: table-cell;");
+				*/
+
+				var z = dojo.getObject('z', true);//the optional true will create the property if it does not exist - that's the case here
+				z.new = function() {
+					var xNext=memoryStore.data.length+1;
+					alert("Estou em z.new !!! "+xNext);
+					grid.set("showFooter");
+					//grid.showFooter=true;
+					memoryStore.add({idCol:xNext,col1:"",col2:"",col3:"rabeuu",col4:"",col5:"",col6:"",col7:"Joomla",col8:"",col9:""});
+					lastRow=xNext;
+					var x = memoryStore.get(xNext); //this is a READ
+						// iterate through all the properties of x:
+						for(var i in x){//i are all the properties of x//FABULOSO
+							console.log(i, "=", x[i]);// i is the property property and x[i] is the value
+						}
+					console.log("New ->"+grid.bodyNode.scrollHeight); //dá 660 - se for one row=30px =>22 rows - 30-22=8
+					// o add está no data store mas não na grid...
+					
+					//console.log("New ->"+grid.getScrollPosition());
+					//grid.bodyNode.autoScrollbar=false; 
+					//http://dojo-sandbox.net/public/69337/3 JESUS !!!!
+					/*
+					grid.select(10);
+					alert(" fez grid.select(10);");
+					var row=grid.row(10);
+					console.log("z.new --> Row is:",row);
+					alert(" fez var row=grid.row(10);");
+					//grid.bodyNode.scrollTop=row.element.offsetTop;
+					*/
+					//grid.bodyNode.scrollTop=grid.bodyNode.scrollHeight+(10*30); //Ok mostra da linha 23 à 30 (8 linhas) - scrollTop é dito em px/linha x linhas
+					grid.bodyNode.scrollTop=grid.bodyNode.scrollHeight; //Ok mostra da linha 23 à 30 (8 linhas) - scrollTop é dito em px/linha x linhas
+					grid.select(xNext); //selects the line xNext
+
+
+				};
+				z.remove = function() {
+					memoryStore.remove(currentRow);//DELETE ok funciona !
+				};
+				z.query = function() {
+					alert("Estou em z.query !!! ");
+					var i=0;
+					memoryStore.query({}, {
+						sort:[{attribute:"idCol", descending: false}], 
+						start: 20,
+						count: 100
+					}).map(function(line){ //map iterates all elements of an array passing them to the callback function - 
+							// the results should be sorted by department, with a limit of 10 objects,
+							// starting at an offset of 0
+							return line.idCol+" - "+line.col1; // return just the idCol, mapping to an array of names
+						}).forEach(function(xx){
+								i++;
+								console.log("#"+i+" - "+xx);
+							});					
+				};				
+				z.header = function() {
+					//alert("Estou em z.header !!!");
+					var xHeader=f0.fieldShownById("f02")
+					//updateHeader(5,"Jesus","text",xColumns,grid);//column to update, header, type of edition <"text","numberBox","comboBox","dateTextBox">
+					updateHeader(5,xHeader,"text",xColumns,grid);//column to update, header, type of edition <"text","numberBox","comboBox","dateTextBox">
+				};
+				
+				console.log(document.title+"......  fim..");//document title tem "o titulo" ... a property <title> que está no head
+				//--------------------------------------------------- FIM ----------------------------------------------------------------
+				//NOTE ON MAP (map iterates all elements of an array passing them to a callback function) 3rd parameter may be used to scope the call to callback
+				//		var arrValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+				//		var doubleValue = array.map(arrValues, function(item){//2nd par (callback) is invoked w/3 args:item,index,array and returning a value
+				//  		return item * 2;
+				//		});
+				
+				//-----------------------------------------------------------------------------------------
+				function makeData(xRows,xCols,xDataArr){//# of rows,#cols, JSON Object to return
+				//-----------------------------------------------------------------------------------------
+				// fills an array of data for the memory store. each line of the array is a Json object 
+				//	{ idCol: 1, col1:"col11",col2:"col12",col3:"col13"},..
+				// the first column has always the property idCol:i (i is 1 for firt row, n for nth row
+					for(var i=0;i<xRows;i++){
+						xJSON={};
+						xArrEl=[];
+						var xObj = null;
+						var xStr = "{";
+						for(var j=0;j<xCols;j++){
+							xJSON={};
+							if(j==0){
+								xStr = xStr+'"idCol":'+(i+1); //the first column
+							}else{
+								var xVar="col"+(j);
+								var xxVar="col"+(i+1)+","+(j);
+								xStr=xStr+',"'+xVar+'":"'+xxVar+'"';
+								//xJSON[xVar]=xxVar;
+							};
+							//console.log("i="+i+" j="+j+" -->"+xStr);
+						};
+						xStr=xStr+"}";
+					//console.log("Linha i="+i+" ------>"+xStr);
+						xObj = JSON.parse(xStr); //the reverse of stringify - use double quotes
+						xDataArr.push(xObj);
+						var xLog="";
+						xLog=JSON.stringify(xDataArr[i]);
+					//console.log("----------------->Linha="+(i+0)+"  -->"+xLog);
+					};
+				};
+				//-----------------------------------------------------------------------------------------
+				function makeColumns(xCols,xColumns){//# of columns, JSON Object to return
+				//-----------------------------------------------------------------------------------------
+				//defines a flexible structure for dgrid columns
+				// xColumns (the output) is a jason  {<field>:<json for field>}
+				//json for field1=>{"name":"idCol","label":<label>}
+				//json for fieldn - n>1=> {name:<name>,label:<label>,"autoSave":true,"editor":"text","editorOn":"dblclick"}
+				//https://github.com/SitePen/dgrid/wiki/Core-Components -->tem as props do column definition object 
+					for(var j=0;j<xCols;j++){
+						var xStrCol="col"+j;
+						if(xStrCol=="col0"){
+							xStrCol="colId";
+							//xColumns.idCol={name:"colId",label:"col0"};
+							xColumns.idCol={name:"idCol",label:"col0"};
+						}else{
+							// should be the same as: {name:xStrCol,label:xStrCol,autoSave:"true",editor:"text",editOn:"dblclick"};
+	xColumns[xStrCol]=Editor({name:xStrCol,label:xStrCol,autoSave:"true"}, "text", "dblclick");
+	// translated to->xColumns[xStrCol]={name:xStrCol,label:xStrCol,"autoSave":"true","Editor":"text","editOn":"dblclick"};
+	//xColumns[xStrCol]=Editor({name:xStrCol,label:xStrCol,widgetArgs:{value: '', constraints: {min: 1, max: 9}} },NumberTextBox, 'dblclick');
+						console.log("makeColumns------>xColumns="+JSON.stringify(xColumns[xStrCol]));
+
+	};
+					};
+					console.log("------>xColumns="+JSON.stringify(xColumns));
+				};
+				
+				//-----------------------------------------------------------------------------------------
+				function updateHeader(xCol,xHeader,xType,xColumns,xGrid){
+				//-----------------------------------------------------------------------------------------
+				// Changes the header of col=xCol to text xHeader for column object=xColumns in grid=xGrid
+				// updateHeader(3,"Products","text",xColumns,Grid)
+// xColumns - is a jason {<field 1 >:<json for field 1>, <field 2 >:<json for field 2>,... }
+//json for field1=>{"name":"idCol","label":<label>}
+//json for fieldn - n>1=> {name:<name>,label:<label>,"autoSave":true,"editor":"text","editorOn":"dblclick"}
+				//xType:
+				//   "text" simple html input text
+				//	 "numberBox" - NumberTextBox widget
+				//iterates thru xColumns object
+					var j=0;
+					for (var xProp in xColumns) { 
+						if (xColumns.hasOwnProperty(xProp)) { //to assure that xProp is an actual property of an object, and doesn't come from the prototype
+							if(j==xCol){
+								//alert(xProp + " -> " + xColumns[xProp].label+" ->"+xHeader);
+								switch(xType){
+									case "text":
+										xColumns[xProp].label=xHeader;
+										xColumns[xProp].editor="text";//simple html text, checkbox,radio,password,button
+										break;
+									case "numberBox":
+xColumns[xProp]=Editor({name:xProp,label:xHeader,widgetArgs:{value: '', constraints: {min: 1, max: 99}} },NumberTextBox, 'dblclick');
+										break;
+									case "comboBox":
+										var itemStore = new dojo.data.ItemFileReadStore({data: { identifier: "name",
+											items: [
+												{name:"item1"},
+												{name:"item2"},
+												{name:"item3"}
+											]
+										}}); 									
+xColumns[xProp]=Editor({name:xProp,label:xHeader,widgetArgs:{value: 'test 1',store:itemStore}},ComboBox,'dblclick');
+										break;
+									case "dateTextBox":
+										//var xValue=eval("new Date()");//returns a javascript Date object
+										var xValue=new Date();
+										xValue=xValue.getFullYear()+"-0"+(xValue.getMonth()+1)+"-"+xValue.getDate();
+										//alert("today is "+xValue);
+										xValue=Locale.parse(xValue,{datePattern:"yyyy-MM-dd",selector:"date"});//reconstroi javascript Date object
+//xColumns[xProp]=Editor({name:xProp,label:xHeader,widgetArgs:{value: xValue,constraints:"dd/MM/yyyy"}},DateTextBox,'dblclick');
+xColumns[xProp]=Editor({name:xProp,label:xHeader,widgetArgs:{value: xValue,constraints:{datePattern: "dd/MM/yyyy"}}},DateTextBox,'dblclick');
+										break;
+
+									default: alert("updateHeader: the type "+xType+" is unknown");	
+								};		
+								xGrid.set('columns', xColumns);
+							};
+							j++;
+						}; 
+					};
+				};					
+			}//closing of main function				
+		);//closing of require function
+	</script>
+</head>
+<body class="claro Mother"> 
+	<div id="header-container">
+		<div id="header">
+			<div id="before-logo">
+				<section>.</section>			
+			</div>
+			<div id="logo-container">
+				<div id="logo">
+				   <a href="#"><img src="images/motherlogo1.jpg" /></a>
+				</div>
+			</div>
+			<div id="after-logo">
+				<section></section>			
+			</div>			
+		</div>
+	</div>
+	<div id="subheader-container">
+		<div id="subheader">
+			<div id="before-nav">
+				<section></section>			
+			</div>			
+			<div id="nav_container">
+				<section></section>			
+				<!--http://bootswatch.com/-->
+					<ul id="bootSnav" class= "nav nav-tabs" > <!-- the pills effect (blue pill) vs the the tabs effect: "nav nav-pillx", "nav nav-tabs", "nav nav-pills" "nav nav-pills nav-stacked span2"-->
+						<!--
+						<li><a href="#"><i class="icon-home icon-white"></i>Home</a></li>
+						<li><a href="#"><i class="icon-picture icon-black"></i>About Us</a></li>
+						<li><a href="#">Feedback1</a></li>
+						<li><a href="#">Feedback2</a></li>
+						<li><a href="#">Feedback3</a></li>
+						<li class="active"><a href="#"><i class="icon-tags icon-black"></i>About</a></li>
+						<li><a href="#">Feedback4</a></li>
+						<li><a href="#"><i class="icon-share icon-black"></i>Feedback5</a></li>
+						<li><a href="#">Contact</a></li>					
+						
+						<!-->
+						<li><a href="#"><i class="icon-home icon-white"></i>Home</a></li>
+						<li class="active"><a href="#"><i class="icon-tags icon-white"></i>About Us</a></li>
+						<li><a href="#"><i class="icon-user icon-white"></i>Contacts</a></li>
+						<li><a href="#"></a></li>
+						<li><a href="#"></a></li>
+					
+
+					</ul>
+			</div>
+			<div id="after-nav">
+				<section></section>			
+			</div>
+		</div>
+	</div>
+	<div id="working-container">
+		<p></p>	
+		<div id="grid"></div>
+		<div>Test ColumnReorder:
+			<button onclick="grid.set('columns', columns1);">idCol,col3,col2,col1</button>
+			<button onclick="grid.set('columns', columns0);">idCol,col1,col2,col3</button>
+		</div>
+
+	</div>	
+	<div id="footer">
+		<section></section>
+	</div>	<!--
+	http://www.myinkblog.com/coding-website-header-navigation/
+	<h1 id="header-bar" class="skin" style="text-align:left; font-family:arial;font-size:24px; color:white;background:black;" img scr="images/motherlogo.jpg" alt="ligth blue button">Mother Builder</h1>
+	-->
+	<!-- themeforest admintasia
+    <p> align="text-align:center" background="images/motherlogo.jpg" >This is Mother Builder</p>
+    <p> This is a paragraph of Mother Builder</p>
+	  	<link rel="icon" type="image/jpg" href="images/motherlogo.jpg" />
+        <img scr="images/motherlogo.jpg" height="40" width="100"/>
+	-->
+	<script src="Mother1/bootstrap.js"></script>	
+</body> 
+</html>

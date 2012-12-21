@@ -1,0 +1,147 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Teste de resize_move 3.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	
+		
+	<link href="../dojo1.7.1/dojox/grid/resources/claroGrid.css" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+
+<!--		
+	<script>
+		// we’re creating a dojoConfig object *before* we load dojo.js
+		var dojoConfig = {
+			async: true,
+			parseOnLoad:true,
+			isDebug:true
+		};
+	</script>
+	<script src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js"></script>
+-->
+	<!-- este bloco substitui o bloco anterior -->
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+
+
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<script src="Mother1/bootstrap.js"></script>	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<link href="../dojo1.7.1/dojox/grid/resources/claroGrid.css" rel="stylesheet">
+	<link href="../dojo1.7.1/dojox/layout/resources/FloatingPane.css " rel="stylesheet">
+	<link href="../dojo1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ------------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)--->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/>  
+	<x!------------------------------------------------------------------------------------- --x>
+		<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+
+<script>
+oDbg=null;//so that we can use "this" inside this html with embedded script
+require([
+	"Mother1/debug.js",
+	"MotherLib6.js",	
+	"Mother1/utils.js",
+    //"Mother1/ResizeMoveArea2.js",  
+    "Mother1/ResizeMoveArea.js",  
+
+	"dojo/_base/declare",	 
+	"dojo/_base/window",
+	"dojo/_base/lang",	
+    "dojo/on",
+	"dojo/parser",//recomendation from JS
+	"dojo/dom",
+	"dojo/dom-construct",//used outside class
+	"dojo/dom-style",	
+	"dojo/ready",
+	], 
+	//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Menu,MenuItem,MenuBar,MenuSeparator,PopupMenuBarItem,DropDownMenu,TooltipDialog,TextBox,Button,Declare,Win,Event,Registry,Dom,Html,On,Evented,Moveable,Mover,DomGeom,DomConstruct,DomStyle,DomClass,Lang,ContentPane,BorderContainer,AccordionContainer,TabContainer,FloatingPane,ColorPalette,Ready){ 
+	//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Menu,MenuItem,PopupMenuItem,MenuBar,MenuSeparator,
+	function(Dbg,FBuilder,Utils,ResizeMoveArea,
+	Declare,Win,Lang,On,Parser,Dom,DomConstruct,DomStyle,Ready){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_resize_move3","",{main:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("MotherLib6"       ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("ResizeMoveArea"   ,"-->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("resizeWCoord"     ,"---->",{"constructor":true,postCreate:true,_onMouseUp:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setThis("test_resize_move3");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+	
+		//---------------------------------------------------------------------------------------	
+		//console.log(document.title+"......  inicio..");//document title tem "Layout Area 6.0" ... a property <title> que está no head		
+		//console.log(document.title+"......  começa o teste da classe..");//document title tem "Layout Area 6.0" ... a property <title> que está no head		
+		//console.log(document.title+" se a dimensão for menor que 50x50 é feito o reset =>lança 'novo' elemento..");//document title tem "Layout Area 6.0" ... a property <title> que está no head		
+		
+		var util=new Utils(); //to use utils functions
+		x1=new ResizeMoveArea("test Area",100,100,100,30,5,"dotted","gold");//borderType:solid, dotted,dashed
+		x1.visible_on_wayout=true; //false will make the area invisible on the way out (click outside the element) - default is true.
+		//x1.activate(); // a primeira vez, a partir dai eram sempre resets
+
+		if(this.oDbg.isDbg("main")) this.oDbg.display("Criou ResizeMoveArea");
+		//alert("Criou ResizeMoveArea");
+		//handlerMoveResizeEnd=x1.on("move_resize_end", function(){//regista-se para receber o evento "move_resize_end"
+		//	alert("TEST move_resize_end returned ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
+		//});
+		//handlerArea=On(Dom.byId(x1.moveResizeDivId), "mouseenter", function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+		//handlerArea=On.pausable(Dom.byId(x1.moveResizeDivId), "mouseenter", function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+		handlerArea=On.pausable(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+			//console.log("TEST ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("TEST ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+			//alert("TEST -> resize_move -------------------------------------- mouseenter -----------------------------------------");
+			x1.activate();
+			handlerArea.pause();
+			//handlerArea.remove();
+		}));	
+		x1.on("resizeMoveEnd",Lang.hitch(this,function(){
+			handlerArea.resume();
+			//console.log("TEST -> CAPTOU EVENT resizeMoveEnd  ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT resizeMoveEnd  ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
+			// --- We want to test the case a) where the next cycle is done with the same element (do nothing)
+			//       or case b) with a test Area B (leaving aside the initial area) 
+			// --the criteria for case b) is:
+			if(x1.position.w<50 && x1.position.h<50){
+				//alert("TEST -> case B) TEST VOLTOU E VAI PROPOR NOVA ÁREA ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
+				if(this.oDbg.isDbg("main")) this.oDbg.display("    case B) TEST VOLTOU E VAI PROPOR NOVA ÁREA ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
+				// We want to use the same x1, but now with new dimensions and somewhere else.
+				x1.reset("test Area",10,10,200,200,2,"dotted","red");//borderType:solid, dotted,dashed
+			}else{
+				//alert("TEST -> case A)TEST VOLTOU ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);	
+				if(this.oDbg.isDbg("main")) this.oDbg.display("   case A)TEST VOLTOU ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);	
+			};
+		}));
+
+/*		
+		handlerAreaOut=On(Dom.byId(x1.moveResizeDivId), "mouseleave", function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+			console.log("-----------------------------------------> saiu de x1 com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+			//DomStyle.set(Dom.byId(x1.moveResizeDivId), "cursor", "move");
+			console.log("test handlerArea -> vai activar");
+			//alert("handlerArea -> vai activar");
+			x1.deactivatePrevious();
+			//handlerArea.remove();
+		});	
+*/		
+		function test(){
+			alert("test message in function test - this call is defined in menu object exterior to the class...");
+		}
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

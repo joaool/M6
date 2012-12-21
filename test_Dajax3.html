@@ -1,0 +1,119 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Test for Dajax v3.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+require([
+	"MotherLib6.js",
+	"Mother1/json2FormDsgn2.js",
+	"Dajaxtest01class.js",
+	"dojo/_base/declare",	 
+	"dojo/_base/lang",
+	"dijit/form/Button",		
+	 "dojo/domReady!"
+	], 
+	//function(FBuilder,FJson,DajaxTest,Declare,Lang){ 
+	function(FBuilder,FJson,DajaxTest,Declare,Lang,Button){ 
+		console.log(document.title+"......  inicio..");//document title tem "Layout Area 6.0" ... a property <title> que está no head		
+		console.log(document.title+"......  começa o teste ..");
+		//---------------------------------------------------------------------------------------	
+		//thiz=this;
+		var viewPortX={l:50,t:5,w:1250,h:200};
+		var f0=new FBuilder("form f0","f0",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1});
+		f0.addChild("label",{value:"Entity",left:80,top:10,width:100}); //1
+		var xArr=[{name:"Invoice"},{name:"InvoiceLine"},{name:"Product"},{name:"Customer"}];
+		f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120});//2
+		//	f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120,placeHolder:"Enter Entity"});//2
+
+
+		f0.addChild("label",{value:"Master Data",left:80,top:40,width:100}); //3
+
+		// EXEMPLO: em que colocamos um valor (23) como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		//f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',23);",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+		// EXEMPLO SEMELHANTE AO ANTERIOR mas em que o default é retirado de "num1" como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',this.get('num1'));",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+
+		f0.addChild("label",{value:"isCreateDelTrueChild",            left:500,top:10}); //5
+		f0.addChild("label",{value:"isCreateNormalChildWithParent",   left:500,top:40}); //6
+		f0.addChild("label",{value:"isCreateNormalChildWITHOUTParent",left:500,top:70}); //7
+		f0.addChild("checkBox",{left:480,top:10+5,title:"true/false for boolean isCreateDelTrueChild"}); //8
+		f0.addChild("checkBox",{left:480,top:40+5,title:"true/false  for boolean isCreateNormalChildWithParent"}); //9
+		f0.addChild("checkBox",{left:480,top:70+5,title:"true/false  for boolean isCreateNormalChildWITHOUTParent"}); //10
+
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:10}); //11
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:40}); //12
+		f0.addChild("textBox",{left:920,top:10,title:"pls introduce number with a comma separator ex:9,3,7",placeHolder:"el1,el2,...eln"});//13
+		f0.addChild("textBox",{left:920,top:40,title:"pls introduce number with a comma separator ex:9,3,7"});//14
+	
+		f0.addChild("button",{left:1100,top:10,width:80,height:80,value:"GO",clickCode:"z.test()"});//15
+
+		f0.addChild("numberBox",{name:"num1",left:80,top:70,width:80,pattern:'##.00000',value:123.5});//16
+		//f0.addChild("textArea",{left:180,top:70,width:100,height:120});//17
+		// EXEMPLO_ Pomos o default igual ao conteudo de "test1" e mostramos o valor à saida (em posCode) !!!! 
+		f0.addChild("textArea",{name:"area1",left:180,top:70,width:100,height:120,preCode:"this.set('area1',this.get('test1'));",posCode:"console.log('saiu de textArea com '+this.get('area1'));"});//17
+		var d= new Date("October 13, 2012 11:13:00");//javascript date definition
+		f0.addChild("dateTextBox",{left:290,top:70,value:d,width:120}); //18   //if value of date is specified as a string
+
+		//f0.addChild("button",{left:1100,top:10,width:80,height:80,value:"GO",clickCode:"alert('zzz');"});//15
+		//f0.setFieldProps("f015",{clickCode:"alert('entrou em click code do original');"});
+
+	    var	z=Lang.getObject("z",true);
+		//------------------------------------------------------------------
+		z.test=function(){
+/*		
+			var sEntity=f0.fieldShownById("f02");
+			var sMasterData=f0.fieldShownById("f04");
+			var isCreateDelTrueChild=f0.fieldShownById("f08");
+			var isCreateNormalChildWithParent=f0.fieldShownById("f09");
+			var isCreateNormalChildWITHOUTParent=f0.fieldShownById("f010");
+			var aIdMasterRelatedRecords1=f0.fieldShownById("f013");
+			var aIdMasterRelatedRecords2=f0.fieldShownById("f014");
+			
+			var toTest={sEntity:sEntity,sMasterData:sMasterData,isCreateDelTrueChild:isCreateDelTrueChild,isCreateNormalChildWithParent:isCreateNormalChildWithParent,
+			isCreateNormalChildWITHOUTParent:isCreateNormalChildWITHOUTParent};
+			var toTest2={aIdMasterRelatedRecords1:aIdMasterRelatedRecords1,aIdMasterRelatedRecords2:aIdMasterRelatedRecords2};
+			//alert("test_Dajax -->JSON="+JSON.stringify(toTest)+" -->"+JSON.stringify(toTest2));
+*/			
+			alert("content="+f0.formContent2Json());
+			var xContent=f0.formContent2Json();// the form content only
+			var json_of_f0=f0.formDsgn2Json();//  the form format only
+			alert("Form Design to Json="+json_of_f0);
+			//Do not forget that in JSON standard double quotes are mandatory
+			//objFjson=new FJson('{"fName":"form f0","fprefix":"f0","fLayout":{"viewPort":{"l":50,"t":5,"w":1250,"h":100},"borderColor":"green","borderType":"solid","borderThickness":1}}');
+			objFjson=new FJson(json_of_f0);
+			objFjson.viewPort.t=230;
+			var f1=objFjson.buildNoWidgets("form f1","f1");//builds form name "form f1" & "f1", from json_of_f0,assigning it to variable f1.
+		    objFjson.buildWidgets(f1);//constroi os widgets da json json_of_f0 no form f1
+			//f1.setFieldProps("f115",{clickCode:"alert('entrou em click code do clone');"});
+
+		};
+		function test(){
+			alert("test message in function test - this call is defined in menu object exterior to the class...");
+		};
+		console.log(document.title+"......  fim..");//document title tem "Layout Area 6.0" ... a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

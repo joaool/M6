@@ -1,0 +1,265 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+     <title>Test editFBuilder4 v1.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!--<link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> -->
+		<link rel="stylesheet" type="text/css" href="Mother1/Mother.css"/>
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;//so that we can use "this" inside this html with embedded script
+//z={};
+z={me:"I am z!"};
+thiz=this;
+//myDialog = null;
+require([
+	"MotherLib6.js",
+	//"Mother1/json2FormDsgn2.js",
+	"Mother1/editFBuilder4.js",
+	"Mother1/debug.js",
+	"../dajax_curr/DojJsonStore.js",
+	"dojo/_base/declare",	 
+	"dojo/_base/lang",
+	"dijit/form/Button",
+	"dijit/Dialog",	
+	"dojo/ready",
+	 "dojo/domReady!"
+	], 
+	//function(FBuilder,FJson,EditFBuilder,Dbg,JsonStoreCrud,Declare,Lang,Button,Dialog,Ready){ 
+	function(FBuilder,EditFBuilder,Dbg,JsonStoreCrud,Declare,Lang,Button,Dialog,Ready){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_save_restore_json4","",{main:true,myTest1:true,fim:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("MotherLib6"          ,"-->",{constructor:true,placeFormInPane:true,"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("editFBuilder4"       ,"-->",{constructor:true,removeAreas:true,removeWListeners:true,setAListeners:false,resumeWListeners:true,suspendWListeners:true,overWidget:true,outWidget:true,get:true});
+		this.oDbg.setDbg("ResizeMoveArea"      ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("resizeWCoord"        ,"------>",{"constructor":true,postCreate:true,_onMouseUp:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setThis("test_save_restore_json4");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//var x=2;
+		// if we want to show x only for those cases where x!=1...we do
+		//if(this.oDbg.isDbg("main")) this.oDbg.display("x should be 1 -- x="+x,x!=1);//we have an error condition - message will only be displayed if error verifies
+		//------------------------------------------------------------------------	
+		//TEST DESCRIPTION: 
+		//this test shows the new Motherlib6 features and editFbuilder3 features
+		//1-new Motherlib6 features:
+		//   a) floating forms with viewPort property "floatF" (possible values-> "nonFloat","modal" or "nonModal". The default is  "nonFloat".
+		//	 b) silent forms with args property "silent" (true/false) ->default=false.
+		//	 c) template support with args property "template" ->default=null. To choose a template programmer can select template:"A" ->A..F with current Mother.CSS file
+		//
+		//    The test builds 3 forms: form fx (named "a)switch run/design"), form _prop ((named "b)Properties") and the main form f0.
+		//        Forms fx and _props are floating forms to support the definition (widgets content) of f0 therefore:
+		//			form fx will be shown immediattly but form _props will show up only if a widget is selected (with fx's button run/design set to design
+		//
+		//        if the user chooses "Design" in fx button run/design edit mode will be enabled in class editFbuilder3 and the click button over 
+		//			any widget will show its handles. The click over any widget will launch editFbuilder3's event "widget_selected"
+		//				In the test callback  for event "widget_selected" we will update the title of the _props form showing it (it was "silent" before...)
+		//                	_prop.setFloatTitle(edit_f0.currentWidget.type+" "+xName+" props.");
+		//					_prop.showForm();
+		//				whenever the user click outside the widget handles will go and class editFbuilder3 will emit event "widget_unselected" 
+		//					Thgis event will be used to hide the properties form with:_prop.hideForm();		
+		//
+		//		 If the "silent" property is used in a "nonFloat" viewport the form will be placed in ContentPane 
+		// 
+		//2-editFbuilder3 features (before incorporation of prop form and run/design form inside editFbuilder (tbd in editFbuilder4)
+		//    editFbuilder3 allows the edition of size and position of all widgets of its form argument. edit_f0=new EditFBuilder(f0,"click"); //"mouseenter","click"
+		//    Version editFbuilder3 does not allow the edition of widget properties  because whenever the focus change to the peoperties form
+		//		the handles will go. This feature (articulated form) is supported by ResizeMoveArea class see how in test_resize_move4.html.
+		//      in order to implement this feature the new class editFbuilder4 will include forms fx and _props.
+		//
+		//3-editFbuilder4 features- included prop form and run/design form 
+		//    editFbuilder3 allows the edition of size and position of all widgets of its form argument. edit_f0=new EditFBuilder(f0,"click"); //"mouseenter","click"
+		//    Version editFbuilder3 does not allow the edition of widget properties  because whenever the focus change to the peoperties form
+		//		the handles will go. This feature (articulated form) is supported by ResizeMoveArea class see how in test_resize_move4.html.
+		//      in order to implement this feature the new class editFbuilder4 will include forms fx and _props.
+		//
+
+		//write code HERE !
+		//
+		//------------------------ switch RUN/DESIGN & properties ----------------------------------------------
+		//http://pp19dd.com/2010/07/reusable-dijit-dialog-yesno-function/
+		//------------------------------------------------------------------------------------------
+		var viewPortX={l:50,t:5,w:1100,h:250};//,floatF:"nonModal";//floatF default will be "noFloat"
+		var f0=new FBuilder("c)form f0","f",{viewPort:viewPortX,borderColor:"b",borderType:"solid",borderThickness:1});//template:"B"
+		f0.addChild("label",{value:"Entity",left:80,top:10,width:100}); //1
+		var xArr=[{name:"Invoice"},{name:"InvoiceLine"},{name:"Product"},{name:"Customer"}];
+		f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120});//2
+		//	f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120,placeHolder:"Enter Entity"});//2
+
+
+		f0.addChild("label",{value:"Master Data",left:80,top:40,width:100,}); //3
+
+		// EXEMPLO: em que colocamos um valor (23) como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		//f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',23);",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+		// EXEMPLO SEMELHANTE AO ANTERIOR mas em que o default é retirado de "num1" como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',this.get('num1'));",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+
+		f0.addChild("label",{value:"isCreateDelTrueChild",            left:500,top:10}); //5
+		f0.addChild("label",{value:"isCreateNormalChildWithParent",   left:500,top:40}); //6
+		f0.addChild("label",{value:"isCreateNormalChildWITHOUTParent",left:500,top:70}); //7
+		f0.addChild("checkBox",{left:480,top:10+5,title:"true/false for boolean isCreateDelTrueChild"}); //8
+		f0.addChild("checkBox",{left:480,top:40+5,title:"true/false  for boolean isCreateNormalChildWithParent"}); //9
+		f0.addChild("checkBox",{left:480,top:70+5,title:"true/false  for boolean isCreateNormalChildWITHOUTParent"}); //10
+
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:10}); //11
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:40}); //12
+		f0.addChild("textBox",{left:920,top:10,title:"pls introduce number with a comma separator ex:9,3,7",placeHolder:"el1,el2,...eln"});//13
+		f0.addChild("textBox",{left:920,top:40,title:"pls introduce number with a comma separator ex:9,3,7"});//14
+	
+		f0.addChild("button",{left:600,top:120,width:80,height:80,value:"SAVE",clickCode:"z.testSave()"});//15
+		f0.addChild("button",{left:700,top:120,width:80,height:80,value:"RESTORE",clickCode:"z.testRestore()"});//16
+
+		f0.addChild("numberBox",{name:"num1",left:80,top:70,width:80,pattern:'##.00000',value:123.5});//17
+		//f0.addChild("textArea",{left:180,top:70,width:100,height:120});//18
+		// EXEMPLO_ Pomos o default igual ao conteudo de "test1" e mostramos o valor à saida (em posCode) !!!! 
+		f0.addChild("textArea",{name:"area1",left:180,top:70,width:100,height:120,preCode:"this.set('area1',this.get('test1'));",posCode:"console.log('saiu de textArea com '+this.get('area1'));"});//18
+		var d= new Date("October 13, 2012 11:13:00");//javascript date definition
+		f0.addChild("dateTextBox",{left:290,top:70,value:d,width:120}); //19   //if value of date is specified as a string
+		
+		if(this.oDbg.isDbg("main")) this.oDbg.display("Acabou a definicao de f0");
+		//edit_f0=new EditFBuilder(f0,"click"); //"mouseenter","click" OK
+		//edit_f0=new EditFBuilder(f0,"click",{formEditionL:1180,formEditionT:50});// OK
+		//edit_f0=new EditFBuilder(f0,"click",{propertiesL:1000,propertiesT:100});// OK
+		edit_f0=new EditFBuilder(f0,"click",{formEditionL:1100,formEditionT:5,propertiesL:1000,propertiesT:100});
+		edit_f0.on("widget_selected",Lang.hitch(this,function(){
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+			var xOrder=edit_f0.currentWidget.posInArr;
+			var xName=f0.field(xOrder).props.name;
+			edit_f0._prop.setFieldProps("_prop1",{value:xName});
+			edit_f0._prop.setFieldProps("_prop5",{value:edit_f0.currentWidget.type+" "+xName});
+			var xOrder=edit_f0.currentWidget.posInArr;
+			//console.log("test_MotherLib5_4 -- Pos="+xOrder+" x="+editF.currentWidget.left+" y="+editF.currentWidget.top);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("Pos="+xOrder+" x="+edit_f0.currentWidget.left+" y="+edit_f0.currentWidget.top);
+			f0.unVisibleById(edit_f0.currentWidget.id)
+			edit_f0._prop.setFloatTitle(edit_f0.currentWidget.type+" "+xName+" props.");
+			edit_f0._prop.showForm();
+		}));
+		edit_f0.on("widget_unselected",Lang.hitch(this,function(){
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+			//fx.setFieldProps("fx2",{value:"No widget selected "});
+			edit_f0._prop.hideForm();				 		
+			f0.visibleById(edit_f0.currentWidget.id)
+			edit_f0.reset();//volta a por listeners à escuta
+		}));
+
+		//--------------------------------------------------------------------------------------------------------------------------
+	    //z=Lang.getObject("z",true); //returns the value for the property of an object defined by a dot separated string. If second par=true it creates the property (if it doesnot exist) in the object
+									// if instead of "foo.bar" we have "z" it creates this.z ?
+		//z is a global object defined before require()
+		//this.z.saveF=function(xFNum){//save or update current form in slot F+xFnum	
+		this.z.testSave=function(){//to test the button SAVE
+			alert("You pressed SAVE");
+		};
+		this.z.testRestore=function(){//to test the button SAVE
+			alert("You pressed RESTORE");
+			//var abc=f0.visibleById("f20");		
+		};
+		this.z.saveF=function(){//save or update current form in slot F+xFnum	
+			xFNum=2
+			var json_of_f0=f0.formDsgn2Json();//  produces the form JSON representation (format only)
+			var oJsonStore = new JsonStoreCrud();//to read
+			var oJsonStore2 = new JsonStoreCrud();//to create or to update				
+			var jtype="F";
+			var idname="F"+xFNum;
+			var name= "JO Form de teste slot fixo F"+xFNum;
+			var description="Form de suporte do teste das properties window";
+			var xRetStr=null;
+			oJsonStore.setCallBack(function(oReply){//read callback
+				xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+					// + oReply.info
+					;
+					if(oReply.isSuccess){
+					    if(oReply.jsonObject.rowCount==0){//the form doesn't exist we have to create it ! 
+						 	oJsonStore2.create( jtype, idname, name, description, json_of_f0 );
+						}else{//the form doesn't exist we have to update it ! 
+							//update: function( jtype, idname, name, description, json )
+						 	oJsonStore2.update( jtype, idname, name, description, json_of_f0 );
+						};
+					}else{
+						alert("Check your internet connection !!!! Trying to read form error:"+oReply.errorMessage);
+					};
+				//fz.setFieldProps("fz1",{value:xRetStr});
+				//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+			},this);
+			oJsonStore2.setCallBack(function(oReply){//update or create callback
+				xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+					// + oReply.info
+					;
+					if(!oReply.isSuccess){
+						alert("Check your internet connection !!!! Trying to write form error:"+oReply.errorMessage);
+					};
+				//fz.setFieldProps("fz1",{value:xRetStr});
+				//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+			},this);			
+			oJsonStore.read( jtype, idname);
+			//oJsonStore.create( jtype, idname, name, description, json_of_f0 );
+		};
+		this.z.restoreF=function(){//restore form in slot id=F1	
+			FBuilder.checkExist("f1");//checks if it exists a form with Id="f1"
+			alert("this.z.restoreF teste !!!!!!!!!");
+			var oJsonStore = new JsonStoreCrud();
+			var jtype="F";
+			var idname="F1";
+			var restJson=null;
+			var xRetStr=null;
+			oJsonStore.setCallBack(function(oReply){
+				var xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;		
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"+ oReply.info;
+				//fz.setFieldProps("fz1",{value:xStr});
+				if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("this.z.restoreF - Inside call back:  BEGIN--->"+xRetStr);
+				var objJson=JSON.parse(oReply.jsonString);//objJson has the whole object
+				this.restJson=objJson.rowSet[0].json;//isolates the form only
+				//x=2;
+				//if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("Erro x não é 1",x!=1);
+				//objFjson=new FJson(restJson);
+				//destroy f0 with f0.destroy (should clean all widgets the dom and the form)
+				//var f1=objFjson.buildNoWidgets("form f1","f1");//builds form name "form f1" & "f1", from restJson,assigning it to variable f1.
+				//objFjson.buildWidgets(f1);//constroi os widgets da json restJson no form f1	
+				//if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("--------- agora mostra o json do form isolado -----------------------");
+				if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("this.z.restoreF *** FORM JSON ALONE *** restJson: BEGIN--->"+this.restJson);
+			},this);
+			oJsonStore.read( jtype, idname);
+			if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("Read request done !");
+		};
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro Mother"> 
+		<div id="xwrapper" </div>
+	</body>
+</html>

@@ -1,0 +1,163 @@
+/* This stylesheet provides the CSS definition of every widget in Mother */	
+/* For each form you can define the widgets introducing the selector Mother_+"form prefix" */	
+body{ 
+	/*background: transparent url("../images/blue_hills.jpg") no-repeat center center fixed; */
+	width: 100%;  
+	height: 100%; 
+	margin: 0% 0% 0% 0%; 
+	background-color:yellow;
+} 
+#header-container {
+	width: 100%;
+	/*height:55px;*/
+	height: 10%;
+	min-height:55px;/* to defend logo height*/
+	/*background-color:gray;/*test color*/
+	background-color:black;/* #000000;*/
+}
+	#header{
+		/*position:absolute;*/
+		/*background-repeat: no-repeat;*/
+		width: 100%;
+		height: 50%;
+		/*margin: auto;*/
+	}
+		#before-logo{
+			float: left;
+			width: 70%;
+			display:inline-block;
+			/*background-color:red;/*test color*/
+			background-color:black;
+		}
+		#logo-container{
+			float: left;
+			width: 25%;
+			/*background-color:pink;/*test color*/
+			background-color:black;
+			/* min-width:300px;*/
+		}		
+			#logo{
+				float: left;
+				/*padding-top: 5%;*/
+				/*border-style:solid;*/
+				margin-left: 55%;
+				/*width: 15%;*/
+			}
+		#after-logo{
+			float: left;
+			width: 5%;
+		}			
+#subheader-container {
+	width: 100%; /* ok working*/
+	/*padding-top:0.5%;*/ /*this sets the distance to the nested element (subheader-green) */
+	/*height: 50%; //* nothing changes */ 
+	height:5%; /* working */
+	min-height:5px;
+	/*background-color:#333333;*/
+	background-color:crimson; /*tests color*/
+	/*white-space:nowrap;*/ /* prevents spliter in text such as "about US" where there's a white space between the two words"*/
+	/*overflow:hidden /*if hidden it will be impossible to have horizontal menus */
+}
+	#subheader{
+		width: 100%; /* ok working*/
+		/*display:inline-block;*/
+
+		/*height: 40px; */
+		/*padding-top: 2%;*//*this sets the distance to the nested element (nav_container-gold) */
+		/*overflow:auto;*/
+		/*background-color:#333333;*/
+		background-color:green;
+		/*overflow:auto */
+	}
+		#before-nav {
+			float: left;
+			width: 2%;
+			height:50%; 
+			/*background-color:#333333;*/
+			min-width:50px;
+			display:inline-block;
+			/*background-color:plum; /*tests color*/
+			
+		}
+		#nav_container{
+			/*margin-top:0px;*/
+		/*float: left;*/
+			/*padding-top:0%;*/ /*this sets the distance to the nested element (nav-blue) */
+			/*padding-left:3%; */ /* ok moves the menu border out of margin */
+			/*width:40%;*/ /* nav_container is 100% of subheader*/
+			width:48%;
+			height:100%; 
+			min-width:290px;
+			display:inline-block;
+
+			/*margin-left: 5%;*/
+			/*height:20px;*/
+			/*border:1px solid #333333;*/
+			/*background:#333333;*/
+			background:gold;  /*color for tests*/
+		}
+			#bootSnav{/* the ul element*/
+				margin-left: 0;
+				padding-left: 0;
+				white-space: nowrap; /* prevents spliter in text such as "about US" where there's a white space between the two words"*/
+				display:inline-block;
+				/*overflow:hidden;*/
+				/*min-height:20px;*/
+				/*background-color:#999;*/
+				/*background-color:blue;*/
+			}
+				#bootSnav li { /*http://css.maxdesign.com.au/listamatic/horizontal02.htm*/   
+					display: inline; 
+					list-style-type: none;
+					/*float:left;*/
+					/*height:18px`*/
+					/*height:80%;*/
+					/*width:auto;*/
+					/*margin:0.9em;*/ /*distance between the li elements*/
+					/*line-height:15px;*/
+					/*background-color:purple;*/
+
+				}
+				#xbootSnav li a{
+					text-shadow: 0 2px 1px rgba(0,0,0,0.5);         
+					display: block;         
+					text-decoration: none;         
+					color: lime;         
+					font-size: 1.5em;         
+					margin: 0 .2em; 
+				} 
+				#bootSnav li a:hover {
+					margin-top: 1px; 
+					margin-left: 1px; 
+				} 		
+		#after-nav{
+			float: right;*/
+			width: 20%;
+			height:1px; 
+			min-width:100px;
+			/*background-color:#333333;*/
+			background-color:cyan; test color*/
+			vertical-align:top;
+			display:inline-block;
+		}			
+
+#working-container {
+	width: 100%; /* ok working*/
+	height:70%;
+	/*padding-top:2%;*/ /*se for 0% aparece um border de background em cima e em baixo - se for 1% só aparece só baixo - se for 2% desaparece mas o texto começa 2% abaixo...
+	/*height: 50%; //* nothing changes */ 
+	/*height: 400px;*/ /* working */
+	background-color:darkorange;/* se mudar para pink e puser padding top=0% pode-se ver o problema */
+	/*background-color:crimson;*/
+	/*overflow:auto */
+}				
+#footer {
+	position:absolute;
+	/*top:85%;*/
+	width: 100%;
+	/*height: 200px;*/
+	height: 15%;
+	background-color: #333333;
+}
+
+

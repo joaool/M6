@@ -1,0 +1,167 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+     <title>Test Save/Restore json v2.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;//so that we can use "this" inside this html with embedded script
+//z={};
+z={me:"I am z!"};
+thiz=this;
+require([
+	"MotherLib6.js",
+	"Mother1/json2FormDsgn2.js",
+	"Mother1/editFBuilder2.js",
+	"Mother1/debug.js",
+	"../dajax_curr/DojJsonStore.js",
+	"dojo/_base/declare",	 
+	"dojo/_base/lang",
+	"dijit/form/Button",		
+	 "dojo/domReady!"
+	], 
+	function(FBuilder,FJson,EditFBuilder,Dbg,JsonStoreCrud,Declare,Lang,Button){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_save_restore_json2","",{main:true,myTest1:true,fim:true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("editFBuilder2"         ,"-->",{constructor:true,removeAreas:true,removeWListeners:true,setAListeners:false,resumeWListeners:true,suspendWListeners:true,overWidget:true,outWidget:true});
+		//this.oDbg.setDbg("ResizeMoveArea"        ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("resizeWCoord"          ,"------>",{"constructor":true,postCreate:true});//All debugs in this class with these keywords will be send to console.log
+
+		this.oDbg.setThis("test_save_restore_json2");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//------------------------------------------------------------------------	
+		//write code HERE !
+		//------------------------ switch RUN/DESIGN & properties ----------------------------------------------
+		var xDesign=true;
+		var fx=new FBuilder("switch run/design","fx",{viewPort:{l:1190,t:5,w:200,h:260},borderColor:"black",borderType:"solid",borderThickness:1});
+		//fx.addChild("button",{left:0,top:0,width:80,value:"DESIGN",clickCode:"z.run_Design()"});//1
+		fx.addChild("button",{left:0,top:0,width:75,value:"Design",clickCode:"thiz.z.run_Design()"});//1
+		fx.addChild("label",{value:"No widget",left:90,top:3,width:100}); //2
+		fx.addChild("grid",{left:0,top:30,width:180,height:230,showId:false,headers:"Name,Value",colTypes:"text/50,text/100"});//3
+		var xVal=fx.fieldById("fx1").props.value; //the same as .label
+		if(this.oDbg.isDbg("main")) this.oDbg.display("valor inicial do button DESIGN/RUN="+xVal);
+		//------------------------------------------------------------------------------------------
+		
+/*		//------------------------ PROPERTIES -------------------------------------------------
+		var viewPortX={l:1200,t:50,w:150,h:230};
+		var fProp=new FBuilder("Properties Form","fProp",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1});
+		fProp.addChild("grid",{left:0,top:0,width:148,height:220,showId:false,headers:"Name,Value",colTypes:"text/50,text/100"});//10
+*/
+		
+		//-------------------------------------------------------------------------------------
+
+		var viewPortX={l:50,t:5,w:1100,h:200};
+		var f0=new FBuilder("form f0","f0",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1});
+		f0.addChild("label",{value:"Entity",left:80,top:10,width:100}); //1
+		var xArr=[{name:"Invoice"},{name:"InvoiceLine"},{name:"Product"},{name:"Customer"}];
+		f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120});//2
+		//	f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120,placeHolder:"Enter Entity"});//2
+
+
+		f0.addChild("label",{value:"Master Data",left:80,top:40,width:100}); //3
+
+		// EXEMPLO: em que colocamos um valor (23) como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		//f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',23);",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+		// EXEMPLO SEMELHANTE AO ANTERIOR mas em que o default é retirado de "num1" como default na textBox (em preCode) e mostrar o valor à saida (em posCode) !!!! 
+		f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',this.get('num1'));",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+
+		f0.addChild("label",{value:"isCreateDelTrueChild",            left:500,top:10}); //5
+		f0.addChild("label",{value:"isCreateNormalChildWithParent",   left:500,top:40}); //6
+		f0.addChild("label",{value:"isCreateNormalChildWITHOUTParent",left:500,top:70}); //7
+		f0.addChild("checkBox",{left:480,top:10+5,title:"true/false for boolean isCreateDelTrueChild"}); //8
+		f0.addChild("checkBox",{left:480,top:40+5,title:"true/false  for boolean isCreateNormalChildWithParent"}); //9
+		f0.addChild("checkBox",{left:480,top:70+5,title:"true/false  for boolean isCreateNormalChildWITHOUTParent"}); //10
+
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:10}); //11
+		f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:40}); //12
+		f0.addChild("textBox",{left:920,top:10,title:"pls introduce number with a comma separator ex:9,3,7",placeHolder:"el1,el2,...eln"});//13
+		f0.addChild("textBox",{left:920,top:40,title:"pls introduce number with a comma separator ex:9,3,7"});//14
+	
+		f0.addChild("button",{left:600,top:120,width:80,height:80,value:"SAVE",clickCode:"z.testSave()"});//15
+		f0.addChild("button",{left:700,top:120,width:80,height:80,value:"RESTORE",clickCode:"z.testRestore()"});//16
+
+		f0.addChild("numberBox",{name:"num1",left:80,top:70,width:80,pattern:'##.00000',value:123.5});//17
+		//f0.addChild("textArea",{left:180,top:70,width:100,height:120});//18
+		// EXEMPLO_ Pomos o default igual ao conteudo de "test1" e mostramos o valor à saida (em posCode) !!!! 
+		f0.addChild("textArea",{name:"area1",left:180,top:70,width:100,height:120,preCode:"this.set('area1',this.get('test1'));",posCode:"console.log('saiu de textArea com '+this.get('area1'));"});//18
+		var d= new Date("October 13, 2012 11:13:00");//javascript date definition
+		f0.addChild("dateTextBox",{left:290,top:70,value:d,width:120}); //19   //if value of date is specified as a string
+		//----------------------------------------
+		edit_f0=new EditFBuilder(f0,"click"); //"mouseenter","click"
+		//edit_f0.on("widget_selected",function(){
+		edit_f0.on("widget_selected",Lang.hitch(this,function(){
+			//console.log("test_MotherLib5_4 -- 	CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+			//DomStyle.set(editF.currentWidget.id,"display","none");//to make it invisible while resizeMove 
+			fx.setFieldProps("fx2",{value:edit_f0.currentWidget.type});
+			var xOrder=edit_f0.currentWidget.posInArr;
+			//console.log("test_MotherLib5_4 -- Pos="+xOrder+" x="+editF.currentWidget.left+" y="+editF.currentWidget.top);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("Pos="+xOrder+" x="+edit_f0.currentWidget.left+" y="+edit_f0.currentWidget.top);
+			f0.unVisibleById(edit_f0.currentWidget.id)
+			//alert("widget_selected");
+		}));
+		edit_f0.on("widget_unselected",Lang.hitch(this,function(){
+			//console.log("test_MotherLib5_4 -- CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+			fx.setFieldProps("fx2",{value:"No widget"});
+			f0.visibleById(edit_f0.currentWidget.id)
+			edit_f0.reset();//volta a por listeners à escuta
+		}));	
+	
+		//--------------------------------------------------------------------------------------------------------------------------
+	    //z=Lang.getObject("z",true); //returns the value for the property of an object defined by a dot separated string. If second par=true it creates the property (if it doesnot exist) in the object
+									// if instead of "foo.bar" we have "z" it creates this.z ?
+		//z is a global object defined before require()
+		this.z.testSave=function(){	
+			alert("xDesign="+xDesign);
+		};
+		this.z.run_Design=function(){	
+			var xVal=fx.fieldById("fx1").props.value;
+			//alert("entrou em run_Design !!!");
+			if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("entrou em run_Design !!! o valor de z.me="+thiz.z.me);
+			//if (oDbg.isDbg("myTest1") ) oDbg.dbg("myTest1","A entrada button fx="+xVal);
+			if(xVal=="Design"){
+				xVal=fx.setFieldProps("fx1",{value:"Run"});
+				edit_f0.stopEdit();
+				xDesign=false;
+			}else{
+				xVal=fx.setFieldProps("fx1",{value:"Design"});
+				edit_f0.resumeEdit();
+				xDesign=true;
+			};
+			xVal=fx.fieldById("fx1").props.value;
+		};	
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

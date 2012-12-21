@@ -1,0 +1,120 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>Teste Promise v1.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />--> <!-- efeito de halo -->
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<script src="Mother1/jquery-1.8.1.min.js"></script>
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;
+//thiz=this;
+require([
+	"Mother1/utils.js",
+	"Mother1/debug.js",
+	"Mother1/editFBuilder2.js",
+	"MotherLib6.js",
+	"dojo/_base/Deferred",
+	"dojo/_base/declare",	 
+	"dojo/_base/window",
+    "dojo/on",
+	"dojo/parser",//recomendation from JS
+	"dojo/dom",
+	"dojo/dom-construct",//used outside class
+	"dojo/dom-style",	
+	"dojo/ready",
+	//----- para editFBuilder on,Lang,DomGeom
+    "dojo/_base/lang",
+	"dojo/dom-geometry",
+	"dojo/Evented" //necessário para emit e recepção de eventos
+	], 
+	function(Utils,Dbg,EditFBuilder,FBuilder,Deferred,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,Lang,DomGeom,Evented){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("test_promise"          ,"",{"main":true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("editFBuilder2"       ,"-->",{"constructor":true,"setAListeners":false,"resumeWListeners":true,suspendWListeners:true,"overWidget":true,"outWidget":true});
+		//this.oDbg.setDbg("ResizeMoveArea"      ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+
+		this.oDbg.setThis("test_promise");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//------------------------------------------------------------------------	
+		//write code HERE !
+		function searchTwitter(term) {
+			var url, xhr, results, def;
+			url = 'http://search.twitter.com/search.json?rpp=100&q=' + term;//https://twitter.com/search?q=IE10&src=typd
+			//url = 'http://search.twitter.com/search.json?q=' + term+'&rpp=100;//example for blue angels -->http://search.twitter.com/search.json?q=blue%20angels&rpp=1
+			//def = new dojo.Deferred();
+			def = new Deferred();
+			xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+			 
+			xhr.onload = function (e) {
+				if (this.status === 200) {
+					results = JSON.parse(this.responseText);
+					def.resolve(results);
+				};
+			};
+			 
+			xhr.onerror = function (e) {
+				//def.reject(e);//dá erro aqui
+			};
+			 
+			xhr.send();
+			 
+			return def;
+		};		
+		if(this.oDbg.isDbg("main")) this.oDbg.display("Before Deferred");
+		/*
+		Deferred.when(4, print); // this will print 4 immediately  call windows print !!!
+		var fourAsync = new Deferred();
+		Deferred.when(fourAsync, print); // this will print 4, one second later when the Deferred is resolved
+		setTimeout(function(){
+			fourAsync.resolve(4);
+		}, 1000);
+
+		function print(value){
+			console.log(value);
+		};	
+		*/
+		dojo.ready(function () {
+			var container = dojo.byId('xwrapper');
+			searchTwitter('blue angels').then(function (data) {
+				data.results.forEach(function (tweet) {
+					dojo.create('li', {
+						innerHTML: tweet.text
+					}, container);
+				});
+			});
+		});
+		if(this.oDbg.isDbg("main")) this.oDbg.display("After Deferred");
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+	</head>
+	<body class="claro">
+		<div id="xwrapper" </div>
+	</body>
+</html>

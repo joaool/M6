@@ -1,0 +1,324 @@
+<html>
+<head>
+<!--
+		<script type="text/javascript" src="Dojo Toolkit/dojo-release-1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" >
+		</script> 
+		<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">
+-->
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+    <title>M6 v1.0</title>
+	<link href="../dojo1.7.1/dijit/themes/claro/claro.css" rel="stylesheet"> 
+	<link type="text/css" rel="stylesheet" href="Mother1/bootstrap.css" />
+	<link rel="stylesheet" href="Mother1/font-awesome.css">	
+	<script type="text/javascript" src="../dojo1.7.1/dojo/dojo.js" djconfig="parseOnLoad: true, isDebug: true" ></script> 
+	<!--<script src="Mother1/jquery-1.8.1.min.js"></script>-->
+	<!--<script src="Mother1/bootstrap.js"></script>-->	
+	<!--<link href="Dojo Toolkit/dojo-release-1.7.1/dojox/layout/resources/ResizeHandle.css " rel="stylesheet">-->
+	<link rel="stylesheet" href="../dgrid/css/dgrid.css">  
+	<!------ To support dojox FloatingPane ---------------------------------------------- -->
+		<link href="../dojo1.7.1/dojox/grid/resources/claroGrid.css" rel="stylesheet">
+		<link href="../dojo1.7.1/dojox/layout/resources/FloatingPane.css " rel="stylesheet">
+	<!------ Mother CSS ----------------------------------------------------------------- -->
+		<!--- For Mother Builder --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilder.css" /> 
+		<!--- For M5 alignment with layoutArea15 --->
+		<link rel="stylesheet" type="text/css" href="Mother1/MotherBuilderOld.css" /> 
+		<!--<link rel="stylesheet" type="text/css" href="Mother1/MotherFOld.css" /> -->
+
+		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
+		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+	<!-- ----------------------------------------------------------------------------------- -->
+	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
+
+<script>
+oDbg=null;
+//thiz=this;
+require([
+	"Mother1/utils.js",
+	"Mother1/debug.js",
+	"Mother1/editFBuilder2.js",
+	"MotherLib6.js",
+    "Mother1/ResizeMoveArea2.js",  
+	"dojo/_base/declare",	 
+	"dojo/_base/window",
+    "dojo/on",
+	"dojo/parser",//recomendation from JS
+	"dojo/dom",
+	"dojo/dom-construct",//used outside class
+	"dojo/dom-style",	
+	//"dojo/ready",
+	// ----- requirementes for ToolBox floating pane ------
+	"dojox/layout/FloatingPane",
+	"dijit/layout/BorderContainer",
+	"dijit/layout/AccordionContainer",
+	"dijit/layout/ContentPane",
+	"dijit/layout/TabContainer",
+	"dijit/ColorPalette",	
+	//----- para editFBuilder on,Lang,DomGeom
+    "dojo/_base/lang",
+	"dojo/dom-geometry",
+	"dojo/Evented" //necessário para emit e recepção de eventos
+	], 
+	//function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,FloatingPane,Lang,DomGeom,Evented){ 
+	function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,
+			FloatingPane,BorderContainer,AccordionContainer,ContentPane,TabContainer,ColorPalette,
+			Lang,DomGeom,Evented){ 
+		//----------- debug preparation Area -----------------------------------------------------------
+		this.oDbg=new Dbg();
+		this.oDbg.setDbg("M6"          ,"",{"main":true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		//this.oDbg.setDbg("editFBuilder2"       ,"-->",{"constructor":true,"setAListeners":false,"resumeWListeners":true,suspendWListeners:true,"overWidget":true,"outWidget":true});
+		//this.oDbg.setDbg("ResizeMoveArea"      ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
+
+		this.oDbg.setThis("M6");
+		//------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
+		//------------------------------------------------------------------------	
+		//write code HERE !
+		DomStyle.set(Win.body(), "backgroundColor", "darkorange");//body() é um node como qq outro...
+		var util=new Utils(); //to use utils functions
+		toolBox(15,88,201,435);
+		//------------------ END OF MAIN CODE ----------------------
+		//------------------- FUNCTIONS AREA -----------------------
+		function toolBox(nL,nT,nW,nH){
+			//alert("ToolBox");
+			//---- floatinPane setup
+			var floatPane1 = DomConstruct.create("div"); 
+			floatPane1.innerHTML=util.makeHTML("div","fPaneId1","R",null,0,0,1,1,1,"dotted","crimson");//O placeHolder do pFloatingPane
+			Win.body().appendChild(floatPane1); 
+			var subFloat1 = DomConstruct.create("div"); //o suporte onde o BorderContainer frame se vai agarrar
+			subFloat1.innerHTML=util.makeHTML("div","fSubPaneId1","R",null,10,50,100,30,6,null,null);//
+			pFloatingToolBox = new FloatingPane({
+				title: "Mother Toolbox",
+				resizable: true, dockable: true,
+				//style: "position:absolute;left:15;top:88;width:201px;height:435px;visibility:visible;",
+				style: "position:absolute;left:"+nL+"px;top:"+nT+"px;width:"+nW+"px;height:"+nH+"px;visibility:visible;",
+				id: "pFloatingToolBoxId"
+			}, dojo.byId("fPaneId1"));
+			//pFloatingToolBox.set("content",bc);
+			pFloatingToolBox.set("content",subFloat1);//a este conteudo vai ser pendurado o BC
+			pFloatingToolBox.startup();
+			//---- end of floatinPane setup
+			if(this.oDbg.isDbg("main")) this.oDbg.display("-------------------floating Pane setup done");
+			//-------------------- prepara conteudo para ToolBox --------------------------------
+			// -------------------------------  Toolbox MAP ---------------------------
+			//	body
+			// 		BorderContainer (bc)
+			//			AccordionContainer (aContainer)
+			//				div (content1) - o placeholder para ap1
+			//					ContentPane (ap1) title: "Layout ToolBox" ->cria id="layoutToolbox_wrapper" (div)
+			//																			id="layoutToolbox_button" (div)
+			//																			id="dijitAccordionChildWrapper" (inserido qdo está aberto)
+			//																			    id="layoutToolBox"
+			//						formObj (layoutToolBox)
+			//				div (content2)
+			//					ContentPane (ap2) title: "Menu ToolBox" -->cria id="menuToolBox_wrapper"
+			//																			id="menuToolBox_button"
+			//				div (content3)
+			//					ContentPane (ap3) title: "Form ToolBox"
+			//						TabContainer (tc)
+			//							ContentPane (tab1) title: "Widgets"
+			//								formObj (formToolbox)
+			//							ContentPane (tab2) title: "Properties"
+			//								formObj (formProperties)
+			var bc = new BorderContainer({
+				// para HP 650,1250
+				//style: "position:absolute; left:8px; top:40px; height: 420px; width: 235px; border: solid 1px;", //para dentro de floatingPane
+				style: "position:absolute; left:8px; top:40px; height:"+(nH-15)+"px; width:"+(nW+34)+"px; border: solid 5px red;", //para dentro de floatingPane
+				design:"sidebar"  //"headline" 
+			});					
+			//var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:225px;height: 320px;"}, "xxxx");//width era 180px
+			var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:"+(nW+24)+"px;height:"+(nH-120)+"px;"}, "xxxx");//width era 180px
+	//var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
+			var xLeft=2;
+			var xTop=1;
+			var xSpace=20;
+			var xWidth=197;
+			var xHeight=17;
+			//--------------------- LayoutToolBox
+			var content1 = DomConstruct.create("div"); 
+			//		var f0=new FBuilder("form f0","f0",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1});
+			//var xStyle="position:absolute;left:0px;top:50px;width:200px;height:350px;border: 5px solid blue";
+			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid green";
+			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid black";
+			var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;order: 10px solid black";
+			var ap1 = new ContentPane({title: "Layout ToolBox",style:xStyle,selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
+			//var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
+			var viewPortX={l:0,t:0,w:200,h:300};
+			var layoutToolBox=new fBuilder("LayoutToolBox","layouttb",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1}); //form para Accordion pane 
+			layoutToolBox.addChild("button",{left:xLeft,top:xTop,value:"Menu Area Layout",clickCode:"z.menuArea();",width:xWidth,height:xHeight}); //1
+			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*1),value:"Forms Area Layout",clickCode:"z.formsArea();",width:xWidth,height:xHeight}); //2
+			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*2),value:"Navigation Area Layout",clickCode:"z.navigationArea();",width:xWidth,height:xHeight}); //3
+			var xComboArr=[{name:"Header"},{name:"SubHeader"},{name:"Working Area"},{name:"Footer"}];
+			layoutToolBox.addChild("comboBox",{left:xLeft+4,top:(xTop+(10+xSpace)*3)+4,value:"Working Area",comboArr:xComboArr,width:150,height:xHeight}); //4
+			layoutToolBox.addChild("button",{left:xLeft+162,top:(xTop+(10+xSpace)*3)+2,value:"Size",clickCode:"z.sizeLayout();",width:35,height:xHeight}); //5
+			var cPal1 = new ColorPalette({
+				palette: "7x10",
+				onChange: function(val){ chooseColor(val); }
+			}); 
+			//Ready(function(){
+				layoutToolBox.addExternal(cPal1,4,122+5);	//add an external element to the fBuilder
+				//layoutToolBox.compensationAll();//necessary to adjust buttons size (aftter widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+			//});
+			ap1.set("content",layoutToolBox.formObj); //Places form "layoutToolBox" over ContentPane "ap1" and add it to accordion pane
+			aContainer.addChild(ap1);
+		
+		
+			if(this.oDbg.isDbg("main")) this.oDbg.display("---------------------Layout Toolbox setup done");
+			// ----------------------------------- Menu Toolbox ---------------------------
+			var content2 = DomConstruct.create("div"); 
+			xStyle="position:absolute;left:2px;top:40px;width:"+(nW+0)+"px;height:"+(nH-190)+"px;border: 10px solid blue";
+			var ap2 = new ContentPane({title: "Menu ToolBox",style:xStyle,selected : false,id:"menuToolBox"}, content2);	
+			menuTc = new TabContainer({title: "MenuToolBox", id:"menuTcId",region: "center",tabPosition:"top"});
+			menuTab1 = new ContentPane({title: "Link Menu"});
+			/*			
+						var menuToolBox=new fBuilder("MenuToolBox","menutb",{borderType:"none"}); //form para Accordion pane menu box
+							var xLeft=2;
+							var xSpace=3;
+							var xHeight=17;
+							var xWidth=80;
+							var xOffSet=10;
+							menuToolBox.addChild("label",{left:xLeft,top:xSpace,value:"Text",width:xWidth,height:xHeight}); //1
+							var xComboArr=[{name:"#1"},{name:"#2"},{name:"#3"},{name:"#4"},{name:"#5"},{name:"#6"},{name:"#7"},{name:"#8"},{name:"#9"}]; 
+						//var xComboArr=readMenuTxt();//returns an array of objects in the form [{name:menu1},{name:menu2},...{name:menu9}]
+							menuToolBox.addChild("comboBox",{left:xLeft+40,top:xSpace,value:xComboArr[0].name,preCode:"zOption=0;xComboArr=z.zReadMenuTxt();z.dummy(xComboArr);",changeCode:"zOption=z.getMenuChoice(this.value,xComboArr);//alert('inside eval zOption='+zOption);",posCode:"z.updateHtmlMenu(this.value,zOption);",comboArr:xComboArr,width:130,height:20,title:"Choose the text for the link menu..."}); //2									
+							menuToolBox.addChild("label",{left:xLeft,top:xOffSet+(xSpace+xHeight)*1,value:"Effect",width:xWidth,height:xHeight}); //3
+							var xxComboArr=[{name:"Blue Pills"},{name:"Red Pills"},{name:"Green Pills"},{name:"Black Pills"},{name:"Tabs"}];
+							menuToolBox.addChild("comboBox",{left:xLeft+40,top:xOffSet+(xSpace+xHeight)*1,value:"Pills",comboArr:xxComboArr,posCode:"z.updateEffects(this.value);",width:100,height:20,title:"Choose the type of effect for the link menus..."}); //4				
+							menuToolBox.addChild("checkBox",{left:xLeft+152,top:xOffSet+(xSpace+xHeight)*1+3,changeCode:"z.setMenuHrz_Vrt(this.checked);",title:"Check for vertical menu "}); //3
+						menuTab1.set("content",menuToolBox.formObj); //Cola o form ao tab1 que está dentro do tab container tc que vai ser colocado no content pane ap1
+			*/			
+			menuTab2 = new ContentPane({title: "Properties"});
+			/*
+						var menuProperties=new fBuilder("MenuProperties","menup",{borderType:"none"}); //form para Accordion pane menu box
+							var xLeft=2;
+							var xSpace=3;
+							var xHeight=20;
+							var xWidth=110;
+							var xOffSet=10;
+							menuProperties.addChild("label",{left:xLeft,top:xSpace+3,value:"menu label",width:xWidth,height:xHeight}); //1
+							menuProperties.addChild("textBox",{left:xLeft+75,top:xSpace,width:xWidth,height:xHeight}); //2
+							menuProperties.addChild("label",{left:xLeft+100,top:30,width:90,height:xHeight}); //3
+							menuProperties.addChild("textArea",{left:xLeft+1,top:60,width:190,height:145}); //2
+							menuProperties.addChild("button",{left:xLeft+45,top:xOffSet+10+(xSpace+xHeight)*8,value:"Ok",clickCode:"z.menuOk()"}); //3
+							menuProperties.addChild("button",{left:xLeft+85,top:xOffSet+10+(xSpace+xHeight)*8,value:"Cancel"}); //4
+							// --> prepares content for Options --> dijit.form.DropDownMenu is the container - IMPORTANT!!! THIS IS INTRODUCED AS EXTERNAL IN MOTHERLIB
+							var optionDropDown = new dijit.DropDownMenu({style: "display: none;"}); 
+							optionDropDown.addChild(new dijit.MenuItem({label:"Peer Menu above",onClick:function(){z.zpeerAbove();},iconClass:"dijitEditorIcon dijitEditorIconJustifyLeft"})); 
+							optionDropDown.addChild(new dijit.MenuItem({label:"Peer Menu bellow",onClick:function(){z.zpeerBelow();},iconClass:"dijitEditorIcon dijitEditorIconJustifyRight"})); 
+							optionDropDown.addChild(new dijit.MenuItem({label:"Creates children",onClick:function(){z.zchildMenu();},iconClass:"dijitEditorIcon dijitEditorIconIndent"})); 
+							optionDropDown.addChild(new dijit.MenuSeparator());
+							optionDropDown.addChild(new dijit.MenuItem({label:"Delete this menu",onClick:function(){z.zok2DeleteMenu();},iconClass:"dijitEditorIcon dijitEditorIconCut"})); 
+							//-------> prepares content for dijit.PopupMenuItem()
+							var popupMenuContainer = new dijit.Menu();
+								popupMenuContainer.addChild(new dijit.MenuItem({label:"Form",onClick:function(){linkToForm(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconSelectAll"})); 
+								popupMenuContainer.addChild(new dijit.MenuItem({label:"List",onClick:function(){linkToList(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconInsertOrderedList"})); 
+								popupMenuContainer.addChild(new dijit.MenuItem({label:"Menu",onClick:function(){linkToMenu(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconInsertUnorderedList"})); 
+								popupMenuContainer.addChild(new dijit.MenuItem({label:"Report",onClick:function(){linkToReport(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconCopy"})); 
+								popupMenuContainer.addChild(new dijit.MenuItem({label:"Batch",onClick:function(){linkToBatch(xLabel,xzLevel);},iconClass:"dijitEditorIcon dijitEditorIconTabIndent"})); 
+							optionDropDown.addChild(new dijit.PopupMenuItem({label:"Connections",iconClass:"dijitEditorIcon dijitEditorIconCreateLink",popup:popupMenuContainer})); 
+							// --> creates Options DropDownButton
+							var button = new dijit.form.DropDownButton({
+								label: "Options",
+								dropDown: optionDropDown
+							});
+							Ready(function(){
+								menuProperties.addExternal(button,2,30);	//add an external element to the fBuilder
+							});
+						menuTab2.set("content",menuProperties.formObj); 
+*/						
+					menuTc.addChild( menuTab1 );
+					menuTc.addChild( menuTab2 );
+					//Ready(function(){
+					//	menuToolBox.compensationAll();//necessary to adjust buttons size (aftter widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+					//});
+				ap2.set("content",menuTc); //Cola o form ao accordion pane e agora vai preencher o form
+				aContainer.addChild(menuTc);				
+			
+			// ---------------------------- Places Accordion inside BorderContainer and Border Container inside subFloat1 (placed  inside floatPane1 in Body)
+			aContainer.startup();
+			bc.addChild(aContainer);
+			subFloat1.appendChild(bc.domNode);
+			bc.startup();
+			
+			//formToolbox.compensationAll();//not 100% necessary, but a good practice (after widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
+				
+
+		};
+		//------------------- END OF FUNCTIONS AREA -----------------------
+		//--------------------------------------------------------------------------------------------------------------------------
+		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head
+	}//closing of main function				
+);//closing of require function
+</script>
+</head>
+<body class="claro Mother"> 
+	<div id="header-container">
+		<div id="header">
+			<div id="before-logo">
+				<section>.</section>			
+			</div>
+			<div id="logo-container">
+				<div id="logo">
+				   <a href="#"><img src="images/motherlogo211.jpg" /></a>
+				</div>
+			</div>
+			<div id="after-logo">
+				<section></section>			
+			</div>			
+		</div>
+	</div>
+	<div id="subheader-container">
+		<div id="subheader">
+			<div id="before-nav">
+				<section></section>			
+			</div>			
+			<div id="nav_container">
+				<section></section>			
+				<!--http://bootswatch.com/-->
+					<ul id="bootSnav" class= "nav nav-tabs" > <!-- the pills effect (blue pill) vs the the tabs effect: "nav nav-pillx", "nav nav-tabs", "nav nav-pills" "nav nav-pills nav-stacked span2"-->
+						<!--
+						<li><a href="#"><i class="icon-home icon-white"></i>Home</a></li>
+						<li><a href="#"><i class="icon-picture icon-black"></i>About Us</a></li>
+						<li><a href="#">Feedback1</a></li>
+						<li><a href="#">Feedback2</a></li>
+						<li><a href="#">Feedback3</a></li>
+						<li class="active"><a href="#"><i class="icon-tags icon-black"></i>About</a></li>
+						<li><a href="#">Feedback4</a></li>
+						<li><a href="#"><i class="icon-share icon-black"></i>Feedback5</a></li>
+						<li><a href="#">Contact</a></li>					
+						
+						<!-->
+						<li><a href="http://www.w3schools.com"><i class="icon-home icon-white"></i>Home</a></li>
+						<li class="active"><a href="http://www.oracle.com"><i class="icon-tags icon-white"></i>About Us</a></li>
+						<li><a href="http://www.microsoft.com"><i class="icon-user icon-white"></i>Contacts</a></li>
+						<li><a href="#"></a></li>
+						<li><a href="#"></a></li>
+					
+
+					</ul>
+			</div>
+			<div id="after-nav">
+				<section></section>			
+			</div>
+		</div>
+	</div>
+	<div id="working-container">
+		<p></p>	
+	</div>	
+	<div id="footer">
+		<section>F</section>
+	</div>	<!--
+	http://www.myinkblog.com/coding-website-header-navigation/
+	<h1 id="header-bar" class="skin" style="text-align:left; font-family:arial;font-size:24px; color:white;background:black;" img scr="images/motherlogo.jpg" alt="ligth blue button">Mother Builder</h1>
+	-->
+	<!-- themeforest admintasia
+    <p> align="text-align:center" background="images/motherlogo.jpg" >This is Mother Builder</p>
+    <p> This is a paragraph of Mother Builder</p>
+	  	<link rel="icon" type="image/jpg" href="images/motherlogo.jpg" />
+        <img scr="images/motherlogo.jpg" height="40" width="100"/>
+	-->
+	<!--<script src="Mother1/bootstrap.js"></script>	-->
+</body> 
+</html>

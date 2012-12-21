@@ -1,0 +1,106 @@
+/* This stylesheet provides the CSS definition of every widget in Mother */	
+/* For each form you can define the widgets introducing the selector Mother_+"form prefix" */	
+#xheader-bar .skin{/*   */
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	border: 4px inset coral ;/*thickness,border-style,color -  outset inset ridged grooved */
+	/*filter:alpha(opacity=50); */
+	/*-moz-opacity:0.5; */
+	/*-khtml-opacity: 0.5; */
+	/*opacity: 0.5;*/ 
+	background-color:black;/*orange sandybrown*/
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:2.4 em;
+	text-shadow: 0px 2px 3px #555;
+	padding: 2px 7px 0px 7px;
+	list-style:none;
+}
+body{ 
+	/*background: transparent url("../images/blue_hills.jpg") no-repeat center center fixed; */
+	width: 100%;  
+	height: 100%; 
+	margin: 0% 0% 0% 0%; 
+} 
+#header-container {
+	width: 100%;
+	/*height:55px;*/
+	height: 55px;/* desapear with any % !!!*/
+	background-color: #000000;
+}
+	#header{
+		position:absolute;
+		/*background-repeat: no-repeat;*/
+		width: 100%;
+		height: 50%;
+		/*margin: auto;*/
+	}
+		#logo{
+			float: left;
+			padding-top: 5px;
+			padding-left: 88%;
+		}
+#subheader-container {
+	width: 100%; /* ok working*/
+	padding-top:0%;/*this sets the distance to the nested element (subheader-green) */
+	/*height: 50%; //* nothing changes */ 
+	height: 30px; /* working */
+	background-color:#333333;
+	/*background-color:crimson;*/
+	/*overflow:auto */
+}
+	#subheader{
+		width: 25%; /* ok working*/
+		height: 20px; 
+		padding-top: 0%;/*this sets the distance to the nested element (nav_container-gold) */
+		/*background-color:#333333;*/
+		background-color:green;
+		/*overflow:auto */
+	}
+		#nav_container{
+			/*margin-top:0px;*/
+			padding-top:0%; /*this sets the distance to the nested element (nav-blue) */
+			padding-left:3%; /* ok moves the menu border out of margin */
+			width:100%;/* nav_container is 100% of subheader*/
+			height:20px;
+			border:1px solid #333333;
+			background:#333333;	
+			/*background:gold;*/	
+		}
+			#nav{
+				margin-top: 0.5%; 
+				width:100%;/* nav width is x% of nav_container*/
+				height:20px;
+				-moz-border-radius:10px;
+				-webkit-border-radius:10px;
+				border-radius:10px; //for opera
+				/*background-color:#999;*/
+				background-color:blue;
+				border:1px solid #ccc;
+			}
+				#nav li {    
+					display: block; 
+					float:left;
+					height:18px;
+					width;auto;
+					margin:0.5em;
+					line-height:3px;
+				}
+				#nav li a {
+					text-shadow: 0 2px 1px rgba(0,0,0,0.5);         
+					display: block;         
+					text-decoration: none;         
+					color: #f0f0f0;         
+					font-size: 1.0em;         
+					margin: 0 .2em; 
+				} 
+				#nav li a:hover {
+					margin-top: 2px; 
+				} 
+#footer {
+	position:absolute;
+	top:85%;
+	width: 100%;
+	height: 200px;
+	background-color: #333333;
+}
