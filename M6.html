@@ -125,7 +125,7 @@ require([
 			var bc = new BorderContainer({
 				// para HP 650,1250
 				//style: "position:absolute; left:8px; top:40px; height: 420px; width: 235px; border: solid 1px;", //para dentro de floatingPane
-				style: "position:absolute; left:8px; top:40px; height:"+(nH-40)+"px; width:"+(nW+34)+"px; border: solid 5px red;", //para dentro de floatingPane
+				style: "position:absolute; left:8px; top:40px; height:"+(nH-50)+"px; width:"+(nW+34)+"px; border: solid 5px red;", //para dentro de floatingPane
 				design:"sidebar"  //"headline" 
 			});					
 			//var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:225px;height: 320px;"}, "xxxx");//width era 180px
@@ -143,7 +143,7 @@ require([
 			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid green";
 			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid black";
 			var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;order: 10px solid black";
-			var ap1 = new ContentPane({title: "Layout ToolBox",style:xStyle,selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
+			var ap1 = new ContentPane({title: "* Layout ToolBox",style:xStyle,selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
 			//var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
 			var viewPortX={l:0,t:0,w:200,h:300};
 			var layoutToolBox=new fBuilder("LayoutToolBox","layouttb",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1}); //form para Accordion pane 
