@@ -79,7 +79,7 @@ require([
 		DomStyle.set(Win.body(), "backgroundColor", "darkorange");//body() é um node como qq outro...
 		var util=new Utils(); //to use utils functions
 		//toolBox(15,88,201,435);
-		toolBox(15,70,321,400);
+		toolBox(15,70,217,380);
 		//------------------ END OF MAIN CODE ----------------------
 		//------------------- FUNCTIONS AREA -----------------------
 		function toolBox(nL,nT,nW,nH){
@@ -131,7 +131,7 @@ require([
 				//style: "position:absolute; left:8px; top:40px; height:"+(nH-35)+"px; width:"+(nW+34)+"px; border: solid 5px red;", //para dentro de floatingPane
 				
 				//------>to "see" the border container change white to red in the style property --------------------------------
-				style: "position:absolute; left:3px; top:37px; width:"+(nW+36)+"px; height:"+(nH-35)+"px; border: solid 5px white;", //para dentro de floatingPane
+				style: "position:absolute; left:3px; top:37px; width:"+(nW+36)+"px; height:"+(nH-15)+"px; border: solid 5px white;", //para dentro de floatingPane
 				design:"sidebar"  //"headline" 
 			});					
 			//var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:225px;height: 320px;"}, "xxxx");//width era 180px
@@ -139,39 +139,38 @@ require([
 			//var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:"+(nW+34)+"px;height:"+(nH-120)+"px;"}, "xxxx");//width era 180px
 			var aContainer = new AccordionContainer({id:"accordion",region: "left",style:xStyle}, "xxxx");//width era 180px
 	//var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
-			var xLeft=2;
+			var xLeft=15;//era 2
 			var xTop=1;
-			var xSpace=20;
-			var xWidth=197;
-			var xHeight=17;
+			var xSpace=30;
+			var xWidth=205; //era 197
+			var xHeight=27;
 			//--------------------- LayoutToolBox
 			var content1 = DomConstruct.create("div"); 
 			//		var f0=new FBuilder("form f0","f0",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1});
 			//var xStyle="position:absolute;left:0px;top:50px;width:200px;height:350px;border: 5px solid blue";
 			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid green";
 			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid black";
-			var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-120)+"px;order: 10px solid black";
+			var xStyle="position:relative;left:0px;top:0px;width:"+(nW+200)+"px;height:"+(nH-120)+"px;order: 10px solid black";
 			var ap1 = new ContentPane({title: "------> Layout ToolBox",style:xStyle,selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
 			//var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
-			var viewPortX={l:0,t:0,w:180,h:300};
-			var layoutToolBox=new fBuilder("LayoutToolBox","layouttb",{viewPort:viewPortX,borderColor:"green",borderType:"none",borderThickness:1}); //form para Accordion pane 
+			//var viewPortX={l:0,t:0,w:340,h:300};
+			var viewPortX={l:0,t:0,w:40,h:40};//scroll não depende deste viewport
+			var layoutToolBox=new fBuilder("LayoutToolBox","layouttb",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:5}); //form para Accordion pane 
 			// --- the widgets for Layout Toolbox
-			/*
-			layoutToolBox.addChild("button",{left:xLeft,top:xTop,value:"Menu Area Layout",clickCode:"z.menuArea();",width:xWidth,height:xHeight}); //1
-			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*1),value:"Forms Area Layout",clickCode:"z.formsArea();",width:xWidth,height:xHeight}); //2
-			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*2),value:"Navigation Area Layout",clickCode:"z.navigationArea();",width:xWidth,height:xHeight}); //3
+			
+			layoutToolBox.addChild("button",{left:xLeft,top:xTop,value:"Menu Area",clickCode:"z.menuArea();",width:xWidth,height:xHeight}); //1
+			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(xSpace)*1),value:"Forms Area",clickCode:"z.formsArea();",width:xWidth,height:xHeight}); //2
+			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(xSpace)*2),value:"Navigation Area",clickCode:"z.navigationArea();",width:xWidth-0,height:xHeight}); //3
+			
 			var xComboArr=[{name:"Header"},{name:"SubHeader"},{name:"Working Area"},{name:"Footer"}];
-			layoutToolBox.addChild("comboBox",{left:xLeft+4,top:(xTop+(10+xSpace)*3)+4,value:"Working Area",comboArr:xComboArr,width:150,height:xHeight}); //4
-			layoutToolBox.addChild("button",{left:xLeft+162,top:(xTop+(10+xSpace)*3)+2,value:"Size",clickCode:"z.sizeLayout();",width:35,height:xHeight}); //5
+			layoutToolBox.addChild("comboBox",{left:xLeft+4,top:(xTop+(xSpace)*3)+6,value:"Working Area",comboArr:xComboArr,width:150,height:xHeight-6}); //4
+			layoutToolBox.addChild("button",{left:xLeft+162,top:(xTop+(xSpace)*3)+1,value:"Size",clickCode:"z.sizeLayout();",width:43,height:xHeight}); //5
 			var cPal1 = new ColorPalette({
 				palette: "7x10",
 				onChange: function(val){ chooseColor(val); }
-			}); 
-			//Ready(function(){
-				layoutToolBox.addExternal(cPal1,4,122+5);	//add an external element to the fBuilder
-				//layoutToolBox.compensationAll();//necessary to adjust buttons size (aftter widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
-			//});
-			*/
+			}); 				
+			layoutToolBox.addExternal(cPal1,xLeft+4,122+5);	//add an external element to the fBuilder
+			
 			ap1.set("content",layoutToolBox.formObj); //Places form "layoutToolBox" over ContentPane "ap1" and add it to accordion pane
 			aContainer.addChild(ap1);
 		
