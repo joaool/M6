@@ -46,7 +46,7 @@ require([
 	"dojo/dom",
 	"dojo/dom-construct",//used outside class
 	"dojo/dom-style",	
-	//"dojo/ready",
+	"dojo/ready",
 	// ----- requirementes for ToolBox floating pane ------
 	"dojox/layout/FloatingPane",
 	"dijit/layout/BorderContainer",
@@ -60,7 +60,7 @@ require([
 	"dojo/Evented" //necessário para emit e recepção de eventos
 	], 
 	//function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,FloatingPane,Lang,DomGeom,Evented){ 
-	function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,
+	function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,
 			FloatingPane,BorderContainer,AccordionContainer,ContentPane,TabContainer,ColorPalette,
 			Lang,DomGeom,Evented){ 
 		//----------- debug preparation Area -----------------------------------------------------------
@@ -78,7 +78,8 @@ require([
 		//write code HERE !
 		DomStyle.set(Win.body(), "backgroundColor", "darkorange");//body() é um node como qq outro...
 		var util=new Utils(); //to use utils functions
-		toolBox(15,88,201,435);
+		//toolBox(15,88,201,435);
+		toolBox(15,70,321,400);
 		//------------------ END OF MAIN CODE ----------------------
 		//------------------- FUNCTIONS AREA -----------------------
 		function toolBox(nL,nT,nW,nH){
@@ -89,16 +90,18 @@ require([
 			Win.body().appendChild(floatPane1); 
 			var subFloat1 = DomConstruct.create("div"); //o suporte onde o BorderContainer frame se vai agarrar
 			subFloat1.innerHTML=util.makeHTML("div","fSubPaneId1","R",null,10,50,100,30,6,null,null);//
-			pFloatingToolBox = new FloatingPane({
-				title: "Mother Toolbox",
-				resizable: true, dockable: true,
-				//style: "position:absolute;left:15;top:88;width:201px;height:435px;visibility:visible;",
-				style: "position:absolute;left:"+nL+"px;top:"+nT+"px;width:"+nW+"px;height:"+nH+"px;visibility:visible;",
-				id: "pFloatingToolBoxId"
-			}, dojo.byId("fPaneId1"));
-			//pFloatingToolBox.set("content",bc);
-			pFloatingToolBox.set("content",subFloat1);//a este conteudo vai ser pendurado o BC
-			pFloatingToolBox.startup();
+			Ready(function(){
+				pFloatingToolBox = new FloatingPane({
+					title: "Mother Toolbox",
+					resizable: true, dockable: true,
+					//style: "position:absolute;left:15;top:88;width:201px;height:435px;visibility:visible;",
+					style: "position:absolute;left:"+nL+"px;top:"+nT+"px;width:"+nW+"px;height:"+nH+"px;visibility:visible;",
+					id: "pFloatingToolBoxId"
+				}, dojo.byId("fPaneId1"));
+				//pFloatingToolBox.set("content",bc);
+				pFloatingToolBox.set("content",subFloat1);//a este conteudo vai ser pendurado o BC
+				pFloatingToolBox.startup();
+			});			
 			//---- end of floatinPane setup
 			if(this.oDbg.isDbg("main")) this.oDbg.display("-------------------floating Pane setup done");
 			//-------------------- prepara conteudo para ToolBox --------------------------------
@@ -125,11 +128,16 @@ require([
 			var bc = new BorderContainer({
 				// para HP 650,1250
 				//style: "position:absolute; left:8px; top:40px; height: 420px; width: 235px; border: solid 1px;", //para dentro de floatingPane
-				style: "position:absolute; left:8px; top:40px; height:"+(nH-51)+"px; width:"+(nW+34)+"px; border: solid 5px red;", //para dentro de floatingPane
+				//style: "position:absolute; left:8px; top:40px; height:"+(nH-35)+"px; width:"+(nW+34)+"px; border: solid 5px red;", //para dentro de floatingPane
+				
+				//------>to "see" the border container change white to red in the style property --------------------------------
+				style: "position:absolute; left:3px; top:37px; width:"+(nW+36)+"px; height:"+(nH-35)+"px; border: solid 5px white;", //para dentro de floatingPane
 				design:"sidebar"  //"headline" 
 			});					
 			//var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:225px;height: 320px;"}, "xxxx");//width era 180px
-			var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:"+(nW+24)+"px;height:"+(nH-120)+"px;"}, "xxxx");//width era 180px
+			var xStyle="width:"+(nW+36)+"px;height:"+(nH-120)+"px;";
+			//var aContainer = new AccordionContainer({id:"accordion",region: "left",style:"width:"+(nW+34)+"px;height:"+(nH-120)+"px;"}, "xxxx");//width era 180px
+			var aContainer = new AccordionContainer({id:"accordion",region: "left",style:xStyle}, "xxxx");//width era 180px
 	//var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
 			var xLeft=2;
 			var xTop=1;
@@ -142,11 +150,13 @@ require([
 			//var xStyle="position:absolute;left:0px;top:50px;width:200px;height:350px;border: 5px solid blue";
 			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid green";
 			//var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;border: 10px solid black";
-			var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-160)+"px;order: 10px solid black";
-			var ap1 = new ContentPane({title: "* Layout ToolBox",style:xStyle,selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
+			var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-120)+"px;order: 10px solid black";
+			var ap1 = new ContentPane({title: "------> Layout ToolBox",style:xStyle,selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
 			//var ap1 = new ContentPane({title: "Layout ToolBox",selected : true,id:"layoutToolBox"}, content1);//put ContentPane "ap1" inside div "content1"
-			var viewPortX={l:0,t:0,w:200,h:300};
-			var layoutToolBox=new fBuilder("LayoutToolBox","layouttb",{viewPort:viewPortX,borderColor:"green",borderType:"solid",borderThickness:1}); //form para Accordion pane 
+			var viewPortX={l:0,t:0,w:180,h:300};
+			var layoutToolBox=new fBuilder("LayoutToolBox","layouttb",{viewPort:viewPortX,borderColor:"green",borderType:"none",borderThickness:1}); //form para Accordion pane 
+			// --- the widgets for Layout Toolbox
+			/*
 			layoutToolBox.addChild("button",{left:xLeft,top:xTop,value:"Menu Area Layout",clickCode:"z.menuArea();",width:xWidth,height:xHeight}); //1
 			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*1),value:"Forms Area Layout",clickCode:"z.formsArea();",width:xWidth,height:xHeight}); //2
 			layoutToolBox.addChild("button",{left:xLeft,top:(xTop+(10+xSpace)*2),value:"Navigation Area Layout",clickCode:"z.navigationArea();",width:xWidth,height:xHeight}); //3
@@ -161,6 +171,7 @@ require([
 				layoutToolBox.addExternal(cPal1,4,122+5);	//add an external element to the fBuilder
 				//layoutToolBox.compensationAll();//necessary to adjust buttons size (aftter widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
 			//});
+			*/
 			ap1.set("content",layoutToolBox.formObj); //Places form "layoutToolBox" over ContentPane "ap1" and add it to accordion pane
 			aContainer.addChild(ap1);
 		
@@ -168,9 +179,9 @@ require([
 			if(this.oDbg.isDbg("main")) this.oDbg.display("---------------------Layout Toolbox setup done");
 			// ----------------------------------- Menu Toolbox ---------------------------
 			var content2 = DomConstruct.create("div"); 
-			xStyle="position:absolute;left:2px;top:40px;width:"+(nW+0)+"px;height:"+(nH-190)+"px;border: 10px solid blue";
-			var ap2 = new ContentPane({title: "Menu ToolBox",style:xStyle,selected : false,id:"menuToolBox"}, content2);	
-			menuTc = new TabContainer({title: "MenuToolBox", id:"menuTcId",region: "center",tabPosition:"top"});
+			xStyle="position:absolute;left:2px;top:20px;width:"+(nW+0)+"px;height:"+(nH-190)+"px;border: 10px solid blue";
+			var ap2 = new ContentPane({title: "------> Menu ToolBox",style:xStyle,selected : false,id:"menuToolBox"}, content2);	
+			menuTc = new TabContainer({title: "------> Menu ToolBox", id:"menuTcId",region: "center",tabPosition:"top"});
 			menuTab1 = new ContentPane({title: "Link Menu"});
 			/*			
 						var menuToolBox=new fBuilder("MenuToolBox","menutb",{borderType:"none"}); //form para Accordion pane menu box
@@ -228,14 +239,23 @@ require([
 							});
 						menuTab2.set("content",menuProperties.formObj); 
 */						
-					menuTc.addChild( menuTab1 );
-					menuTc.addChild( menuTab2 );
+			menuTc.addChild( menuTab1 );
+			menuTc.addChild( menuTab2 );
 					//Ready(function(){
 					//	menuToolBox.compensationAll();//necessary to adjust buttons size (aftter widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
 					//});
-				ap2.set("content",menuTc); //Cola o form ao accordion pane e agora vai preencher o form
-				aContainer.addChild(menuTc);				
-			
+			ap2.set("content",menuTc); //Cola o form ao accordion pane e agora vai preencher o form
+			aContainer.addChild(menuTc);
+			if(this.oDbg.isDbg("main")) this.oDbg.display("---------------------Menu Toolbox setup done");
+			// ----------------------------------- Form Toolbox ---------------------------
+			var content3 = DomConstruct.create("div"); 
+			var xStyle="position:relative;left:0px;top:0px;width:"+(nW-10)+"px;height:"+(nH-120)+"px;order: 10px solid black";
+			var ap3 = new ContentPane({title: "------> Form ToolBox",style:xStyle,selected : false,id:"toolbox"}, content3);//put ContentPane "ap3" inside div "content3"
+			var viewPortX3={l:0,t:0,w:180,h:300};
+			var formToolbox=new fBuilder("Form ToolBox","toolb",{viewPort:viewPortX3,borderColor:"yellow",borderType:"none",borderThickness:1}); //form para Accordion pane 
+			// --- the widgets for Form Toolbox
+			ap3.set("content",formToolbox.formObj); //Places form "formToolbox" over ContentPane "ap3" and add it to accordion pane
+			aContainer.addChild(ap3);
 			// ---------------------------- Places Accordion inside BorderContainer and Border Container inside subFloat1 (placed  inside floatPane1 in Body)
 			aContainer.startup();
 			bc.addChild(aContainer);
