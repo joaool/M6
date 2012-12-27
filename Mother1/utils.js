@@ -9,8 +9,9 @@ define(["dojo",
 		 "dojo/dom-construct",				 
 		 "dojo/dom-class",
 		 "dojo/dom",
+		 "dojo/_base/Deferred",
 		 "dijit/_WidgetBase"],
-	function(dojo,Declare,Lang,Array,on,Query,DomStyle,DomGeom,DomConstruct,DomClass,Dom,Widget){
+	function(dojo,Declare,Lang,Array,on,Query,DomStyle,DomGeom,DomConstruct,DomClass,Dom,Deferred,Widget){
 		return Declare("utils", null, {
 			// A collection of tools for Mother overall use 
 			//To make this work, you'll need to tell the browser that Utils is a global variable: window.Utils = new UtilityMethod(); 

@@ -71,12 +71,12 @@
 						this.oDbg.setThis("ResizeMoveArea");//All debugs within this class will belong to "ResizeMoveArea"			
 						//console.log("resizeMoveArea ---- CONSTRUCTOR !!! ----");
 						if(this.oDbg.isDbg("constructor")) this.oDbg.display("---- CONSTRUCTOR !!! ----");
-						this.element = DomConstruct.create("div",{id:"_moveResizeBaseDiv"}); //cria HTML div - 
+						this.element = DomConstruct.create("div",{id:"_moveResizeBaseDiv", style:"position:inherit; top:0; left:0"}); //cria HTML div -
 						this.moveResizeDivId="_moveResizeDiv0";//+this.static.moveResizeCount;
 						this.avatarId="_avatarId0";//+this.static.moveResizeCount;
 						this.current={label:xLabel,active:false,l:landingLeft,t:landingTop,w:landingWidth,h:landingHeight,borderThickness:xBorderThickness,borderType:xBorderType,activeColor:xActiveColor};
 						var util=new Utils(); //to use utils functions
-						this.element.innerHTML=util.makeDivId(this.moveResizeDivId,this.current.l,this.current.t,this.current.w,this.current.h,this.current.borderThickness,null);
+						this.element.innerHTML=util.makeAbsDivId(this.moveResizeDivId,this.current.l,this.current.t,this.current.w,this.current.h,this.current.borderThickness,null);
 						Win.body().appendChild(this.element); 
 						this.visibleElement = DomConstruct.create("div"); //cria outro HTML div 
 						this.visibleElement.innerHTML=util.getInnerHTML("textBox",this.avatarId,this.current.label,this.current.w,this.current.h,this.current.borderThickness,this.current.borderType,this.current.activeColor); //este é o que se vai ver...

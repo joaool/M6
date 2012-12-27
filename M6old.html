@@ -264,17 +264,29 @@ require([
 			var oDeferred=new Deferred();
 			var oPos={L:nL,T:nT,W:nW,H:nH};
 			var x1=new ResizeMoveArea(sArea,nL,nT,nW,nH,5,"dotted","gold");//borderType:solid, dotted,dashed
+			console.log("criou ResizeMoveArea para "+sArea);
 			x1.visible_on_wayout=true; //false will make the area invisible on the way out (click outside the element) - default is true.
-			handlerArea=On.once(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+			var z=function(evt){
+				console.log("begin of mouseenter ");
+
 				//console.log("TEST ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
 				if(this.oDbg.isDbg("main")) this.oDbg.display("placeArea ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
 				//alert("TEST -> resize_move -------------------------------------- mouseenter -----------------------------------------");
 				x1.activate();
-				//handlerArea.pause();
-				//handlerArea.remove();
-			}));	
+			};
+			var handlerArea=On.once(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,zvt));
+			// var handlerArea=On.once(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+			// 	console.log("begin of mouseenter ");
+
+			// 	//console.log("TEST ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+			// 	if(this.oDbg.isDbg("main")) this.oDbg.display("placeArea ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+			// 	//alert("TEST -> resize_move -------------------------------------- mouseenter -----------------------------------------");
+			// 	x1.activate();
+			// }));	
 			x1.on("resizeMoveEnd",Lang.hitch(this,function(){
 				//handlerArea.resume();
+				console.log("resizeMoveEnd event launched.... ");
+
 				//console.log("TEST -> CAPTOU EVENT resizeMoveEnd  ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
 				if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT resizeMoveEnd  ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
 				// --- We want to test the case a) where the next cycle is done with the same element (do nothing)
@@ -291,7 +303,7 @@ require([
 				//return oDeferred.oPos;
 			}));
 			return oDeferred;			
-		};		
+		};	//placeArea	
 		menuArea=function(){
 			//alert("menuArea !!!"+layoutToolBox.name);
 			//alert("menuArea ->"+xLabel.substr(0,4));
@@ -303,12 +315,12 @@ require([
 			oPos.W=layout.menuArea.W;
 			oPos.H=layout.menuArea.H;
 			var xlabel=null;
-			if (!layout.menuArea.L) {//first definition
+			if (!oPos.L) {//first definition
 				//layoutToolBox.setFieldProps("layouttb1",{value:"Press to finish"}); 
 				//oPos=placeArea("Menu Area",500,50,500,30,5);
 				oPos=placeArea("Menu Area",500,50,500,30,5).then(
 						function(oPos){
-							//alert("menuArea ->Closed definition with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
+							alert("menuArea ->Closed definition with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
 							layout.menuArea.L=oPos.L;
 							layout.menuArea.T=oPos.T;
 							layout.menuArea.W=oPos.W;
@@ -318,13 +330,13 @@ require([
 				
 			}else{//a definition was done beforehand
 				//xLabel=layoutToolBox.fieldShownById("layouttb1");
-				//alert("menuArea ->New Call with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
+				alert("menuArea ->New Call with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
 				oPos=placeArea("Menu Area",oPos.L,oPos.T,oPos.W,oPos.H);
 			};	
 			this.layout.menuArea.L=oPos.L;
 			this.layout.menuArea.T=oPos.T;
 			this.layout.menuArea.W=oPos.W;
-			this.layout.menuArea.H=oPos.H;	
+			this.layout.menuArea.H=oPos.H;				
 		};
 		formsArea=function(){
 				oPos.L=this.layout.menuArea.L;

@@ -14,10 +14,11 @@
 			"dojo/_base/lang",
 			"dojo/dom-geometry",
 			"dojo/dom-construct",
-			"dojo/dom-style",	
+			"dojo/dom-style",
+			"dijit/registry",				
 			"dojo/Evented", //necessário para emit e recepção de eventos	 
 			 "dojo/domReady!"], 
-		function(Utils,Dbg,FBuilder,ResizeMoveArea,Declare,Win,On,Dom,Lang,DomGeom,DomConstruct,DomStyle,Evented){	
+		function(Utils,Dbg,FBuilder,ResizeMoveArea,Declare,Win,On,Dom,Lang,DomGeom,DomConstruct,DomStyle,Registry,Evented){	
 		//function(Utils,Declare,Lang,DomGeom,Evented){	
 		return Declare("editFBuilder",[Evented,FBuilder],{
 			// Exemple of Use:	editF=new editFBuilder(f1,"click"); //f1 is a form (FBuilder instance), par2 is an eventType"mouseenter" or "click"
@@ -159,7 +160,7 @@
 				this._fx.addChild("textArea",{left:2,top:78,width:205,height:50}); //5
 				
 				var xArr=[{name:"Claro"},{name:"Blue Hills"},{name:"Simple Green"},{name:"Autumn Tree"},{name:"Chess"},{name:"Light Blue"},{name:"A+C background"}];
-				this._fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=_editFBuilder4.getComboChoice(this.value);"});//2
+				this._fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=_editFBuilder4.getComboChoice(this.value);"});//6
 
 				
 				this._fx.addChild("label",{value:"Insert widgets:",left:5,top:162}); //3
@@ -490,8 +491,9 @@
 				};
 				xVal=this._fx.fieldById("_fx1").props.value;
 			},
-			getComboChoice:function(x){//to test buttons (z is defined globally)
-				//alert("getComboChoice:You this.value="+x);
+			getComboChoice:function(){//to test buttons (z is defined globally)
+				x=Registry.byId("_fx6").get("displayedValue");
+				//alert("---->"+x);
 				var xArr0=[{name:"Claro",template:null},{name:"Blue Hills",template:"A"},{name:"Simple Green",template:"B"},{name:"Autumn Tree",template:"C"},{name:"Chess",template:"D"},{name:"Light Blue",template:"E"},{name:"A+C background",template:"F"}];
 				var xTemplate=null;
 				for(var i=0;i<xArr0.length;i++){

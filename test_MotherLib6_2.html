@@ -32,7 +32,7 @@ thiz=this;
 require([
 	"Mother1/utils.js",
 	"Mother1/debug.js",
-	"Mother1/editFBuilder3.js",
+	"Mother1/editFBuilder4.js",
 	"MotherLib6.js",
     "Mother1/ResizeMoveArea2.js",  
 	"dojo/_base/declare",	 
@@ -41,7 +41,8 @@ require([
 	"dojo/parser",//recomendation from JS
 	"dojo/dom",
 	"dojo/dom-construct",//used outside class
-	"dojo/dom-style",	
+	"dojo/dom-style",
+	"dijit/registry",	
 	"dojo/ready",
 	//----- para editFBuilder on,Lang,DomGeom
     "dojo/_base/lang",
@@ -50,7 +51,7 @@ require([
 	], 
 	//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Menu,MenuItem,MenuBar,MenuSeparator,PopupMenuBarItem,DropDownMenu,TooltipDialog,TextBox,Button,Declare,Win,Event,Registry,Dom,Html,On,Evented,Moveable,Mover,DomGeom,DomConstruct,DomStyle,DomClass,Lang,ContentPane,BorderContainer,AccordionContainer,TabContainer,FloatingPane,ColorPalette,Ready){ 
 	//function(fBuilder,EditViewPort,MoveResizeArea,Exchanger,ResizeWidget,MoveCanvas,Utils,Menu,MenuItem,PopupMenuItem,MenuBar,MenuSeparator,
-	function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,Lang,DomGeom,Evented){ 
+	function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Registry,Ready,Lang,DomGeom,Evented){ 
 		//----------- debug preparation Area -----------------------------------------------------------
 		this.oDbg=new Dbg();
 		this.oDbg.setDbg("test_MotherLib6_2","",{"main":true});//All debugs in this class with these keywords will be send to console.log
@@ -91,12 +92,13 @@ require([
 		fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"thiz.z.test('Design/Run')"});//1
 		
 		fx.addChild("label",{value:"Entity:",left:2,top:30}); //2
-		fx.addChild("textBox",{value:xEntity,left:45,top:30,width:160}); //2
-		fx.addChild("label",  {left:2,top:58,value:"Form Description:"}); //3
-		fx.addChild("textArea",{left:2,top:78,width:205,height:50}); //4
+		fx.addChild("textBox",{value:xEntity,left:45,top:30,width:160}); //3
+		fx.addChild("label",  {left:2,top:58,value:"Form Description:"}); //4
+		fx.addChild("textArea",{left:2,top:78,width:205,height:50}); //5
 		
 		var xArr=[{name:"Claro"},{name:"Blue Hills"},{name:"Simple Green"},{name:"Autumn Tree"},{name:"Chess"},{name:"Light Blue"},{name:"A+C background"}];
-		fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=thiz.z.getComboChoice(this.value);"});//2
+		//fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=thiz.z.getComboChoice(this.value);"});//2
+		fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=getComboChoice();"});//6
 
 		
 		fx.addChild("label",{value:"Insert widgets:",left:5,top:162}); //3
@@ -143,6 +145,7 @@ require([
 		f1.addChild("grid",{left:880,top:80,width:200,height:220,showId:false,headers:"Name/text(50),Value/text(100)"});//10
 		//f1.setFieldStyle("f110",{left:1050,top:20});
 		//alert("vai chamar EditFBuilder");
+		/*
 		editF=new EditFBuilder(f1,"click"); //"mouseenter","click"
 		editF.on("widget_selected",function(){
 			//console.log("test_MotherLib5_4 -- 	CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+editF.currentWidget.id+" do tipo "+editF.currentWidget.type);
@@ -160,11 +163,17 @@ require([
 			f1.visibleById(editF.currentWidget.id)
 			editF.reset();//volta a por listeners à escuta
 		});	
+		*/
 		this.z.test=function(x){//to test buttons (z is defined globally)
 			alert("test:You pressed "+x);
-		};	
-		this.z.getComboChoice=function(x){//to test buttons (z is defined globally)
-			//alert("getComboChoice:You this.value="+x);
+		};
+		getComboChoice=function(){//to test buttons (z is defined globally)
+			//alert("!!!!!! getComboChoice:You this.value="+x);
+			var wid=Registry.byId("fx6");
+			console.log("------------>"+wid.get('displayedValue'));
+			x=wid.get('displayedValue');
+
+			//x="Blue Hills";
 			var xArr0=[{name:"Claro",template:null},{name:"Blue Hills",template:"A"},{name:"Simple Green",template:"B"},{name:"Autumn Tree",template:"C"},{name:"Chess",template:"D"},{name:"Light Blue",template:"E"},{name:"A+C background",template:"F"}];
 			var xTemplate=null;
 			for(var i=0;i<xArr0.length;i++){
@@ -174,7 +183,7 @@ require([
 			};
 			f1.setTemplate(xTemplate);
 			alert("Test:selected "+x+" ==>template="+xTemplate);
-		};			
+		};		
 		this.z.insertW=function(x){//to test buttons (z is defined globally)
 			alert("insert Widget:You pressed "+x);
 		};
