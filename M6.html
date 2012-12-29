@@ -66,14 +66,14 @@ require([
 			Lang,DomGeom,Evented){ 
 		//----------- debug preparation Area -----------------------------------------------------------
 		this.oDbg=new Dbg();
-		this.oDbg.setDbg("M6"          ,"",{"main":true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("M6"           ,"",{"main":true});//All debugs in this class with these keywords will be send to console.log
 		//this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
 		//this.oDbg.setDbg("editFBuilder2"       ,"-->",{"constructor":true,"setAListeners":false,"resumeWListeners":true,suspendWListeners:true,"overWidget":true,"outWidget":true});
-		//this.oDbg.setDbg("ResizeMoveArea"      ,"---->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
-
+		this.oDbg.setDbg("ResizeMoveArea"      ,"-->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
 		this.oDbg.setThis("M6");
 		//------------------------------------------------------------------------
 		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN..");//document title tem a property <title> que está no head
+
 		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  BEGIN CLASS TEST..");
 		//------------------------------------------------------------------------	
 		//write code HERE !
@@ -263,30 +263,42 @@ require([
 		placeArea=function(sArea,nL,nT,nW,nH){
 			var oDeferred=new Deferred();
 			var oPos={L:nL,T:nT,W:nW,H:nH};
+			if(this.oDbg.isDbg("main")) this.oDbg.display("------->entrou em placeArea com label="+sArea+" x="+nL+" y="+nT+" width="+nW+" height="+nH);
+			//console.log("------->entrou em placeArea com label="+sArea+" x="+nL+" y="+nT+" width="+nW+" height="+nH);
 			var x1=new ResizeMoveArea(sArea,nL,nT,nW,nH,5,"dotted","gold");//borderType:solid, dotted,dashed
 			x1.visible_on_wayout=true; //false will make the area invisible on the way out (click outside the element) - default is true.
-			handlerArea=On.once(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+			var z=function(evt){
+				console.log("Z begin of mouseenter ");
+
 				//console.log("TEST ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
-				if(this.oDbg.isDbg("main")) this.oDbg.display("placeArea ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+				if(this.oDbg.isDbg("main")) this.oDbg.display("Z placeArea ------------> mouseenter com label="+x1.current.label+" id="+x1.moveResizeDivId+" Positions x="+x1.current.l+" y="+x1.current.t+" width="+x1.current.w+" height="+x1.current.h);
 				//alert("TEST -> resize_move -------------------------------------- mouseenter -----------------------------------------");
+				handlerArea.pause();
 				x1.activate();
-				//handlerArea.pause();
-				//handlerArea.remove();
-			}));	
+			};
+			if(this.oDbg.isDbg("main")) this.oDbg.display("----->vai montar event handler ");
+			//console.log("------------------------------>vai montar event handler ");
+			var handlerArea=On.pausable(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,z));//ao passar de dojo.
+			if(this.oDbg.isDbg("main")) this.oDbg.display("----->Montou event handler "+handlerArea);
+			// handlerArea=On.once(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
+			// 	//console.log("TEST ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
+			// 	if(this.oDbg.isDbg("main")) this.oDbg.display("placeArea ------------> mouseenter com label="+x1.current.label+"  id="+x1.moveResizeDivId);
+			// 	//alert("TEST -> resize_move -------------------------------------- mouseenter -----------------------------------------");
+			// 	x1.activate();
+			// 	//handlerArea.pause();
+			//handlerArea.remove();
+			// }));	
 			x1.on("resizeMoveEnd",Lang.hitch(this,function(){
 				//handlerArea.resume();
 				//console.log("TEST -> CAPTOU EVENT resizeMoveEnd  ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
 				if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT resizeMoveEnd  ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
-				// --- We want to test the case a) where the next cycle is done with the same element (do nothing)
-				//       or case b) with a test Area B (leaving aside the initial area) 
-				// --the criteria for case b) is:
-				if(this.oDbg.isDbg("main")) this.oDbg.display("   case A)TEST VOLTOU ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);	
 				oPos.L=x1.position.x;
 				oPos.T=x1.position.y;
 				oPos.W=x1.position.w;
 				oPos.H=x1.position.h;
 				x1.visibleElement.innerHTML=util.getInnerHTML("textBox",x1.avatarId,sArea,oPos.W,oPos.H,x1.current.borderThickness,"solid",x1.current.activeColor); //este é o que se vai ver...
-				//handlerArea.remove();
+				//handlerArea.pause();
+				handlerArea.remove();
 				oDeferred.resolve(oPos);
 				//return oDeferred.oPos;
 			}));
@@ -297,34 +309,27 @@ require([
 			//alert("menuArea ->"+xLabel.substr(0,4));
 			//alert("menuArea combo ->"+layoutToolBox.fieldShownById("layouttb4"));
 			//handlerArea=null;
-			var oPos={};
-			oPos.L=layout.menuArea.L;
-			oPos.T=layout.menuArea.T;
-			oPos.W=layout.menuArea.W;
-			oPos.H=layout.menuArea.H;
+			var xoPos={};
+			xoPos.L=layout.menuArea.L;
+			xoPos.T=layout.menuArea.T;
+			xoPos.W=layout.menuArea.W;
+			xoPos.H=layout.menuArea.H;
 			var xlabel=null;
 			if (!layout.menuArea.L) {//first definition
-				//layoutToolBox.setFieldProps("layouttb1",{value:"Press to finish"}); 
-				//oPos=placeArea("Menu Area",500,50,500,30,5);
-				oPos=placeArea("Menu Area",500,50,500,30,5).then(
-						function(oPos){
-							//alert("menuArea ->Closed definition with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
-							layout.menuArea.L=oPos.L;
-							layout.menuArea.T=oPos.T;
-							layout.menuArea.W=oPos.W;
-							layout.menuArea.H=oPos.H;
-						}
-					);
-				
-			}else{//a definition was done beforehand
-				//xLabel=layoutToolBox.fieldShownById("layouttb1");
-				//alert("menuArea ->New Call with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
-				oPos=placeArea("Menu Area",oPos.L,oPos.T,oPos.W,oPos.H);
-			};	
-			this.layout.menuArea.L=oPos.L;
-			this.layout.menuArea.T=oPos.T;
-			this.layout.menuArea.W=oPos.W;
-			this.layout.menuArea.H=oPos.H;	
+				xoPos.L=500;
+				xoPos.T=50;
+				xoPos.W=500;
+				xoPos.H=30;
+			};
+			oPos=placeArea("Menu Area",xoPos.L,xoPos.T,xoPos.W,xoPos.H).then(
+					function(oPos){
+						//alert("menuArea ->Closed definition with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
+						layout.menuArea.L=oPos.L;
+						layout.menuArea.T=oPos.T;
+						layout.menuArea.W=oPos.W;
+						layout.menuArea.H=oPos.H;
+					}
+				);
 		};
 		formsArea=function(){
 				oPos.L=this.layout.menuArea.L;

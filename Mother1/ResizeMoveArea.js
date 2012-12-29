@@ -67,12 +67,17 @@
 					z1:0,
 					constructor:function(xLabel,landingLeft,landingTop,landingWidth,landingHeight,xBorderThickness,xBorderType,xActiveColor){
 						//ex: 	x1=new ResizeMoveArea("test Area",100,100,100,30,5,"dotted","gold");//label,inicial position,borderType:(solid, dotted,dashed),color
+						var xId="menu";
 						this.oDbg=new Dbg();
 						this.oDbg.setThis("ResizeMoveArea");//All debugs within this class will belong to "ResizeMoveArea"			
 						//console.log("resizeMoveArea ---- CONSTRUCTOR !!! ----");
 						if(this.oDbg.isDbg("constructor")) this.oDbg.display("---- CONSTRUCTOR !!! ----");
 						this.element = DomConstruct.create("div",{id:"_moveResizeBaseDiv", style:"position:inherit; top:0; left:0"}); //cria HTML div -
-						this.moveResizeDivId="_moveResizeDiv0";//+this.static.moveResizeCount;
+						this.moveResizeDivId="_moveResizeDiv0_"+xId;//+this.static.moveResizeCount;
+						if(Dom.byId(this.moveResizeDivId)){//if it exists, detroy it
+							//alert("ResizeMoveArea - Já existe menu !!! Vai destruir !");
+							DomConstruct.destroy(Dom.byId(this.moveResizeDivId));
+						};
 						this.avatarId="_avatarId0";//+this.static.moveResizeCount;
 						this.current={label:xLabel,active:false,l:landingLeft,t:landingTop,w:landingWidth,h:landingHeight,borderThickness:xBorderThickness,borderType:xBorderType,activeColor:xActiveColor};
 						var util=new Utils(); //to use utils functions
@@ -96,11 +101,16 @@
 						//DomStyle.set("_moveResizeBaseDiv", "left", this.current.l);
 						DomStyle.set("_moveResizeBaseDiv", "left", 0);
 						//DomStyle.set("_moveResizeBaseDiv", "top", this.current.t);
-						DomStyle.set("_moveResizeBaseDiv", "top", 0);
-						DomStyle.set("_moveResizeDiv0", "left", this.current.l);
-						DomStyle.set("_moveResizeDiv0", "top", this.current.t);
-						DomStyle.set("_moveResizeDiv0", "width", this.current.w);
-						DomStyle.set("_moveResizeDiv0", "height", this.current.h);
+						// DomStyle.set("_moveResizeBaseDiv", "top", 0);
+						// DomStyle.set("_moveResizeDiv0", "left", this.current.l);
+						// DomStyle.set("_moveResizeDiv0", "top", this.current.t);
+						// DomStyle.set("_moveResizeDiv0", "width", this.current.w);
+						// DomStyle.set("_moveResizeDiv0", "height", this.current.h);
+						
+						DomStyle.set(this.moveResizeDivId, "left", this.current.l);
+						DomStyle.set(this.moveResizeDivId, "top", this.current.t);
+						DomStyle.set(this.moveResizeDivId, "width", this.current.w);
+						DomStyle.set(this.moveResizeDivId, "height", this.current.h);
 						//this.element.innerHTML=util.makeDivId(this.moveResizeDivId,this.current.l,this.current.t,this.current.w,this.current.h,this.current.borderThickness,null);
 						//Win.body().appendChild(this.element); 
 						//this.visibleElement = DomConstruct.create("div"); //cria outro HTML div 
@@ -221,7 +231,6 @@
 						//console.log("vai sair emitindo 	resizeMoveEnd");	
 						if(!this.visible_on_wayout)
 							DomStyle.set(this.visibleElement,"display","none");
-							
 						this.emit("resizeMoveEnd",{});//- new on/event system - 
 						//console.log("vai sair e já emitiu resizeMoveEnd");				
 						this.destroy;
