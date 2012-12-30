@@ -260,12 +260,12 @@ require([
 			bc.startup();
 			//formToolbox.compensationAll();//not 100% necessary, but a good practice (after widgets are placed in the DOM) to insure that buttons will get the rigth dimensions....
 		};
-		placeArea=function(sArea,nL,nT,nW,nH){
+		placeArea=function(sId,sArea,nL,nT,nW,nH){
 			var oDeferred=new Deferred();
 			var oPos={L:nL,T:nT,W:nW,H:nH};
 			if(this.oDbg.isDbg("main")) this.oDbg.display("------->entrou em placeArea com label="+sArea+" x="+nL+" y="+nT+" width="+nW+" height="+nH);
 			//console.log("------->entrou em placeArea com label="+sArea+" x="+nL+" y="+nT+" width="+nW+" height="+nH);
-			var x1=new ResizeMoveArea(sArea,nL,nT,nW,nH,5,"dotted","gold");//borderType:solid, dotted,dashed
+			var x1=new ResizeMoveArea(sId,sArea,nL,nT,nW,nH,5,"dotted","gold");//borderType:solid, dotted,dashed
 			x1.visible_on_wayout=true; //false will make the area invisible on the way out (click outside the element) - default is true.
 			var z=function(evt){
 				console.log("Z begin of mouseenter ");
@@ -276,18 +276,10 @@ require([
 				handlerArea.pause();
 				x1.activate();
 			};
-			if(this.oDbg.isDbg("main")) this.oDbg.display("----->vai montar event handler ");
+			if(this.oDbg.isDbg("main")) this.oDbg.display("----->vai montar event handler para id="+x1.moveResizeDivId);
 			//console.log("------------------------------>vai montar event handler ");
 			var handlerArea=On.pausable(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,z));//ao passar de dojo.
 			if(this.oDbg.isDbg("main")) this.oDbg.display("----->Montou event handler "+handlerArea);
-			// handlerArea=On.once(Dom.byId(x1.moveResizeDivId), "mouseenter", Lang.hitch(this,function(evt){ //ao passar de dojo.connect para on não esquecer que "onmouseenter" passa a "mouseenter"
-			// 	//console.log("TEST ------------> mouseenter com label="+x1.current.label+" order="+x1.current.order+" id="+x1.moveResizeDivId);
-			// 	if(this.oDbg.isDbg("main")) this.oDbg.display("placeArea ------------> mouseenter com label="+x1.current.label+"  id="+x1.moveResizeDivId);
-			// 	//alert("TEST -> resize_move -------------------------------------- mouseenter -----------------------------------------");
-			// 	x1.activate();
-			// 	//handlerArea.pause();
-			//handlerArea.remove();
-			// }));	
 			x1.on("resizeMoveEnd",Lang.hitch(this,function(){
 				//handlerArea.resume();
 				//console.log("TEST -> CAPTOU EVENT resizeMoveEnd  ---->Positions x="+x1.position.x+" y="+x1.position.y+" width="+x1.position.w+" height="+x1.position.h);
@@ -305,23 +297,19 @@ require([
 			return oDeferred;			
 		};		
 		menuArea=function(){
-			//alert("menuArea !!!"+layoutToolBox.name);
-			//alert("menuArea ->"+xLabel.substr(0,4));
-			//alert("menuArea combo ->"+layoutToolBox.fieldShownById("layouttb4"));
-			//handlerArea=null;
-			var xoPos={};
-			xoPos.L=layout.menuArea.L;
-			xoPos.T=layout.menuArea.T;
-			xoPos.W=layout.menuArea.W;
-			xoPos.H=layout.menuArea.H;
+			var oPos={};
+			oPos.L=layout.menuArea.L;
+			oPos.T=layout.menuArea.T;
+			oPos.W=layout.menuArea.W;
+			oPos.H=layout.menuArea.H;
 			var xlabel=null;
 			if (!layout.menuArea.L) {//first definition
-				xoPos.L=500;
-				xoPos.T=50;
-				xoPos.W=500;
-				xoPos.H=30;
+				oPos.L=500;
+				oPos.T=50;
+				oPos.W=500;
+				oPos.H=30;
 			};
-			oPos=placeArea("Menu Area",xoPos.L,xoPos.T,xoPos.W,xoPos.H).then(
+			oPos=placeArea("menu","Menu Area",oPos.L,oPos.T,oPos.W,oPos.H).then(
 					function(oPos){
 						//alert("menuArea ->Closed definition with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
 						layout.menuArea.L=oPos.L;
@@ -332,17 +320,51 @@ require([
 				);
 		};
 		formsArea=function(){
-				oPos.L=this.layout.menuArea.L;
-				oPos.T=this.layout.menuArea.T;
-				oPos.W=this.layout.menuArea.W;
-				oPos.H=this.layout.menuArea.H;
-				alert("formsArea ->menu Layout is l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
-				//alert("formsArea !!!");
+			var oPos={};
+			oPos.L=layout.formsArea.L;
+			oPos.T=layout.formsArea.T;
+			oPos.W=layout.formsArea.W;
+			oPos.H=layout.formsArea.H;
+			var xlabel=null;
+			if (!layout.formsArea.L) {//first definition
+				oPos.L=500;
+				oPos.T=150;
+				oPos.W=500;
+				oPos.H=300;
+			};
+			oPos=placeArea("forms","Forms Area",oPos.L,oPos.T,oPos.W,oPos.H).then(
+					function(oPos){
+						//alert("menuArea ->Closed definition with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
+						layout.formsArea.L=oPos.L;
+						layout.formsArea.T=oPos.T;
+						layout.formsArea.W=oPos.W;
+						layout.formsArea.H=oPos.H;
+					}
+				);
 		};
 		navigationArea=function(){
-			alert("naviagationArea !!!");
+			var oPos={};
+			oPos.L=layout.navArea.L;
+			oPos.T=layout.navArea.T;
+			oPos.W=layout.navArea.W;
+			oPos.H=layout.navArea.H;
+			var xlabel=null;
+			if (!layout.navArea.L) {//first definition
+				oPos.L=500;
+				oPos.T=500;
+				oPos.W=300;
+				oPos.H=40;
+			};
+			oPos=placeArea("nav","Navigation Area",oPos.L,oPos.T,oPos.W,oPos.H).then(
+					function(oPos){
+						//alert("menuArea ->Closed definition with l="+oPos.L+" t="+oPos.T+" width="+oPos.W+" height="+oPos.H);
+						layout.navArea.L=oPos.L;
+						layout.navArea.T=oPos.T;
+						layout.navArea.W=oPos.W;
+						layout.navArea.H=oPos.H;
+					}
+				);		
 		};
-		
 		//------------------- END OF FUNCTIONS AREA -----------------------
 		//--------------------------------------------------------------------------------------------------------------------------
 		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head

@@ -65,23 +65,41 @@
 					sai_por_move:false,//na classe acima (editFBuilder) há um bug que desaparece qdo sai_por_move fica true.Isto é para ser usado acima
 					z:0,
 					z1:0,
-					constructor:function(xLabel,landingLeft,landingTop,landingWidth,landingHeight,xBorderThickness,xBorderType,xActiveColor){
-						//ex: 	x1=new ResizeMoveArea("test Area",100,100,100,30,5,"dotted","gold");//label,inicial position,borderType:(solid, dotted,dashed),color
-						var xId="menu";
+					constructor:function(xId,xLabel,landingLeft,landingTop,landingWidth,landingHeight,xBorderThickness,xBorderType,xActiveColor){
+						//ex  x1=new ResizeMoveArea("test","test Area",100,100,100,30,5,"dotted","gold");//borderType:solid, dotted,dashed
+						//   par1<id sufix for DOM>, par2<text to be shown>, par3,4,5,6<L,T,W,H for area>, par7<BorderThickness in px>
+						//   par8<BorderType like solid, dashed etc>,    par9<Border Color>
 						this.oDbg=new Dbg();
 						this.oDbg.setThis("ResizeMoveArea");//All debugs within this class will belong to "ResizeMoveArea"			
 						//console.log("resizeMoveArea ---- CONSTRUCTOR !!! ----");
 						if(this.oDbg.isDbg("constructor")) this.oDbg.display("---- CONSTRUCTOR !!! ----");
-						this.element = DomConstruct.create("div",{id:"_moveResizeBaseDiv", style:"position:inherit; top:0; left:0"}); //cria HTML div -
-						this.moveResizeDivId="_moveResizeDiv0_"+xId;//+this.static.moveResizeCount;
-						if(Dom.byId(this.moveResizeDivId)){//if it exists, detroy it
-							//alert("ResizeMoveArea - Já existe menu !!! Vai destruir !");
-							DomConstruct.destroy(Dom.byId(this.moveResizeDivId));
+						var xBaseNode=Dom.byId("_moveResizeBaseDiv");
+						if(!xBaseNode){//if it does not exist cereates it
+							this.element = DomConstruct.create("div",{id:"_moveResizeBaseDiv", style:"position:inherit; top:0; left:0"}); //cria HTML div -
+						}else{
+							this.element =xBaseNode;
+							this.element.style.position="inherit"; //necessary to prevent JUMP in move....
 						};
-						this.avatarId="_avatarId0";//+this.static.moveResizeCount;
+						this.moveResizeDivId="_moveResizeDiv0_"+xId;
+						if(Dom.byId(this.moveResizeDivId)){//if it exists, destroy its parent
+							//alert("ResizeMoveArea - Já existe menu !!! Vai destruir !");
+							var node2Destroy=Dom.byId(this.moveResizeDivId).parentNode;
+							//DomConstruct.destroy(Dom.byId(this.moveResizeDivId));
+							DomConstruct.destroy(node2Destroy);
+						};
+						this.avatarId="_avatarId0_"+xId;
 						this.current={label:xLabel,active:false,l:landingLeft,t:landingTop,w:landingWidth,h:landingHeight,borderThickness:xBorderThickness,borderType:xBorderType,activeColor:xActiveColor};
 						var util=new Utils(); //to use utils functions
-						this.element.innerHTML=util.makeAbsDivId(this.moveResizeDivId,this.current.l,this.current.t,this.current.w,this.current.h,this.current.borderThickness,null);
+
+					//this.element.innerHTML=util.makeAbsDivId(this.moveResizeDivId,this.current.l,this.current.t,this.current.w,this.current.h,this.current.borderThickness,null);
+						var zz=util.makeAbsDivId(this.moveResizeDivId,this.current.l,this.current.t,this.current.w,this.current.h,this.current.borderThickness,null); 
+					//this.element.innerHTML=zz;
+					   DomConstruct.create("div",{innerHTML:zz},this.element);
+						//DomConstruct.place(zz,this.moveResizeDivId);
+					
+						// if the node with id=this.moveResizeDivId has no childs had the first one otherwise add another one
+						//DomConstruct.place(zz, this.moveResizeDivId,"after");
+ 
 						Win.body().appendChild(this.element); 
 						this.visibleElement = DomConstruct.create("div"); //cria outro HTML div 
 						this.visibleElement.innerHTML=util.getInnerHTML("textBox",this.avatarId,this.current.label,this.current.w,this.current.h,this.current.borderThickness,this.current.borderType,this.current.activeColor); //este é o que se vai ver...
@@ -106,7 +124,7 @@
 						// DomStyle.set("_moveResizeDiv0", "top", this.current.t);
 						// DomStyle.set("_moveResizeDiv0", "width", this.current.w);
 						// DomStyle.set("_moveResizeDiv0", "height", this.current.h);
-						
+
 						DomStyle.set(this.moveResizeDivId, "left", this.current.l);
 						DomStyle.set(this.moveResizeDivId, "top", this.current.t);
 						DomStyle.set(this.moveResizeDivId, "width", this.current.w);
@@ -182,7 +200,9 @@
 						this.oExchanger.setPointer(this,1);//does setPointer to the exchanger slot 1 (2nd param of setPointer()) - passing "this"	
 					
 						//console.log("-->ready2Move ------->vai criar objMove e moveCoord");
-						this.objMove = new Moveable(this.element,{// o HTML element passa a mover-se. a classe moveable vai alterar a sua style property indicando as posições...
+						//var node2Move=this.element;
+						var node2Move=Dom.byId(this.moveResizeDivId);
+						this.objMove = new Moveable(node2Move,{// o HTML element passa a mover-se. a classe moveable vai alterar a sua style property indicando as posições...
 							delay:5, //moveable only triggers after a drag of 5 pixels
 							mover:moveCoord //Moveable instanciates moveCoord (coordinated by this class) when we click on element
 						});
