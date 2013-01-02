@@ -95,6 +95,7 @@
 			_fx:null,
 			_prop:null,
 			initialPos:{},//it will be -->{formEditionL:l1,formEditionT:t1,propertiesL:l2,propertiesT:t2} )
+			slot:0,
 			zzz:null,
 
 			//-------------------------------------------------------------------
@@ -505,18 +506,30 @@
 			getComboChoice:function(){//to test buttons (z is defined globally)
 				//alert("getComboChoice o valor de zzz="+this.zzz);
 				x=Registry.byId("_fx8").get("displayedValue");
-				//alert("---->"+x);
-				var xArr0=[{name:"Claro",template:null},{name:"Blue Hills",template:"A"},{name:"Simple Green",template:"B"},{name:"Autumn Tree",template:"C"},{name:"Chess",template:"D"},{name:"Light Blue",template:"E"},{name:"A+C background",template:"F"}];
-				var xTemplate=null;
-				for(var i=0;i<xArr0.length;i++){
-					if (x==xArr0[i].name){
-						xTemplate=xArr0[i].template
-					};
-				};
-				if(this.oDbg.isDbg("main")) this.oDbg.display("getComboChoice zzz="+this.zzz);
+				xTemplate=this.convertName_Template(x);
 				this.objEditForm.setTemplate(xTemplate);
 				//alert("Test:selected "+x+" ==>template="+xTemplate);
 			},
+			convertName_Template:function(sName){
+				var xArr0=[{name:"Claro",template:null},{name:"Blue Hills",template:"A"},{name:"Simple Green",template:"B"},{name:"Autumn Tree",template:"C"},{name:"Chess",template:"D"},{name:"Light Blue",template:"E"},{name:"A+C background",template:"F"}];
+				var xTemplate=null;
+				for(var i=0;i<xArr0.length;i++){
+					if (sName==xArr0[i].name){
+						xTemplate=xArr0[i].template
+					};
+				};
+				return xTemplate;
+			},//convertName_Template
+			convertTemplate_Name:function(sTemplate){
+				var xArr0=[{template:null,name:"Claro"},{template:"A",name:"Blue Hills"},{template:"B",name:"Simple Green"},{template:"C",name:"Autumn Tree"},{template:"D",name:"Chess"},{template:"E",name:"Light Blue"},{template:"F",name:"A+C background"}];
+				var sName=null;
+				for(var i=0;i<xArr0.length;i++){
+					if (sTemplate==xArr0[i].template){
+						sName=xArr0[i].name;
+					};
+				};
+				return sName;
+			},//convertTemplate_Name			
 			insertW:function(xType){	
 				var xRunDesign=this._fx.fieldById("_fx1").props.value;
 				if(xRunDesign=="Run"){
@@ -577,8 +590,8 @@
 				var xName=this._fx.fieldShownByName("fName");
 				var xDescr=this._fx.fieldShownById("_fx5");
 				//thiz.z.saveF("F",2,xName,xDescr);
-				console.log("SAVE name="+xName+" description="+xDescr);
-				this.saveJson("F",2,xName,xDescr);
+				console.log("SAVE name="+xName+" description="+xDescr+" to slot="+this.slot);
+				this.saveJson("F",this.slot,xName,xDescr);
 				//tSave();
 			},
 			restore:function(){
@@ -593,14 +606,17 @@
 				//this.restoreForm_FromSlot(2,"nonModal");
 				//this.restoreForm_FromSlot("F",2,"f2","nonModal");
 			//var fz=this.restoreForm_FromSlot("F",2,this.objEditForm.prefix,"nonFloat");
-				this.restoreForm_FromSlot("F",2,this.objEditForm.prefix,"nonFloat").then(
+				this.restoreForm_FromSlot("F",this.slot,this.objEditForm.prefix,"nonFloat").then(
 						function(fz){
 							//alert("Template=XXX");
 							this.objEditForm=fz; //now we need a refresh to place widgets in the dome
 							//fBuilder.refresh(fz.prefix);
-							alert("refresh done");
+							//alert("refresh done");
 							console.log("Reconstruiu prefix="+this.objEditForm.prefix);//form Name+Form Description
 							console.log("Template="+this.objEditForm.template);
+							//console.log("_fx. NameTemplate="+_editFBuilder5._fx.name);//ok com _editFBuilder5 !!!! this._fx.name não funciona
+							var xName=_editFBuilder5.convertTemplate_Name(this.objEditForm.template);
+							_editFBuilder5._fx.setFieldPropsByName("templates",{value:xName});  
 							this.zzz=this.objEditForm.template;
 							_editFBuilder5.objEditForm.template=this.objEditForm.template;
 							console.log("O template ficou -->"+this.zzz);

@@ -103,6 +103,11 @@ require([
 		//--------------------------------------------------------------------------------------------
 		//var viewPortX={l:50,t:5,w:1100,h:250,floatF:"nonModal"};//,floatF:"nonModal";//floatF default will be "noFloat"
 		//NOTE - FLOATING FORMS ARE NOT EDITABLE DIRECTLY - Edit it "nonfloat" and then makeit float
+		var viewPortXX={l:1200,t:5,w:100,h:15};//,floatF:"nonModal";//floatF default will be "noFloat"
+		var fSlot=new FBuilder("To receive slot number","fSlot",{viewPort:viewPortXX,borderColor:"red",borderType:"solid",borderThickness:1});
+		fSlot.addChild("label",{value:"Slot #:",left:0,top:0,width:50}); //1
+		fSlot.addChild("numberBox",{name:"slotValue",value:1,left:55,top:0,width:20,posCode:"updateSlot();"}); //2
+
 		var viewPortX={l:50,t:5,w:1100,h:250};//,floatF:"nonModal";//floatF default will be "noFloat"
 		var f0=new FBuilder("To test save/restore f0","f0",{viewPort:viewPortX,borderColor:"b",borderType:"solid",borderThickness:1});//template:"B"
 		f0.addChild("label",{value:"Entity",left:80,top:10,width:100}); //1
@@ -206,6 +211,11 @@ require([
 		var testSave=function(){//to test the button SAVE
 			alert("CHEGUEI AQUI E ESTOU MUITO CONTENTE...");
 		};
+		updateSlot=function(){//to receive changes from slot
+			x=fSlot.fieldShownById("fSlot2");
+			console.log("Slot now is---->"+x);
+			edit_f0.slot=x;
+		};		
 		this.z.changeCheck=function(){//to test the button SAVE
 			alert("changeCheck !!!!...");
 		};
