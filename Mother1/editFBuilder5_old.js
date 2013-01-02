@@ -149,34 +149,39 @@
 				var xDesign=true;
 				var xEntity="teste";
 				//var fx=new FBuilder("a)switch run/design","fx",{viewPort:{l:1180,t:5,w:220,h:330,floatF:"nonModal"},borderColor:"red",borderType:"solid",borderThickness:1});
-				this._fx=new FBuilder("editFBuilder4 - run/design","_fx",{viewPort:{l:this.initialPos.formEditionL,t:this.initialPos.formEditionT,w:220,h:330,floatF:"nonModal"},borderColor:"red",borderType:"solid",borderThickness:1});
+				this._fx=new FBuilder("editFBuilder5 - run/design","_fx",{viewPort:{l:this.initialPos.formEditionL,t:this.initialPos.formEditionT,w:220,h:360,floatF:"nonModal"},borderColor:"red",borderType:"solid",borderThickness:1});
 				//var fx=new FBuilder("a)switch run/design","fx",{viewPort:{l:1190,w:210,h:253},borderColor:"black",borderType:"solid",borderThickness:1});
 				//fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"thiz.z.run_Design()"});//1
 				this._fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"_editFBuilder4.run_Design()"});//1
-				this._fx.addChild("label",{value:"->Entity:",left:2,top:30}); //2
-				//this._fx.addChild("textBox",{value:xEntity,left:45,top:30,width:160}); //3
+				this._fx.addChild("label",{value:"Entity:",left:2,top:30}); //2
 				this._fx.addChild("textBox",{name:"entity",value:xEntity,left:45,top:30,width:160,posCode:"this.set('lblEntityDescription','What is a '+this.get('entity')+'?');}"}); //3
-				this._fx.addChild("label",  {name:"lblEntityDescription",left:2,top:58,value:"Form Description:"}); //4
+
+				this._fx.addChild("label",  {name:"lblEntityDescription",left:2,top:58,value:"Entity Description:"}); //4
 				this._fx.addChild("textArea",{left:2,top:78,width:205,height:50}); //5
 				
+				this._fx.addChild("label",{value:"Form Name:",left:2,top:135}); //5
+				this._fx.addChild("textBox",{name:"fName",value:xEntity,left:80,top:135,width:125,posCode:"this.set('lblEntityDescription','What is a '+this.get('entity')+'?');}"}); //6
+
+
+				
 				var xArr=[{name:"Claro"},{name:"Blue Hills"},{name:"Simple Green"},{name:"Autumn Tree"},{name:"Chess"},{name:"Light Blue"},{name:"A+C background"}];
-				this._fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=_editFBuilder4.getComboChoice(this.value);"});//6
+				this._fx.addChild("comboBox",{left:2,top:165,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=_editFBuilder4.getComboChoice(this.value);"});//7
 
 				
-				this._fx.addChild("label",{value:"Insert widgets:",left:5,top:162}); //3
+				this._fx.addChild("label",{value:"Insert widgets:",left:5,top:192}); //8
 
-				var xTop=182;		
-				this._fx.addChild("button",{left:0,top:xTop,width:65,height:25,value:"Text",clickCode:"_editFBuilder4.insertW('textBox')"});//4
-				this._fx.addChild("button",{left:68,top:xTop,width:65,height:25,value:"Label",clickCode:"_editFBuilder4.insertW('label')"});//5
-				this._fx.addChild("button",{left:136,top:xTop,width:65,height:25,value:"Num.",clickCode:"_editFBuilder4.insertW('numberBox')"});//6
+				var xTop=212;		
+				this._fx.addChild("button",{left:0,top:xTop,width:65,height:25,value:"Text",clickCode:"_editFBuilder4.insertW('textBox')"});//9
+				this._fx.addChild("button",{left:68,top:xTop,width:65,height:25,value:"Label",clickCode:"_editFBuilder4.insertW('label')"});//10
+				this._fx.addChild("button",{left:136,top:xTop,width:65,height:25,value:"Num.",clickCode:"_editFBuilder4.insertW('numberBox')"});//11
 				
-				this._fx.addChild("button",{left:0,top:xTop+25,width:65,height:25,value:"Area",clickCode:"_editFBuilder4.insertW('textArea')"});//4
-				this._fx.addChild("button",{left:68,top:xTop+25,width:65,height:25,value:"Check",clickCode:"_editFBuilder4.insertW('checkBox')"});//4
-				this._fx.addChild("button",{left:136,top:xTop+25,width:65,height:25,value:"Date",clickCode:"_editFBuilder4.insertW('dateTextBox')"});//4
+				this._fx.addChild("button",{left:0,top:xTop+25,width:65,height:25,value:"Area",clickCode:"_editFBuilder4.insertW('textArea')"});//12
+				this._fx.addChild("button",{left:68,top:xTop+25,width:65,height:25,value:"Check",clickCode:"_editFBuilder4.insertW('checkBox')"});//13
+				this._fx.addChild("button",{left:136,top:xTop+25,width:65,height:25,value:"Date",clickCode:"_editFBuilder4.insertW('dateTextBox')"});//14
 
-				this._fx.addChild("button",{left:0,top:xTop+50,width:65,height:25,value:"Button",clickCode:"_editFBuilder4.insertW('button')"});//4
-				this._fx.addChild("button",{left:68,top:xTop+50,width:65,height:25,value:"Combo",clickCode:"_editFBuilder4.insertW('comboBox')"});//4
-				this._fx.addChild("button",{left:136,top:xTop+50,width:65,height:25,value:"Grid",clickCode:"_editFBuilder4.insertW('grid')"});//4
+				this._fx.addChild("button",{left:0,top:xTop+50,width:65,height:25,value:"Button",clickCode:"_editFBuilder4.insertW('button')"});//15
+				this._fx.addChild("button",{left:68,top:xTop+50,width:65,height:25,value:"Combo",clickCode:"_editFBuilder4.insertW('comboBox')"});//16
+				this._fx.addChild("button",{left:136,top:xTop+50,width:65,height:25,value:"Grid",clickCode:"_editFBuilder4.insertW('grid')"});//17
 
 				this._fx.addChild("button",{left:0,top:xTop+76,width:90,height:35,value:"Save Form",clickCode:"thiz.z.saveF()"});//4
 				this._fx.addChild("button",{left:95,top:xTop+76,width:100,height:35,value:"Restore",clickCode:"thiz.z.restoreF()"});//4

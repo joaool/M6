@@ -293,7 +293,7 @@ var oClassName = declare("fBuilder",null,{//
 		// Nota:Cada widget/field que é acrescentado ao form com o method addChild() é por default conectado a um doubleclick event
 		//		O handler do double click event de cada field é insideWidgetMove(xId) para o caso de move=true
 		//-----------------------------------------------------------------------------------------------------------
-		// Index of methods (6+3+5+15+17+23+2=81):
+		// Index of methods (6+3+5+15+18+23+2=82):
 		//		constructor: function(name,prefix,args)//builds the form par1=name with the unique prefix par2=prefix with its parameters in the args object
 		//      ----------------------------------------------- FORM MAINTENANCE METHODS (6) --------------
 		//		setName:function(sName){// updates name taking in account possible update on floating/silent forms
@@ -331,7 +331,8 @@ var oClassName = declare("fBuilder",null,{//
 		//		addExternal:function(xObj,xLeft,xTop){// places an external object visually inside the form and in positions xLeft,xTop 
 		//		compensationAll:function(){//Necessary because by some reason button width/height need to be set after widget DOM connection (not before this)
 		//		compensationButton:function(xOrder){//HANDLE WITH CARE use only in Buttons !!!
-		//      ------------------------------------------------- INTERNAL methods (17)-----------------------------------------------------------------------------------------
+		//      ------------------------------------------------- INTERNAL methods (18)-----------------------------------------------------------------------------------------
+		//		replaceClassTrambolho:function(dijitObj,i,xTemplate){//to be used in setTemplate() until we discovered another solution
 		//		totObjects:function(){//returns the total number of widgets in the current form
 		//		maxTot:function(xType){//gets the highest number of fields of xType 
 		//		counterIndexMig:function(xType){//MIGUEL's VERSION FOR gets the index of type=xType in counter[] TO BE TESTED
@@ -545,51 +546,83 @@ var oClassName = declare("fBuilder",null,{//
 			//we need to replace the old template if it exists or to add the template if none exist
 			// there is a particularity for object button -->it needs compensationButton().
 			var dijitObj=null;
+			var xNode=null;
 			if(this.oDbg.isDbg("constructor")) this.oDbg.display("Inside setTemplate -- xTemplate="+xTemplate);
 			var xTotWidgets=this.totObjects(); 
 			if(this.template){//one template is set....we need to replace it - the old ("Mother_"+this.template) will be replaced by "Mother_"+xTemplate.
-				domClass.replace(this.xPane.domNode,"Mother_"+xTemplate,"Mother_"+this.template);//places the new template xTemplate instead of old this.template
+				//domClass.replace(this.xPane.domNode,"Mother_"+xTemplate,"Mother_"+this.template);//places the new template xTemplate instead of old this.template
+				domClass.replace(this.xPane.id,"Mother_"+xTemplate,"Mother_"+this.template);//places the new template xTemplate instead of old this.template
 				for(var i=0;i<xTotWidgets;i++){ //replace the old template from every widget
-					if(this.static.zarrObj[this.currentFormNumber][i].type=="button"){
-						var xId=this.static.zarrObj[this.currentFormNumber][i].props.id;
-						var xNode=dojo.byId(xId);
-						if(xTemplate){//if we are exchanging for a diferent template replaces
-							domClass.replace(xNode.parentNode,"Mother_"+xTemplate,"Mother_"+this.template);//
-						}else{//if we are changing to null remove
-							domClass.remove(xNode.parentNode,"Mother_"+this.template);//
-						};						
-						//this.compensationButton(i);//this includes domClass.add
-					}else{
-						dijitObj=this.static.zarrWidgets[this.currentFormNumber][i];
-						domClass.replace(dijitObj.domNode,"Mother_"+xTemplate,"Mother_"+this.template);//
-					};
-					//dijitObj=this.static.zarrWidgets[this.currentFormNumber][i];		
-					//domClass.add(dijitObj.domNode, "Mother_"+this.template);//choose CSS selector from  Mother.CSS
-					//var	xId=this.static.zarrObj[this.currentFormNumber][i].props.id;
-					//domClass.replace(dijitObj.domNode,"Mother_"+xTemplate,"Mother_"+this.template);//
-					//domClass.replace(xId,"Mother_"+xTemplate,"Mother_"+this.template);//
+					dijitObj=this.static.zarrWidgets[this.currentFormNumber][i];
+					this.replaceClassTrambolho(dijitObj,i,xTemplate);					
 				};	
 			}else{//in this case we only have to add
 				if (this.oDbg.isDbg("constructor")) this.oDbg.display("Inside setTemplate -- no template is set we will add Template=" + xTemplate);
-				domClass.add(this.xPane.domNode, "Mother_" + xTemplate);//adds the new template xTemplate 
+				domClass.add(this.xPane.id, "Mother_" + xTemplate);//adds the new template xTemplate 	
 				for(var i = 0; i < xTotWidgets; i++) { //adds the template in every widget
-					if(this.static.zarrObj[this.currentFormNumber][i].type=="button"){
-						var xId=this.static.zarrObj[this.currentFormNumber][i].props.id;
-						var xNode=dojo.byId(xId);
-						domClass.add(xNode.parentNode, "Mother_"+xTemplate);//add a class "Mother_x" to the SPAN node thar has .dijitButtonNode
-						//this.compensationButton(i);//this includes domClass.add
-					}else{
-						dijitObj=this.static.zarrWidgets[this.currentFormNumber][i];
-						domClass.add(dijitObj.domNode,"Mother_"+xTemplate);//				
-					};
+					dijitObj=this.static.zarrWidgets[this.currentFormNumber][i];
+					this.replaceClassTrambolho(dijitObj,i,xTemplate);		
 				};	
 
 			};
 			this.template=xTemplate;//now updates the "template" class property 
-			//domClass.add(this.xPane.domNode, "Mother_"+this.template);//add the CSS class "Mother_"+A,B,C,D,E,F to ContentPane - Match with Mother.CSS
-			// DO NOT FORGET 	<body class="claro Mother">  IN LEADING HTML !!!!!
-			//we should change widgets, treat class replacement and float /nonfloat
-		},		
+		},//setTemplate
+		replaceClassTrambolho:function(dijitObj,i,xTemplate){//to be used in setTemplate() until we discovered another solution
+			//this is necessary because the beaviour of setTemplate() is different in the case no restore from the case restore....
+			//this code deals with the cases of adding or replacing CSS classes....
+			var xNode=dijitObj.domNode;//the node never exists after a restore oferation .... God knows why....=>trambolho
+			if(!xNode){//the node never exists after a restore oferation .... God knows why....=>trambolho
+				console.log("replaceClassTrambolho - probably after a restore operation >NO NODE<----------------------------------------");
+				if(dijitObj.declaredClass=="dijit.form.Button"){//in the case of a button...
+					xNode=Dom.byId(dijitObj.id);
+					if(xTemplate){//if we are exchanging for a diferent template replaces
+						console.log(i+" - ----->Button Node "+dijitObj.id+" to template="+xTemplate+" declared="+dijitObj.declaredClass+" Class is going to be placed in Parent !!!");
+						if(this.template){//we are placing a new xTemplate in the place of an old template this.template
+							domClass.replace(xNode.parentNode,"Mother_"+xTemplate,"Mother_"+this.template);//
+						}else{//we are adding a new xTemplate because no template existed before
+							domClass.add(xNode.parentNode, "Mother_"+xTemplate);//add a class "Mother_x" to the SPAN node thar has .dijitButtonNode
+						};
+					}else{//if we are changing to null remove
+						console.log(i+" - ----->Button Node "+dijitObj.id+" to NULL template declared="+dijitObj.declaredClass+" Class is going to be removed from Parent !!!");
+						domClass.remove(xNode.parentNode,"Mother_"+this.template);//
+					};							
+				}else{//node is not a button
+					console.log(i+" - ----->Node "+dijitObj.id+" declared="+dijitObj.declaredClass+", value="+dijitObj.value+" not existing ...look for widget_"+dijitObj.id);
+					xNode=Dom.byId("widget_"+dijitObj.id);
+					if(!xNode){//the widget_<> is not used in textArea, or checkBoxes
+						if(dijitObj.declaredClass=="dijit.form.SimpleTextarea"){//in the case of a text Area....
+							xNode=Dom.byId(dijitObj.id);
+							domClass.replace(xNode,"Mother_"+xTemplate,"Mother_"+this.template);//
+							console.log(i+" ============>It is a text Area declared="+dijitObj.declaredClass+", value="+dijitObj.value+" look for id="+dijitObj.id+"  and class replace !!!");
+						}else{//probably a checkbox
+							console.log(i+" ============>No widget_"+dijitObj.id+" declared="+dijitObj.declaredClass+", value="+dijitObj.value+" Null again=> skip class replace !!!");
+						};
+					}else {//case of labels, textBoxes, comboBoxes, numericBoxes
+						domClass.replace(xNode,"Mother_"+xTemplate,"Mother_"+this.template);//
+					};	
+				};		
+			}else{
+				console.log("replaceClassTrambolho - probably without a restore operation >NODE FOUND !<-----------------------------------");
+				if(dijitObj.declaredClass=="dijit.form.Button"){//in the case of a button...	
+					xNode=Dom.byId(dijitObj.id);
+					if(xTemplate){//if we are exchanging for a diferent template replaces
+						console.log(i+" - ----->Button Node "+dijitObj.id+" to template="+xTemplate+" declared="+dijitObj.declaredClass+" Class is going to be placed in Parent !!!");
+						if(this.template){//we are placing a new xTemplate in the place of an old template this.template
+							domClass.replace(xNode.parentNode,"Mother_"+xTemplate,"Mother_"+this.template);//
+						}else{//we are adding a new xTemplate because no template existed before
+							domClass.add(xNode.parentNode, "Mother_"+xTemplate);//add a class "Mother_x" to the SPAN node thar has .dijitButtonNode
+						};
+					}else{//if we are changing to null remove
+						console.log(i+" - ----->Button Node "+dijitObj.id+" to NULL template declared="+dijitObj.declaredClass+" Class is going to be removed from Parent !!!");
+						domClass.remove(xNode.parentNode,"Mother_"+this.template);//
+					};						
+				}else{//not a button
+					console.log(i+" - ----->Node found! Not Button Node "+dijitObj.id+" declared="+dijitObj.declaredClass+" Class="+xTemplate+" will replace previous class="+this.template);
+					//console.log(i+"------>setTemplate Not button C previous template="+this.template+"-->changing to "+xTemplate);
+					domClass.replace(xNode,"Mother_"+xTemplate,"Mother_"+this.template);//
+				};	
+			};			
+		},//replaceClassTrambolho
 		//-------------------------------------------------------------------------------------------
 		setFloatTitle:function(xTitle){// for floating forms ("modal" or "nonModal") updates the dialog title (initially set to the form  name)
 		//-------------------------------------------------------------------------------------------
@@ -3148,7 +3181,7 @@ xColumns[xProp]=Editor({name:xProp,label:xHeader,editorArgs:{value: xValue,const
 				console.log(i+"------------->vai destruir "+xxId+" do tipo="+xType);
 				if(Registry.byId(xxId))
 					Registry.byId(xxId).destroy();//destroy o widget enquanto dojo.destroy() só destroi o dom node
-			}		   
+			};		   
 			oClassName.prototype.static.zarrObj[this.currentFormNumber]=[]; //cleans the properties array	
 			//arrWidgets=[]; //..e limpa arrWidgets
 			oClassName.prototype.static.zarrWidgets[this.currentFormNumber]=[]; //cleans the widgets array	
@@ -3169,6 +3202,29 @@ xColumns[xProp]=Editor({name:xProp,label:xHeader,editorArgs:{value: xValue,const
 			};			
 			oClassName.prototype.static.zarrForms[currentFormNumber]=null;//frees the slot
 		};
+	};
+	oClassName.refresh= function(xPrefix) {//destroy FBuilder FORM xId- destroy all widgets and cleans the DOM for Form with prefix=xId 
+	//example:
+	//   FBuilder.destroy("f2");//destroy the FBuilder form with prefix "f2" - it is a nop if the form is non existing
+		oClassName.checkExist(xPrefix);
+		//Destroy all widgets for form xId
+		if(oClassName.formNumber_of_last_CheckExist<0){
+		    console.log("MotherLib6 - oClassName.refresh - YOU ARE TRYING TO REFRESH A NON EXISTENT FORM "+xPrefix+" nothing will be done !");
+		}else{
+			console.log("refresh............................ prefix="+xPrefix);
+			var currentFormNumber=oClassName.formNumber_of_last_CheckExist;
+		    console.log("MotherLib6 - oClassName.refresh - FORM "+xPrefix+" WITH CURRENTFORMNUMBER="+currentFormNumber+" WILL BE REFRESHED...");
+		    var xTotWidgets=oClassName.prototype.static.zarrObj[currentFormNumber].length;
+		    console.log("MotherLib6 - oClassName.refresh - FORM "+xPrefix+" HAS "+xTotWidgets+" WIDGETS !!!!");
+			for(var i=0;i<xTotWidgets;i++){
+				//var xId=arrObj[i].props.id;
+				var xxId=oClassName.prototype.static.zarrObj[currentFormNumber][i].props.id;
+				var xType=oClassName.prototype.static.zarrObj[currentFormNumber][i].type;
+				console.log(i+"------------->faz refresh "+xxId+" do tipo="+xType);
+				if(Registry.byId(xxId))
+					Registry.byId(xxId).domNode;//destroy o widget enquanto dojo.destroy() só destroi o dom node
+			};
+		};			
 	};
 
 	return oClassName;

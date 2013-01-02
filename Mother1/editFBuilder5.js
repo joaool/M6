@@ -1,12 +1,15 @@
 	_z={me:"I am _z!"};
 	//_thiz=null;
-	_editFBuilder4=null;//necessary for motherLib eval (ex: so that Fbuilder buttons can run conde in this class...)
+	_editFBuilder5=null;//necessary for motherLib eval (ex: so that Fbuilder buttons can run conde in this class...)
 	define([
 			"Mother1/utils.js",
 			"Mother1/debug.js",
 			"MotherLib6.js",
-			"Mother1/ResizeMoveArea.js",  
+			"Mother1/ResizeMoveArea.js", 
+			"Mother1/json2FormDsgn2.js", 
+			"../dajax_curr/DojJsonStore.js",
 			"dojo/_base/declare",
+			"dojo/_base/Deferred", //this is for version 1.7
 			//----- para editFBuilder on,Lang,DomGeom
 			"dojo/_base/window",//used
 			"dojo/on",//used
@@ -18,7 +21,7 @@
 			"dijit/registry",				
 			"dojo/Evented", //necessário para emit e recepção de eventos	 
 			 "dojo/domReady!"], 
-		function(Utils,Dbg,FBuilder,ResizeMoveArea,Declare,Win,On,Dom,Lang,DomGeom,DomConstruct,DomStyle,Registry,Evented){	
+		function(Utils,Dbg,FBuilder,ResizeMoveArea,Json2F,JsonStoreCrud,Declare,Deferred,Win,On,Dom,Lang,DomGeom,DomConstruct,DomStyle,Registry,Evented){	
 		//function(Utils,Declare,Lang,DomGeom,Evented){	
 		return Declare("editFBuilder",[Evented,FBuilder],{
 			// Exemple of Use:	editF=new editFBuilder(f1,"click"); //f1 is a form (FBuilder instance), par2 is an eventType"mouseenter" or "click"
@@ -92,6 +95,7 @@
 			_fx:null,
 			_prop:null,
 			initialPos:{},//it will be -->{formEditionL:l1,formEditionT:t1,propertiesL:l2,propertiesT:t2} )
+			zzz:null,
 
 			//-------------------------------------------------------------------
 			k:0,
@@ -122,9 +126,9 @@
 				// if we want to define how inicialization of superclass works the chainning should be turned of with "-chains-":{constructor:"manual"}, 
 				//the properties of editFBuilder area mixin of FfBuilder properties and editFBuilder (because of inheritance)
 				//_thiz=this;
-				_editFBuilder4=this;//so that fBuilder can call editFBuilder4's methods via eval
+				_editFBuilder5=this;//so that fBuilder can call editFBuilder4's methods via eval
 				//----------------------------------------------------------------------------------------------
-				console.assert((objEditForm),"editFBuilder4.contructor ->objEditForm is undefined or false !!!");
+				console.assert((objEditForm),"editFBuilder5.contructor ->objEditForm is undefined or false !!!");
 				//----------- debug preparation Area -----------------------------------------------------------
 				this.oDbg=new Dbg();
 				this.oDbg.setThis("editFBuilder4");//All debugs within this class will belong to "editFBuilder2"	
@@ -149,37 +153,42 @@
 				var xDesign=true;
 				var xEntity="teste";
 				//var fx=new FBuilder("a)switch run/design","fx",{viewPort:{l:1180,t:5,w:220,h:330,floatF:"nonModal"},borderColor:"red",borderType:"solid",borderThickness:1});
-				this._fx=new FBuilder("editFBuilder4 - run/design","_fx",{viewPort:{l:this.initialPos.formEditionL,t:this.initialPos.formEditionT,w:220,h:330,floatF:"nonModal"},borderColor:"red",borderType:"solid",borderThickness:1});
+				this._fx=new FBuilder("editFBuilder5 - run/design","_fx",{viewPort:{l:this.initialPos.formEditionL,t:this.initialPos.formEditionT,w:220,h:360,floatF:"nonModal"},borderColor:"red",borderType:"solid",borderThickness:1});
 				//var fx=new FBuilder("a)switch run/design","fx",{viewPort:{l:1190,w:210,h:253},borderColor:"black",borderType:"solid",borderThickness:1});
 				//fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"thiz.z.run_Design()"});//1
-				this._fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"_editFBuilder4.run_Design()"});//1
-				this._fx.addChild("label",{value:"->Entity:",left:2,top:30}); //2
-				//this._fx.addChild("textBox",{value:xEntity,left:45,top:30,width:160}); //3
-				this._fx.addChild("textBox",{name:"entity",value:xEntity,left:45,top:30,width:160,posCode:"this.set('lblEntityDescription','What is a '+this.get('entity')+'?');}"}); //3
+				this._fx.addChild("button",{left:0,top:0,width:203,value:"Design",clickCode:"_editFBuilder5.run_Design()"});//1
+				this._fx.addChild("label",{value:"Entity:",left:2,top:30}); //2
+				this._fx.addChild("textBox",{name:"entity",value:xEntity,left:45,top:30,width:160,posCode:"this.set('lblEntityDescription','What is a '+this.get('entity')+'?');"}); //3
+				
 				this._fx.addChild("label",  {name:"lblEntityDescription",left:2,top:58,value:"Form Description:"}); //4
 				this._fx.addChild("textArea",{left:2,top:78,width:205,height:50}); //5
+
+				this._fx.addChild("label",{value:"Form Name:",left:2,top:135}); //6
+				this._fx.addChild("textBox",{name:"fName",value:xEntity,left:82,top:135,width:123}); //7
+
 				
 				var xArr=[{name:"Claro"},{name:"Blue Hills"},{name:"Simple Green"},{name:"Autumn Tree"},{name:"Chess"},{name:"Light Blue"},{name:"A+C background"}];
-				this._fx.addChild("comboBox",{left:2,top:135,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=_editFBuilder4.getComboChoice(this.value);"});//6
+				this._fx.addChild("comboBox",{name:"templates",left:2,top:165,value:"Select Template",comboArr:xArr,width:202,changeCode:"zOption=_editFBuilder5.getComboChoice(this.value);"});//8
 
 				
-				this._fx.addChild("label",{value:"Insert widgets:",left:5,top:162}); //3
+				this._fx.addChild("label",{value:"Insert widgets:",left:5,top:192}); //3
 
-				var xTop=182;		
-				this._fx.addChild("button",{left:0,top:xTop,width:65,height:25,value:"Text",clickCode:"_editFBuilder4.insertW('textBox')"});//4
-				this._fx.addChild("button",{left:68,top:xTop,width:65,height:25,value:"Label",clickCode:"_editFBuilder4.insertW('label')"});//5
-				this._fx.addChild("button",{left:136,top:xTop,width:65,height:25,value:"Num.",clickCode:"_editFBuilder4.insertW('numberBox')"});//6
+				var xTop=212;		
+				this._fx.addChild("button",{left:0,top:xTop,width:65,height:25,value:"Text",clickCode:"_editFBuilder5.insertW('textBox')"});//4
+				this._fx.addChild("button",{left:68,top:xTop,width:65,height:25,value:"Label",clickCode:"_editFBuilder5.insertW('label')"});//5
+				this._fx.addChild("button",{left:136,top:xTop,width:65,height:25,value:"Num.",clickCode:"_editFBuilder5.insertW('numberBox')"});//6
 				
-				this._fx.addChild("button",{left:0,top:xTop+25,width:65,height:25,value:"Area",clickCode:"_editFBuilder4.insertW('textArea')"});//4
-				this._fx.addChild("button",{left:68,top:xTop+25,width:65,height:25,value:"Check",clickCode:"_editFBuilder4.insertW('checkBox')"});//4
-				this._fx.addChild("button",{left:136,top:xTop+25,width:65,height:25,value:"Date",clickCode:"_editFBuilder4.insertW('dateTextBox')"});//4
+				this._fx.addChild("button",{left:0,top:xTop+25,width:65,height:25,value:"Area",clickCode:"_editFBuilder5.insertW('textArea')"});//4
+				this._fx.addChild("button",{left:68,top:xTop+25,width:65,height:25,value:"Check",clickCode:"_editFBuilder5.insertW('checkBox')"});//4
+				this._fx.addChild("button",{left:136,top:xTop+25,width:65,height:25,value:"Date",clickCode:"_editFBuilder5.insertW('dateTextBox')"});//4
 
-				this._fx.addChild("button",{left:0,top:xTop+50,width:65,height:25,value:"Button",clickCode:"_editFBuilder4.insertW('button')"});//4
-				this._fx.addChild("button",{left:68,top:xTop+50,width:65,height:25,value:"Combo",clickCode:"_editFBuilder4.insertW('comboBox')"});//4
-				this._fx.addChild("button",{left:136,top:xTop+50,width:65,height:25,value:"Grid",clickCode:"_editFBuilder4.insertW('grid')"});//4
+				this._fx.addChild("button",{left:0,top:xTop+50,width:65,height:25,value:"Button",clickCode:"_editFBuilder5.insertW('button')"});//4
+				this._fx.addChild("button",{left:68,top:xTop+50,width:65,height:25,value:"Combo",clickCode:"_editFBuilder5.insertW('comboBox')"});//4
+				this._fx.addChild("button",{left:136,top:xTop+50,width:65,height:25,value:"Grid",clickCode:"_editFBuilder5.insertW('grid')"});//4
 
-				this._fx.addChild("button",{left:0,top:xTop+76,width:90,height:35,value:"Save Form",clickCode:"thiz.z.saveF()"});//4
-				this._fx.addChild("button",{left:95,top:xTop+76,width:100,height:35,value:"Restore",clickCode:"thiz.z.restoreF()"});//4
+				this._fx.addChild("button",{name:"btnSave",left:0,top:xTop+76,width:90,height:35,value:"Save Form",clickCode:"_editFBuilder5.save()"});//4
+				this._fx.addChild("button",{name:"btnRestore",left:95,top:xTop+76,width:100,height:35,value:"Restore",clickCode:"_editFBuilder5.restore()"});//4
+				//this._fx.addChild("button",{name:"btnRestore",left:95,top:xTop+76,width:100,height:35,value:"Restore",clickCode:"this.restore()"});//4
 				
 				var xVal=this._fx.fieldById("_fx1").props.value; //the same as .label
 				
@@ -194,7 +203,7 @@
 				this._prop.addChild("textArea",{left:5,top:55,width:220,height:50}); //4
 
 				this._prop.addChild("label",  {left:5,top:108,width:155,value:"No widget selected "}); //5
-				this._prop.addChild("button", {left:175,top:105,width:40,height:25,value:"Del",clickCode:"_editFBuilder4.deleteW()"});//6
+				this._prop.addChild("button", {left:175,top:105,width:40,height:25,value:"Del",clickCode:"_editFBuilder5.deleteW()"});//6
 				
 				//this._prop.addChild("grid",   {left:5,top:135,width:215,height:189,showId:false,headers:"Name,Value",colTypes:"text/50,text/100"});//7
 				this._prop.addChild("grid",   {left:5,top:135,width:215,height:189,showId:false,headers:"Name/text(50),Value/text(100)"});//7
@@ -494,7 +503,8 @@
 				xVal=this._fx.fieldById("_fx1").props.value;
 			},
 			getComboChoice:function(){//to test buttons (z is defined globally)
-				x=Registry.byId("_fx6").get("displayedValue");
+				//alert("getComboChoice o valor de zzz="+this.zzz);
+				x=Registry.byId("_fx8").get("displayedValue");
 				//alert("---->"+x);
 				var xArr0=[{name:"Claro",template:null},{name:"Blue Hills",template:"A"},{name:"Simple Green",template:"B"},{name:"Autumn Tree",template:"C"},{name:"Chess",template:"D"},{name:"Light Blue",template:"E"},{name:"A+C background",template:"F"}];
 				var xTemplate=null;
@@ -503,6 +513,7 @@
 						xTemplate=xArr0[i].template
 					};
 				};
+				if(this.oDbg.isDbg("main")) this.oDbg.display("getComboChoice zzz="+this.zzz);
 				this.objEditForm.setTemplate(xTemplate);
 				//alert("Test:selected "+x+" ==>template="+xTemplate);
 			},
@@ -561,6 +572,152 @@
 				//edit_f0.setAListeners();		
 				this.resumeEdit();
 			},				
+			save:function(){
+				var x=this._fx.fieldShownByName("fName");//checks what's in combobox
+				var xName=this._fx.fieldShownByName("fName");
+				var xDescr=this._fx.fieldShownById("_fx5");
+				//thiz.z.saveF("F",2,xName,xDescr);
+				console.log("SAVE name="+xName+" description="+xDescr);
+				this.saveJson("F",2,xName,xDescr);
+				//tSave();
+			},
+			restore:function(){
+				//alert("editFBuilder5 restore ENTROU");//console.log("editFBuilder5 restore);
+				//if(FBuilder.checkExist("f2")){//checks if it exists a form with prefix xPrefix
+				if(FBuilder.checkExist(this.objEditForm.prefix)){//checks if it exists a form with prefix xPrefix
+					//alert(this.objEditForm.prefix+" EXISTE E TEM DE SER DESTRUIDO");					
+					console.log("editFBuilder5 Restore "+this.objEditForm.prefix+" EXISTE E TEM DE SER DESTRUIDO");
+				};
+				//FBuilder.destroy("f2");//destroy the FBuilder form "f1" - it is a nop if the form is non existing
+				FBuilder.destroy(this.objEditForm.prefix);//destroy the FBuilder form "f1" - it is a nop if the form is non existing
+				//this.restoreForm_FromSlot(2,"nonModal");
+				//this.restoreForm_FromSlot("F",2,"f2","nonModal");
+			//var fz=this.restoreForm_FromSlot("F",2,this.objEditForm.prefix,"nonFloat");
+				this.restoreForm_FromSlot("F",2,this.objEditForm.prefix,"nonFloat").then(
+						function(fz){
+							//alert("Template=XXX");
+							this.objEditForm=fz; //now we need a refresh to place widgets in the dome
+							//fBuilder.refresh(fz.prefix);
+							alert("refresh done");
+							console.log("Reconstruiu prefix="+this.objEditForm.prefix);//form Name+Form Description
+							console.log("Template="+this.objEditForm.template);
+							this.zzz=this.objEditForm.template;
+							_editFBuilder5.objEditForm.template=this.objEditForm.template;
+							console.log("O template ficou -->"+this.zzz);
+						},
+						this
+				);
+			},	
+			saveJson:function(cType,nSlot,sName,sDescr){//save or update current Json  of type=cType in slot nSlot	
+				//par1 - type (1 byte), par2 - Slot number ex thiz.z.saveF("F",2,xName,xDescr);
+				var json_of_f0=this.objEditForm.formDsgn2Json();//  produces the form JSON representation (format only)
+				var oJsonStore = new JsonStoreCrud();//to read
+				var oJsonStore2 = new JsonStoreCrud();//to create or to update				
+				//var jtype="F";
+				var jtype=cType;
+				var idname=cType+nSlot;
+				//var name= "Slot fixo N="+nSlot;
+				var name=sName;
+				//var description="Form de suporte do teste das properties window";
+				//var description=edit_f0._fx.fieldShownById("_fx5");
+				var description=sDescr;
+				//alert("BUTTON SAVE formNumber="+nSlot+" Description:"+description);
+				if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("BUTTON SAVE formNumber="+nSlot+" Description:"+description);
+				var xRetStr=null;
+				oJsonStore.setCallBack(function(oReply){//read callback
+					xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+						+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+						+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+						+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+						+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+						// + oReply.info
+						;
+						if(oReply.isSuccess){
+						    if(oReply.jsonObject.rowCount==0){//the form doesn't exist we have to create it ! 
+							 	oJsonStore2.create( jtype, idname, name, description, json_of_f0 );
+							}else{//the form doesn't exist we have to update it ! 
+								//update: function( jtype, idname, name, description, json )
+							 	oJsonStore2.update( jtype, idname, name, description, json_of_f0 );
+							};
+						}else{
+							alert("Check your internet connection !!!! Trying to read form error:"+oReply.errorMessage);
+						};
+					//fz.setFieldProps("fz1",{value:xRetStr});
+					//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+				},this);
+				oJsonStore2.setCallBack(function(oReply){//update or create callback
+					xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+						+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+						+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+						+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+						+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+						// + oReply.info
+						;
+						if(!oReply.isSuccess){
+							alert("Check your internet connection !!!! Trying to write form error:"+oReply.errorMessage);
+						};
+					//fz.setFieldProps("fz1",{value:xRetStr});
+					//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+				},this);			
+				oJsonStore.read( jtype, idname);
+				//oJsonStore.create( jtype, idname, name, description, json_of_f0 );
+			},//saveJson				
+			//restoreForm_FromSlot:function(xFNum,xFloatF){//restore from DB slot 1..2..3., xFloatF= noFloat,modal,nonModal 
+			restoreForm_FromSlot:function(cType,nSlot,sPrefix,xFloatF){//restore from DB slot 1..2..3., xFloatF= noFloat,modal,nonModal 
+				//alert("restoreFromSlot "+xFNum);
+				//var xFNum=2;
+				var oDeferred=new Deferred();
+				var oJsonStore = new JsonStoreCrud();
+				//var jtype="F";
+				var jtype=cType;
+				//var idname="F"+xFNum;
+				var idname=cType+nSlot;
+				//var fPrefix="f"+xFNum;  //prefix will be f<i> for slot i
+				//var fPrefix="f"+nSlot;  //prefix will be f<i> for slot i
+				var fPrefix=sPrefix;  //prefix will be para,eter sPrefix
+				//var fName="From slot f"+xFNum;
+				var fName="From slot "+cType+nSlot;
+				var restJson=null;
+				var xRetStr=null;
+				var objJson2F=null;
+				var fz=null;//to return
+				oJsonStore.setCallBack(function(oReply){
+					var xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+						+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;		
+						+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+						+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+						+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"+ oReply.info;
+					//fz.setFieldProps("fz1",{value:xStr});
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot - Inside call back:  BEGIN--->"+xRetStr);
+					var objJson=JSON.parse(oReply.jsonString);//objJson has the whole object
+					restJson=objJson.rowSet[0].json;//isolates the form only
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot *** typeof objJson ="+typeof objJson +" ***");
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot *** typeof restJson ="+typeof restJson +" ***");
+					//destroy f0 with f0.destroy (should clean all widgets the dom and the form)
+					//var f1=objFjson.buildNoWidgets("form f1","f1");//builds form name "form f1" & "f1", from restJson,assigning it to variable f1.
+					//objFjson.buildWidgets(f1);//constroi os widgets da json restJson no form f1	
+					//if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("--------- agora mostra o json do form isolado -----------------------");
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot *** FORM JSON ALONE *** restJson: BEGIN--->"+restJson);
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot *** ------------------- vai construir objJson2F com typeof restJson ="+typeof restJson +"<-----------------");
+					objJson2F=new Json2F(restJson);//builds pre-object from JSON string
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot *** ------------------->ja construiu objJson2F<-----------------");
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot *** typeof objJson2F ="+typeof objJson2F +" ***");
+					//before building a form we should be sure that the form does not exist
+					fz=objJson2F.buildNoWidgets(fName,fPrefix,xFloatF);//builds form name "form f1" & "f1", from restJson,assigning it to variable f1.
+					if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("restoreForm_FromSlot *** ------------------->buildNoWidgets complete !!!<-----------------");
+					if(fz){
+						objJson2F.buildWidgets(fz);//to build widgets defined in json restJson into fz form - only if fz is not null (it will be null if prefix exists)
+					}else{
+						alert("restoreForm_FromSlot ERROR: couldn't build widgets into form because prefix "+fPrefix+" is not free ! =>Pls destroy the form before calling this method");
+						fz=null;
+					};
+					//return fz;
+					oDeferred.resolve(fz);
+				},this);
+				oJsonStore.read( jtype, idname);
+				if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("Read request done !");
+				return oDeferred;			
+			},//restoreForm_FromSlot					
 			test:function(){
 				console.log("editFBuilder.test");
 			}			

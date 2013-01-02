@@ -26,7 +26,7 @@
 		<!--<link rel="stylesheet" type="text/css" href="Mother1/MotherFOld.css" /> -->
 
 		<!--- For Mother Forms  A -BlueHills, B-Simple Green C- Tree D-Chess E-light blue F(A+C)=>(fz,f0)-->
-		<!-- <link rel="stylesheet" type="text/css" href="Mother1/MotherF.css"/> --> 
+		<link rel="stylesheet" type="text/css" href="Mother1/Mother.css"/>
 	<!-- ----------------------------------------------------------------------------------- -->
 	<!--	<link href="Dojo Toolkit/dojo-release-1.7.1/dijit/themes/claro/claro.css" rel="stylesheet">-->
 
@@ -36,9 +36,11 @@ oDbg=null;
 require([
 	"Mother1/utils.js",
 	"Mother1/debug.js",
-	"Mother1/editFBuilder2.js",
+	"Mother1/editFBuilder5.js",
 	"MotherLib6.js",
-    "Mother1/ResizeMoveArea.js",  
+	"Mother1/json2FormDsgn2.js",
+    "Mother1/ResizeMoveArea.js", 
+    "Mother1/mmenu2.js", 
 	"dojo/_base/declare",	 
 	"dojo/_base/window",
     "dojo/on",
@@ -61,14 +63,14 @@ require([
 	"dojo/Evented" //necessário para emit e recepção de eventos
 	], 
 	//function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Ready,FloatingPane,Lang,DomGeom,Evented){ 
-	function(Utils,Dbg,EditFBuilder,FBuilder,ResizeMoveArea,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Deferred,Ready,
+	function(Utils,Dbg,EditFBuilder,FBuilder,Json2F,ResizeMoveArea,mMenu,Declare,Win,On,Parser,Dom,DomConstruct,DomStyle,Deferred,Ready,
 			FloatingPane,BorderContainer,AccordionContainer,ContentPane,TabContainer,ColorPalette,
 			Lang,DomGeom,Evented){ 
 		//----------- debug preparation Area -----------------------------------------------------------
 		this.oDbg=new Dbg();
 		this.oDbg.setDbg("M6"           ,"",{"main":true});//All debugs in this class with these keywords will be send to console.log
-		//this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
-		//this.oDbg.setDbg("editFBuilder2"       ,"-->",{"constructor":true,"setAListeners":false,"resumeWListeners":true,suspendWListeners:true,"overWidget":true,"outWidget":true});
+		this.oDbg.setDbg("MotherLib6"          ,"-->",{"addChild":false,"constructor":true,"JSON_Default_dgrid":true,setFieldStyle:true});//All debugs in this class with these keywords will be send to console.log
+		this.oDbg.setDbg("editFBuilder4"       ,"-->",{"constructor":true,"setAListeners":false,"resumeWListeners":true,suspendWListeners:true,"overWidget":true,"outWidget":true});
 		this.oDbg.setDbg("ResizeMoveArea"      ,"-->",{"constructor":true,"activate":true,"afterMoving":true});//All debugs in this class with these keywords will be send to console.log
 		this.oDbg.setThis("M6");
 		//------------------------------------------------------------------------
@@ -82,6 +84,7 @@ require([
 		layout={menuArea:{L:null,T:null,W:null,H:null},formsArea:{L:null,T:null,W:null,H:null},navArea:{L:null,T:null,W:null,H:null}};
 		//toolBox(15,88,201,435);
 		var layoutToolBox=null;
+		var zMenu=null;
 		toolBox(15,100,217,380);
 		//------------------ END OF MAIN CODE ----------------------
 		//------------------- FUNCTIONS AREA -----------------------
@@ -308,6 +311,11 @@ require([
 				oPos.T=50;
 				oPos.W=500;
 				oPos.H=30;
+			}else{
+				//DomConstruct.destroy("mMenuId");//destroys menu old placement, because a new position is going to be defined
+				if(zMenu){
+					zMenu.destroy();
+				};
 			};
 			oPos=placeArea("menu","Menu Area",oPos.L,oPos.T,oPos.W,oPos.H).then(
 					function(oPos){
@@ -316,8 +324,48 @@ require([
 						layout.menuArea.T=oPos.T;
 						layout.menuArea.W=oPos.W;
 						layout.menuArea.H=oPos.H;
+						makeMenu();
 					}
 				);
+		};
+		makeMenu=function(){
+			//alert("MAKE MENU !!!");
+			var menuABox={};
+			menuABox.l=layout.menuArea.L;
+			menuABox.t=layout.menuArea.T;
+			menuABox.w=layout.menuArea.W;
+			menuABox.h=layout.menuArea.H;
+			//---- now the action
+			var menuPlace = DomConstruct.create("div"); 
+			menuPlace.innerHTML=util.makeHTML("div","mMenuId","A","",menuABox.l,menuABox.t,menuABox.w,menuABox.h,2,"solid","red");
+			Win.body().appendChild(menuPlace); 
+			xMenu0={menus:[ //o mais básico
+					{label: "File",onMouseEnter: function(){z.zTest(this.label,this.yLevel)},xPopup:[//2nd level
+							{label:"Menu Nr. 1",onClick: function(){z.zTest(this.label,this.yLevel)}}, //to ahave param =>anonimous function call wrapper - instead of onClick: z.zTest
+							{label:"Menu Nr. 2",onClick: function(){z.zTest(this.label,this.yLevel)}},//old code onClick: z.zTest
+							{label:"_@Sep"}, //this means "separator" in menu builder jargon
+							{label:"Menu Nr. 3",onClick: function(){z.zTest(this.label,this.yLevel)},xPopup:[//3rd level},
+									{label:"Subsubmenu 1",onClick: function(){z.zTest(this.label,this.yLevel)}},			
+									{label:"Subsubmenu 2",onClick: function(){z.zTest(this.label,this.yLevel)}},			
+									{label:"Subsubmenu 3",onClick: function(){z.zTest(this.label,this.yLevel)}}						
+								]
+							},
+							{label:"Menu Nr. 4",onClick: function(){z.zTest(this.label,this.yLevel)}}
+						],
+					},
+					{label: "Edit",onMouseEnter: function(){z.zTest(this.label,this.yLevel)},xPopup:[//2nd level
+							{label:"Edit Nr. 1",onClick: function(){z.zTest(this.label,this.yLevel)}},
+							{label:"Edit Nr. 2",onClick: function(){z.zTest(this.label,this.yLevel)}},
+						],	
+					},											
+					{label: "Mother",onMouseEnter: function(){z.zTest(this.label,this.level)}}
+				]
+			};
+			zMenu=new mMenu({menu:xMenu0,placeId:"mMenuId"});//args vem na forma {"menu": xMenu,placeId:"wrapper"} e monta logo this.targetNode="target"
+			if(this.oDbg.isDbg("main"))	this.oDbg.display("zMenu foi criado....");
+			zMenu.refreshMenu();
+			if(this.oDbg.isDbg("main")) this.oDbg.display("refresh efectuado");
+
 		};
 		formsArea=function(){
 			var oPos={};
@@ -339,6 +387,58 @@ require([
 						layout.formsArea.T=oPos.T;
 						layout.formsArea.W=oPos.W;
 						layout.formsArea.H=oPos.H;
+						// now the action
+						var viewPortX={l:oPos.L,t:oPos.T,w:oPos.W,h:oPos.H,floatF:"nonFloat"};//,floatF:"nonModal","modal"
+						var f0=new FBuilder("Form Area","f",{viewPort:viewPortX,borderColor:"black",borderType:"solid",borderThickness:1});//
+						f0.gridPattern=20;
+						// f0.addChild("label",{value:"Entity",left:80,top:10,width:100}); //1
+						// var xArr=[{name:"Invoice"},{name:"InvoiceLine"},{name:"Product"},{name:"Customer"}];
+						// f0.addChild("comboBox",{left:180,top:10,value:"Something...",comboArr:xArr,width:120});//2
+						// f0.addChild("label",{value:"Master Data",left:80,top:40,width:100,}); //3
+						// f0.addChild("textBox",{name:"test1",left:180,top:40,width:250,preCode:"console.log('PRECODE');this.set('test1',this.get('num1'));",posCode:"console.log('POSCODE');console.log('saiu com '+this.get('test1'));"});//4
+						// f0.addChild("label",{value:"isCreateDelTrueChild",            left:500,top:10}); //5
+						// f0.addChild("label",{value:"isCreateNormalChildWithParent",   left:500,top:40}); //6
+						// f0.addChild("label",{value:"isCreateNormalChildWITHOUTParent",left:500,top:70}); //7
+						// f0.addChild("checkBox",{left:480,top:10+5,title:"true/false for boolean isCreateDelTrueChild"}); //8
+						// f0.addChild("checkBox",{left:480,top:40+5,title:"true/false  for boolean isCreateNormalChildWithParent"}); //9
+						// f0.addChild("checkBox",{left:480,top:70+5,title:"true/false  for boolean isCreateNormalChildWITHOUTParent"}); //10
+						// f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:10}); //11
+						// f0.addChild("label",{value:"aIdMasterRelatedRecords",         left:750,top:40}); //12
+						// f0.addChild("textBox",{left:920,top:10,title:"pls introduce number with a comma separator ex:9,3,7",placeHolder:"el1,el2,...eln"});//13
+						// f0.addChild("textBox",{left:920,top:40,title:"pls introduce number with a comma separator ex:9,3,7"});//14
+					
+						// f0.addChild("button",{left:600,top:120,width:80,height:80,value:"SAVE",clickCode:"z.testSave()"});//15
+						// f0.addChild("button",{left:700,top:120,width:80,height:80,value:"RESTORE",clickCode:"z.testRestore()"});//16
+
+						// f0.addChild("numberBox",{name:"num1",left:80,top:70,width:80,pattern:'##.00000',value:123.5});//17
+						// f0.addChild("textArea",{name:"area1",left:180,top:70,width:100,height:120,preCode:"this.set('area1',this.get('test1'));",posCode:"console.log('saiu de textArea com '+this.get('area1'));"});//18
+						// var d= new Date("October 13, 2012 11:13:00");//javascript date definition
+						// f0.addChild("dateTextBox",{left:290,top:70,value:d,width:120}); //19   //if value of date is specified as a string
+
+						edit_f0=new EditFBuilder(f0,"click",{formEditionL:1100,formEditionT:5,propertiesL:1000,propertiesT:100});
+						if(this.oDbg.isDbg("main")) this.oDbg.display("formsArea -->edit_f0 object created");
+						edit_f0.on("widget_selected",Lang.hitch(this,function(){
+							if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_selected' FOI SELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+							var xOrder=edit_f0.currentWidget.posInArr;
+							var xName=f0.field(xOrder).props.name;
+							edit_f0._prop.setFieldProps("_prop1",{value:xName});
+							edit_f0._prop.setFieldProps("_prop5",{value:edit_f0.currentWidget.type+" "+xName});
+							var xOrder=edit_f0.currentWidget.posInArr;
+							//console.log("test_MotherLib5_4 -- Pos="+xOrder+" x="+editF.currentWidget.left+" y="+editF.currentWidget.top);
+							if(this.oDbg.isDbg("main")) this.oDbg.display("Pos="+xOrder+" x="+edit_f0.currentWidget.left+" y="+edit_f0.currentWidget.top);
+							f0.unVisibleById(edit_f0.currentWidget.id)
+							edit_f0._prop.setFloatTitle(edit_f0.currentWidget.type+" "+xName+" props.");
+							edit_f0._prop.showForm();
+						}));
+						edit_f0.on("widget_unselected",Lang.hitch(this,function(){
+							if(this.oDbg.isDbg("main")) this.oDbg.display("CAPTOU EVENT 'widget_unselected'-> FOI DESELECCIONADO O WIDGET "+edit_f0.currentWidget.id+" do tipo "+edit_f0.currentWidget.type);
+							//fx.setFieldProps("fx2",{value:"No widget selected "});
+							edit_f0._prop.hideForm();				 		
+							f0.visibleById(edit_f0.currentWidget.id)
+							edit_f0.reset();//volta a por listeners à escuta
+						}));
+						if(this.oDbg.isDbg("main")) this.oDbg.display("formsArea ----->events are ready");
+
 					}
 				);
 		};
@@ -365,6 +465,66 @@ require([
 					}
 				);		
 		};
+		tSave=function(){
+			alert("tSave in M6!!!");
+		};
+		saveJson=function(cType,nSlot,sName,sDescr){//save or update current Json  of type=cType in slot nSlot	
+			//par1 - type (1 byte), par2 - Slot number ex thiz.z.saveF("F",2,xName,xDescr);
+			//xFNum=2;
+			//nSlot=nSlot;
+			alert(f0.name);
+			var json_of_f0=f0.formDsgn2Json();//  produces the form JSON representation (format only)
+			var oJsonStore = new JsonStoreCrud();//to read
+			var oJsonStore2 = new JsonStoreCrud();//to create or to update				
+			//var jtype="F";
+			var jtype=cType;
+			var idname=cType+nSlot;
+			//var name= "Slot fixo N="+nSlot;
+			var name=sName;
+			//var description="Form de suporte do teste das properties window";
+			//var description=edit_f0._fx.fieldShownById("_fx5");
+			var description=sDescr;
+			//alert("BUTTON SAVE formNumber="+nSlot+" Description:"+description);
+			if(thiz.oDbg.isDbg("main")) thiz.oDbg.display("BUTTON SAVE formNumber="+nSlot+" Description:"+description);
+			var xRetStr=null;
+			oJsonStore.setCallBack(function(oReply){//read callback
+				xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+					// + oReply.info
+					;
+					if(oReply.isSuccess){
+					    if(oReply.jsonObject.rowCount==0){//the form doesn't exist we have to create it ! 
+						 	oJsonStore2.create( jtype, idname, name, description, json_of_f0 );
+						}else{//the form doesn't exist we have to update it ! 
+							//update: function( jtype, idname, name, description, json )
+						 	oJsonStore2.update( jtype, idname, name, description, json_of_f0 );
+						};
+					}else{
+						alert("Check your internet connection !!!! Trying to read form error:"+oReply.errorMessage);
+					};
+				//fz.setFieldProps("fz1",{value:xRetStr});
+				//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+			},this);
+			oJsonStore2.setCallBack(function(oReply){//update or create callback
+				xRetStr="<@@> testServer \n<br>-------------------------------------------------\n<br>"
+					+ "  /__[@@] CLIENT TimeDurationUntilReply=[" + oReply.timing.clientTimer +"] milliseconds / [@@] Client INNER timeduration=[" + oReply.timing.clientTimerOutside +"]" //;
+					+ " /__[@@] SERVER TimeDurationUntilReply=[" + oReply.timing.serverTimer +"] milliseconds "
+					+ "\n<br>--------------------------------------------------\n<br>REPLY: "+(oReply.isSuccess?' {noErrors} ':'!**ERROR**! ==> ')
+					+ " ErrorMessage="+ oReply.errorMessage+"\n<br>-------\n<br> jsonString received==>"+ oReply.jsonString +"<== \n<br>----\n<br>Info data received:\n<br>"
+					// + oReply.info
+					;
+					if(!oReply.isSuccess){
+						alert("Check your internet connection !!!! Trying to write form error:"+oReply.errorMessage);
+					};
+				//fz.setFieldProps("fz1",{value:xRetStr});
+				//if(this.oDbg.isDbg("main")) this.oDbg.display(xRetStr);
+			},this);			
+			oJsonStore.read( jtype, idname);
+			//oJsonStore.create( jtype, idname, name, description, json_of_f0 );
+		};//saveJson		
 		//------------------- END OF FUNCTIONS AREA -----------------------
 		//--------------------------------------------------------------------------------------------------------------------------
 		if(this.oDbg.isDbg("main")) this.oDbg.display(document.title+"......  END..");//document title tem  a property <title> que está no head

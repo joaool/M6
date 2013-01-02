@@ -76,6 +76,7 @@
 						var xBaseNode=Dom.byId("_moveResizeBaseDiv");
 						if(!xBaseNode){//if it does not exist cereates it
 							this.element = DomConstruct.create("div",{id:"_moveResizeBaseDiv", style:"position:inherit; top:0; left:0"}); //cria HTML div -
+							Win.body().appendChild(this.element); 
 						}else{
 							this.element =xBaseNode;
 							this.element.style.position="inherit"; //necessary to prevent JUMP in move....
@@ -100,7 +101,7 @@
 						// if the node with id=this.moveResizeDivId has no childs had the first one otherwise add another one
 						//DomConstruct.place(zz, this.moveResizeDivId,"after");
  
-						Win.body().appendChild(this.element); 
+					//Win.body().appendChild(this.element); 
 						this.visibleElement = DomConstruct.create("div"); //cria outro HTML div 
 						this.visibleElement.innerHTML=util.getInnerHTML("textBox",this.avatarId,this.current.label,this.current.w,this.current.h,this.current.borderThickness,this.current.borderType,this.current.activeColor); //este é o que se vai ver...
 						//dojo.byId(this.moveResizeDivId).appendChild(this.visibleElement); //textarea will be child of inner element instead of child of element (element.appendChild(visibleElement))
